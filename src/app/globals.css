@@ -78,6 +78,14 @@ body {
 @keyframes fade-out {
   from {
     opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes move-out {
+  from {
+    opacity: 1;
     transform: translateX(0px);
   }
   to {
@@ -88,7 +96,7 @@ body {
 @keyframes move-in {
   from {
     opacity: 0;
-    transform: translateX(-400px);
+    transform: translateX(-200px);
   }
   to {
     opacity: 1;
@@ -99,7 +107,7 @@ body {
 canvas {
   opacity: 0;
   touch-action: none;
-  animation: fade-in 5s ease 3s forwards;
+  animation: fade-in 5s ease-in-out 0.1s forwards;
 }
 
 .opener {
@@ -117,9 +125,11 @@ canvas {
   justify-content: center;
   overflow: hidden;
   pointer-events: none;
+  background: #fef4ef;
+  animation: fade-out 5s ease-in-out 0.1s forwards;
 }
 .opener p {
-  animation: fade-out 3s cubic-bezier(0.7, 0, 0.84, 0) 0s forwards;
+  animation: move-out 3s cubic-bezier(0.7, 0, 0.84, 0) 0s forwards;
 
 }
 
@@ -131,8 +141,7 @@ canvas {
 
 .footer {
   opacity: 0;
-  animation: move-in 3s cubic-bezier(0.16, 1, 0.3, 1) 4s forwards;
-  transform: translateX(-20px);
+  animation: fade-in 3s cubic-bezier(0.16, 1, 0.3, 1) 4s forwards;
 }
 
 .overlay {

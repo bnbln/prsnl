@@ -4,7 +4,6 @@ import { Link } from '@chakra-ui/next-js'
 import { Stats, OrbitControls, Circle } from '@react-three/drei'
 import { Canvas, useLoader, useFrame } from "@react-three/fiber"
 import { Bloom, DepthOfField, EffectComposer, Noise, Vignette } from '@react-three/postprocessing'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import Image from 'next/image'
 import styles from './page.module.css'

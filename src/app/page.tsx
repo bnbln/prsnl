@@ -13,7 +13,8 @@ export default function Home() {
       height: "100vh"
     }}>
       <Spline />
-      <div style={{
+      <div 
+      style={{
         padding: useBreakpointValue({base: "34px 40px", xl: "74px 80px"}),
         height: "100vh",
         width: "100%",
@@ -26,7 +27,8 @@ export default function Home() {
         justifyContent: "space-between",
         pointerEvents: "none"
       }}>
-        <p style={{
+        <p 
+        style={{
           color: "#000",
           fontSize: "17px",
           fontStyle: "normal",
@@ -35,14 +37,18 @@ export default function Home() {
           letterSpacing: "1.02px",
           textTransform: "uppercase",
           pointerEvents: "all"
-        }}>Benedikt <span style={{
+        }}>Benedikt <span 
+        style={{
           fontWeight: 300
-        }}>Schnupp</span></p>
-        <div style={{
+        }}>Schnupp</span>
+        </p>
+        <div 
+        style={{
           display: "flex",
           justifyContent: useBreakpointValue({base: "flex-start", md: "flex-end"}),
         }}>
-          <p style={{
+          <p 
+          style={{
             maxWidth: useBreakpointValue({base: "auto", md: "250px"}),
             textAlign: useBreakpointValue({base: "left", md: "right"}),
             pointerEvents: "all",

@@ -7,7 +7,7 @@ import useSpline from '@splinetool/r3f-spline'
 
 export default function Spline() {
   return (
-    <Canvas orthographic camera={{ position: [6, 0, 10], zoom: useBreakpointValue({base: "20", sm: "35", md: "50", xl: "70", '2xl': "80"}) }}>
+    <Canvas orthographic camera={{ position: [6, 0, 10], near: 0.01, far: 50, zoom: useBreakpointValue({base: "20", sm: "35", md: "50", xl: "55"}) }}>
       <color attach="background" args={['#fef4ef']} />
       <ambientLight />
       <directionalLight castShadow intensity={0.6} position={[0, 0, 10]} />

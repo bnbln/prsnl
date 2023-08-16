@@ -147,14 +147,6 @@ canvas {
   animation: fade-in 5s ease 1s forwards;
 }
 
-.char {
-  position: absolute;
-  font-size: 14vw;
-  font-weight: 800;
-  padding: 0;
-  margin: 0;
-  line-height: 0.8em;
-}
 
 a {
   color: #3e3e3d;

@@ -7,31 +7,6 @@ export default function Home() {
     width: "100vw",
     height: "100vh"
   }
-  const overlay = {
-    padding: useBreakpointValue({base: "34px 40px", xl: "74px 80px"}),
-    height: "100vh",
-    width: "100%",
-    position: "absolute",
-    left: 0,
-    top: 0,
-    zIndex: 100,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    pointerEvents: "none"
-  }
-  const logo = {
-    color: "#000",
-    leadingTrim: "both",
-    textEdge: "cap",
-    fontSize: "17px",
-    fontStyle: "normal",
-    fontWeight: 800,
-    lineHeight: "29px", /* 170.588% */
-    letterSpacing: "1.02px",
-    textTransform: "uppercase",
-    pointerEvents: "all"
-  }
   const box = {
     display: "flex",
     justifyContent: useBreakpointValue({base: "flex-start", md: "flex-end"}),
@@ -54,8 +29,31 @@ export default function Home() {
   return (
     <main style={scene}>
       <Spline />
-      <div style={overlay}>
-        <p style={logo}>Benedikt <span style={logoSpan}>Schnupp</span></p>
+      <div style={{
+        padding: useBreakpointValue({base: "34px 40px", xl: "74px 80px"}),
+        height: "100vh",
+        width: "100%",
+        position: "absolute",
+        left: 0,
+        top: 0,
+        zIndex: 100,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        pointerEvents: "none"
+      }}>
+        <p style={{
+          color: "#000",
+          leadingTrim: "both",
+          textEdge: "cap",
+          fontSize: "17px",
+          fontStyle: "normal",
+          fontWeight: 800,
+          lineHeight: "29px",
+          letterSpacing: "1.02px",
+          textTransform: "uppercase",
+          pointerEvents: "all"
+        }}>Benedikt <span style={logoSpan}>Schnupp</span></p>
         <div style={box}>
           <p style={text}>Im a Motion Designer and Web Developer from Berlin. This page is under construction, duh. For now connect with me on: <a style={link} target="_blank" href='https://www.linkedin.com/in/benedikt-schnupp-928112116/'>LinkedIn</a>
           </p>

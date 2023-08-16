@@ -43,7 +43,7 @@ export function Overlay() {
       <div style={{ position: 'absolute', bottom: 120, left: 120, fontSize: '18px' }}>
         Hey,
         <br />
-        I'm a Motion Designer <br /> and Web Developer from Berlin. <br />
+        Im a Motion Designer <br /> and Web Developer from Berlin. <br />
         <br />
         This page is under construction, duh. <br />
         For now connect with me on:

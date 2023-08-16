@@ -1,0 +1,36 @@
+{
+  "name": "personal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@chakra-ui/next-js": "^2.1.5",
+    "@chakra-ui/react": "^2.8.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@react-three/drei": "^9.80.3",
+    "@react-three/fiber": "^8.13.6",
+    "@react-three/postprocessing": "^2.15.0",
+    "@splinetool/loader": "^0.9.420",
+    "@splinetool/r3f-spline": "^1.0.2",
+    "@types/node": "20.5.0",
+    "@types/react": "18.2.20",
+    "@types/react-dom": "18.2.7",
+    "@types/three": "^0.155.0",
+    "eslint": "8.47.0",
+    "eslint-config-next": "13.4.16",
+    "framer-motion": "^10.15.2",
+    "leva": "^0.9.35",
+    "next": "13.4.16",
+    "postprocessing": "^6.33.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "three": "^0.155.0",
+    "typescript": "5.1.6"
+  }
+}

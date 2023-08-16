@@ -1,3 +1,4 @@
+import { useBreakpointValue } from '@chakra-ui/react'
 import { Canvas } from '@react-three/fiber'
 import { Float, MeshTransmissionMaterial } from '@react-three/drei'
 import { Environment, Lightformer, OrbitControls, PivotControls } from '@react-three/drei'
@@ -6,7 +7,7 @@ import useSpline from '@splinetool/r3f-spline'
 
 export default function Spline() {
   return (
-    <Canvas orthographic camera={{ position: [6, -5, 10], zoom: 60 }}>
+    <Canvas orthographic camera={{ position: [6, 0, 10], zoom: useBreakpointValue({base: "20", sm: "35", md: "50", xl: "70", '2xl': "80"}) }}>
       <color attach="background" args={['#fef4ef']} />
       <ambientLight />
       <directionalLight castShadow intensity={0.6} position={[0, 0, 10]} />

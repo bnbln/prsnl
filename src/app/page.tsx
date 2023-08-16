@@ -28,40 +28,52 @@ export default function Home() {
       height: "100vh"
     }}>
       <Spline />
-      <div 
-      style={{
-        padding: useBreakpointValue({base: "34px 40px", xl: "74px 80px"}),
-        height: "100vh",
-        width: "100%",
-        position: "absolute",
-        left: 0,
-        top: 0,
-        zIndex: 100,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        pointerEvents: "none"
-      }}>
-        <div style={{pointerEvents: "all"}}>
-        {/* <WalkthroughPopover /> */}
+      <div className="opener">
         <p 
+            style={{
+              color: "#000",
+              fontSize: "28px",
+              fontStyle: "normal",
+              fontWeight: 800,
+              lineHeight: "29px",
+              letterSpacing: "1.02px",
+              textTransform: "uppercase",
+              pointerEvents: "all",
+              textAlign: "center"
+            }}>Benedikt <span style={{fontWeight: 300}}>Schnupp</span>
+          </p>
+      </div>
+      <div className='overlay'
         style={{
-          color: "#000",
-          fontSize: "17px",
-          fontStyle: "normal",
-          fontWeight: 800,
-          lineHeight: "29px",
-          letterSpacing: "1.02px",
-          textTransform: "uppercase",
-          pointerEvents: "all",
-          marginTop: "-10px"
-        }}>Benedikt <span 
-        style={{
-          fontWeight: 300
-        }}>Schnupp</span>
+          padding: useBreakpointValue({base: "34px 40px", xl: "74px 80px"}),
+          height: "100vh",
+          width: "100%",
+          position: "absolute",
+          left: 0,
+          top: 0,
+          zIndex: 100,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          pointerEvents: "none"
+        }}>
+          <div style={{pointerEvents: "all"}} className='logo'>
+        <p 
+          style={{
+            color: "#000",
+            fontSize: "17px",
+            fontStyle: "normal",
+            fontWeight: 800,
+            lineHeight: "29px",
+            letterSpacing: "1.02px",
+            textTransform: "uppercase",
+            pointerEvents: "all",
+            marginTop: "-10px"
+          }}>Benedikt <span style={{fontWeight: 300}}>Schnupp</span>
         </p>
-        </div>
-        <div 
+
+      </div>
+        <div className='footer'
         style={{
           display: "flex",
           justifyContent: useBreakpointValue({base: "flex-start", md: "flex-end"}),

@@ -1,18 +1,44 @@
 import { useBreakpointValue } from '@chakra-ui/react'
 import { Canvas } from '@react-three/fiber'
 import { Float, MeshTransmissionMaterial } from '@react-three/drei'
-import { Environment, Lightformer, OrbitControls, PivotControls } from '@react-three/drei'
+import { Environment, Lightformer, OrbitControls, PivotControls, Text, Html } from '@react-three/drei'
 import useSpline from '@splinetool/r3f-spline'
 // import { useControls } from 'leva'
 
 export default function Spline() {
   return (
-    <Canvas orthographic camera={{ position: [6, 0, 10], near: 0.01, far: 50, zoom: useBreakpointValue({base: "20", sm: "35", md: "50", xl: "55"}) }}>
+    <Canvas orthographic camera={{ position: [6, 0, 10], near: 0.01, far: 1000, zoom: useBreakpointValue({base: "20", sm: "35", md: "50", xl: "55"}) }}>
       <color attach="background" args={['#fef4ef']} />
       <ambientLight />
       <directionalLight castShadow intensity={0.6} position={[0, 0, 10]} />
+      <Html castShadow receiveShadow transform rotation={[0, 0, 0]} center position={[12, -6, 1.3]}>
+        {/* <div style={{
+          
+          fontWeight: 800,
+          textTransform: "uppercase",
+          letterSpacing: 100,
+          fontSize: 130,
+          width: "700px",
+          lineHeight: 0.9,
+          opacity: 1,
+          zIndex: 900
+        }}>
+          BenediktSchnupp
+        </div> */}
+      </Html>
       <Scene scale={0.025} />
-      <OrbitControls makeDefault />
+
+      <OrbitControls
+        makeDefault 
+        minAzimuthAngle={-Math.PI / 4}
+        maxAzimuthAngle={Math.PI / 4}
+        minPolarAngle={Math.PI / 6}
+        maxPolarAngle={Math.PI - Math.PI / 6}
+        minZoom={20}
+        maxZoom={70}
+        zoomSpeed={0.25}
+        panSpeed={0.5}
+        />
       <Environment resolution={256}>
         <group rotation={[-Math.PI / 2, 0, 0]}>
           <Lightformer intensity={4} rotation-x={Math.PI / 2} position={[0, 5, -9]} scale={[10, 10, 1]} />

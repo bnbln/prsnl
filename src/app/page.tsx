@@ -65,6 +65,8 @@ export default function Home() {
         style={{
           display: "flex",
           justifyContent: useBreakpointValue({base: "flex-start", md: "flex-end"}),
+          marginBottom: useBreakpointValue({base: "100px", md: "0px"}),
+
         }}>
           <p 
           style={{

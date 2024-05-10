@@ -1,96 +1,99 @@
 'use client'
 import React from 'react'
-import { useBreakpointValue } from '@chakra-ui/react'
-import Spline from './Spline'
+import * as contentful from 'contentful'
+import MyCanvas from './Animation'
 import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
-  Button,
-  ButtonGroup,
   Box
 } from '@chakra-ui/react'
+import Row from './components/Row'
+
+
+const data = [
+  {
+    title: "Developement", 
+    small: true, 
+    items: [
+      {
+        title: "Integrating a custom Spinner Animation with LottieJS", 
+        desc: "Interaction",
+        color: "#9AADD5",
+        video: "./Portrait01.mp4"
+      },
+      {
+        title: "Programmatic Typography Systems", 
+        desc: "Typography",
+        image: "./Portrait02.jpg"
+      },
+      {
+        title: "Generating advanced QR-Codes with Stable Diffusion", 
+        desc: "Artificial Intelligence",
+        image: "./Portrait04.jpg"
+      },
+      {
+        title: "Relaunching a Berlin Lawyers Corporate Design and Website", 
+        desc: "Clients",
+        color: "#172340",
+      },
+      {
+        title: "Automating Video Workflows in Trailer Production for TV Channel", 
+        desc: "Clients",
+        color: "#f18825",
+      }
+    ]
+  },
+  {
+    title: "Motion Design", 
+    small: false, 
+    items: [
+      {
+        title: "Problem Solving Strategy: Just don't stop!", 
+        desc: "Artificial Intelligence",
+        color: "#9AADD5",
+        video: "./Landscape01.mp4"
+      },
+      {
+        title: "Programmatic Typography Systems", 
+        desc: "Typography",
+        color: "#9AADD5",
+        image: "./Portrait02.jpg"
+      },
+      {
+        title: "Integrating a custom Spinner Animation with LottieJS", 
+        desc: "Interaction",
+        color: "#9AADD5",
+        video: "./Portrait01.mp4"
+      },
+      {
+        title: "Automating Video Workflows in Trailer Production for TV Channel", 
+        desc: "Clients",
+        color: "#f18825",
+      }
+    ]
+  }
+]
 
 export default function Home() {
-  const link = {
-    color: "#FF7845",
-    fontWeight: 800
-  }
+
+  
   return (
-    <main style={{
-      width: "100vw",
-      height: "100vh"
-    }}>
-      <Spline />
-      <div className="opener">
-        <p 
-            style={{
-              color: "#000",
-              fontSize: "28px",
-              fontStyle: "normal",
-              fontWeight: 800,
-              lineHeight: "29px",
-              letterSpacing: "1.02px",
-              textTransform: "uppercase",
-              pointerEvents: "all",
-              textAlign: "center"
-            }}>Benedikt <span style={{fontWeight: 300}}>Schnupp</span>
-          </p>
-      </div>
-      <div className='overlay'
-        style={{
-          padding: useBreakpointValue({base: "34px 40px", xl: "74px 80px"}),
-          height: "100vh",
-          width: "100%",
-          position: "absolute",
-          left: 0,
-          top: 0,
-          zIndex: 100,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          pointerEvents: "none"
-        }}>
-          <div style={{pointerEvents: "all"}} className='logo'>
-        <p 
-          style={{
-            color: "#000",
-            fontSize: "17px",
-            fontStyle: "normal",
-            fontWeight: 800,
-            lineHeight: "29px",
-            letterSpacing: "1.02px",
-            textTransform: "uppercase",
-            pointerEvents: "all",
-            marginTop: "-10px"
-          }}>Benedikt <span style={{fontWeight: 300}}>Schnupp</span>
-        </p>
+    <>
+    {/* <MyCanvas /> */}
+    {/* <Spline /> */}
+    <Box zIndex={0} maxH='65vh' color='white'>
+    <video autoPlay muted style={{
+            minWidth: "100%",
+            borderRadius: 4.5,
+            }} src="./Hero.mp4"/>
+    </Box>
 
-      </div>
-        <div className='footer'
-        style={{
-          display: "flex",
-          justifyContent: useBreakpointValue({base: "flex-start", md: "flex-end"}),
-          marginBottom: useBreakpointValue({base: "100px", md: "0px"}),
 
-        }}>
-          <p 
-          style={{
-            maxWidth: useBreakpointValue({base: "auto", md: "250px"}),
-            textAlign: useBreakpointValue({base: "left", md: "right"}),
-            pointerEvents: "all",
-            fontWeight: 300,
-            fontSize: useBreakpointValue({base: 14, md: 21, xl: 18}),
-          }}>Im a Motion Designer and Web Developer from Berlin. This page is under construction, duh. For now connect with me on: <a style={link} target="_blank" href='https://www.linkedin.com/in/benedikt-schnupp-928112116/'>LinkedIn</a>
-          </p>
-        </div>
-      </div>
-    </main>
+    {data.map((section, index) => {
+      // console.log(section, index);
+      return(
+        <Row key={index} title={section.title} small={section.small} items={section.items} />
+      )
+
+    })}
+    </>
   )
 }

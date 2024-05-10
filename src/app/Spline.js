@@ -3,12 +3,13 @@ import { Canvas } from '@react-three/fiber'
 import { Float, MeshTransmissionMaterial } from '@react-three/drei'
 import { Environment, Lightformer, OrbitControls, PivotControls, Text, Html } from '@react-three/drei'
 import useSpline from '@splinetool/r3f-spline'
+import MyCanvas from './Animation'
 // import { useControls } from 'leva'
 
 export default function Spline() {
   return (
-    <Canvas orthographic camera={{ position: [6, 0, 10], near: 0.01, far: 1000, zoom: useBreakpointValue({base: "20", sm: "35", md: "50", xl: "55"}) }}>
-      <color attach="background" args={['#fef4ef']} />
+    <Canvas orthographic camera={{ position: [6, 0, 10], near: 0.01, far: 1000, zoom: useBreakpointValue({base: "20", sm: "35", md: "50", xl: "55"}) }} style={{height:"65vh"}}>
+      <color attach="background" args={['#000000']} />
       <ambientLight />
       <directionalLight castShadow intensity={0.6} position={[0, 0, 10]} />
       <Html castShadow receiveShadow transform rotation={[0, 0, 0]} center position={[12, -6, 1.3]}>
@@ -26,7 +27,8 @@ export default function Spline() {
           BenediktSchnupp
         </div> */}
       </Html>
-      <Scene scale={0.025} />
+      {/* <Scene scale={0.025} /> */}
+      {/* <MyCanvas scale={0.025} /> */}
 
       <OrbitControls
         makeDefault 
@@ -39,7 +41,7 @@ export default function Spline() {
         zoomSpeed={0.25}
         panSpeed={0.5}
         />
-      <Environment resolution={256}>
+      {/* <Environment resolution={256}>
         <group rotation={[-Math.PI / 2, 0, 0]}>
           <Lightformer intensity={4} rotation-x={Math.PI / 2} position={[0, 5, -9]} scale={[10, 10, 1]} />
           {[2, 0, 2, 0, 2, 0, 2, 0].map((x, i) => (
@@ -49,7 +51,7 @@ export default function Spline() {
           <Lightformer intensity={2} rotation-y={Math.PI / 2} position={[-5, -1, -1]} scale={[50, 2, 1]} />
           <Lightformer intensity={2} rotation-y={-Math.PI / 2} position={[10, 1, 0]} scale={[50, 2, 1]} />
         </group>
-      </Environment>
+      </Environment> */}
     </Canvas>
   )
 }
@@ -125,3 +127,4 @@ function Shape({ name, float = 300, color, config, ...props }) {
     </Float>
   )
 }
+

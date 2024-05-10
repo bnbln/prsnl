@@ -23,28 +23,28 @@ export default function Row({
     const [gutter, setGutter] = useState(0)
     const [inner, setInner] = useState(1206)
     const elementRef = useRef(null);
+    
     useEffect(() => {
-        // Function to handle what happens on window resize
-        const handleResize = () => {
-          if (elementRef.current) {
-            const left = elementRef.current.offsetLeft;
-            setGutter(left);
-            setInner(window.innerWidth)
-          }
-        };
+        // Ensure this code doesn't run during SSR
+        if (typeof window !== 'undefined') {
+          const handleResize = () => {
+            if (elementRef.current) {
+              const left = elementRef.current.offsetLeft;
+              setGutter(left);
+              setInner(window.innerWidth);
+            }
+          };
     
-        // Call handleResize initially in case the size is needed right away
-        handleResize();
+          // Call handleResize once to set initial state
+          handleResize();
     
-        // Set up the event listener for the resize event
-        window.addEventListener('resize', handleResize);
+          // Setup event listener
+          window.addEventListener('resize', handleResize);
     
-        // Cleanup function to remove the event listener
-        return () => {
-          window.removeEventListener('resize', handleResize);
-        };
-      }, []); // Empty dependency array means this runs once and cleanup on unmount
-    // console.log(items);
+          // Cleanup function to remove the event listener
+          return () => window.removeEventListener('resize', handleResize);
+        }
+      }, []); // Empty dependency array ensures this effect only runs once
           
     return (
         <Box mt={"6.75rem"}>

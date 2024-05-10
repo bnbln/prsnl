@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useRef, useEffect, useState } from 'react'
 import { Box, Heading, HStack, useBreakpointValue } from '@chakra-ui/react';
 import {ChevronLeftIcon, ChevronRightIcon} from '@chakra-ui/icons'

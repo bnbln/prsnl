@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React from 'react'
 import { Box, Heading, HStack, useBreakpointValue } from '@chakra-ui/react';
 import {ChevronLeftIcon, ChevronRightIcon} from '@chakra-ui/icons'
 import Tile from './Tile'
@@ -17,36 +17,10 @@ export default function Row({
     small?: boolean,
     items: object 
   }) {
-
-    const [gutter, setGutter] = useState(0)
-    const [inner, setInner] = useState(1206)
-    const elementRef = useRef(null);
-    
-    useEffect(() => {
-        // Ensure this code doesn't run during SSR
-        if (typeof window !== 'undefined') {
-          const handleResize = () => {
-            if (elementRef.current) {
-              const left = elementRef.current.offsetLeft;
-              setGutter(left);
-              setInner(window.innerWidth);
-            }
-          };
-    
-          // Call handleResize once to set initial state
-          handleResize();
-    
-          // Setup event listener
-          window.addEventListener('resize', handleResize);
-    
-          // Cleanup function to remove the event listener
-          return () => window.removeEventListener('resize', handleResize);
-        }
-      }, []); // Empty dependency array ensures this effect only runs once
-          
+       
     return (
         <Box mt={"6.75rem"}>
-            <Box maxW={"68rem"} ml={"auto"} mr={"auto"} ref={elementRef} id="test">
+            <Box maxW={"68rem"} ml={"auto"} mr={"auto"}>
                 <HStack mb={8} w={"100%"} justifyContent={"space-between"} pl={useBreakpointValue({base: 4, xl: 0})} pr={useBreakpointValue({base: 4, xl: 0})} >
                     <Heading fontSize='1.685625rem' color={"white"}>{title}</Heading>
                     <HStack gap={2} color={"white"}>
@@ -60,13 +34,10 @@ export default function Row({
                 maxWidth: "68rem",
                 marginLeft: "auto",
                 marginRight: "auto",
-                overflowClipMargin: "calc(0.5*var(--document-width)-max(68rem,calc(var(--document-width)-40px)))"
             }}>
                 <div style={{
-                    //  width: "var(--document-width)", 
-                    width: useBreakpointValue({base: "100%", xl: inner}) ,
-                    marginLeft: useBreakpointValue({base: 0, xl: -gutter-12}),
-                    //marginLeft: "calc(-1*var(--gutter-size))",
+                    width: useBreakpointValue({base: "100%", xl: "100vw"}) ,
+                    marginLeft: useBreakpointValue({base: 0, xl: "calc(-1*var(--gutter-size))"}) ,
                 }}>
                     <div style={{
                         gap: 12,
@@ -80,7 +51,6 @@ export default function Row({
                         display: "flex",
                         minWidth:"100%"
                         }}>
-                            <Box pl={gutter} />
                             {items && items.map((item, i) => {
                                 // console.log(item);
                                 return(
@@ -95,7 +65,6 @@ export default function Row({
                                         />
                                 )
                             })}
-                            <Box pl={gutter} />
                    </div>
                 </div>
             </div>

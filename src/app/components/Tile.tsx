@@ -2,7 +2,8 @@ import React from 'react'
 import {
   Heading,
   Text,
-  Box
+  Box,
+  useBreakpointValue
 } from '@chakra-ui/react'
 import  Image from 'next/image'
 import { relative } from 'path';
@@ -20,7 +21,15 @@ type TileProps = {
 const Tile: React.FC<TileProps> = ({ small = true, video, image, title, desc, color }) => {
   // Bedingter Render basierend auf 'small'
   return (
-    <a href='#home'>
+    <Box as='a' href='#home' className='tile' 
+    sx={{
+      '&:first-child': {
+        marginLeft: useBreakpointValue({base: 4, xl: 'var(--gutter-size)'}),
+      },
+      '&:last-child': {
+        marginRight: useBreakpointValue({base: 4, xl: 'var(--gutter-size)'}),
+      }
+    }}>
     <div style={{
         height: "29.471875rem",
         borderRadius: 4.5,
@@ -65,7 +74,7 @@ const Tile: React.FC<TileProps> = ({ small = true, video, image, title, desc, co
 
         
     </div>
-    </a>
+    </Box>
   );
 }
 

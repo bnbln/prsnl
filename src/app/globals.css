@@ -1,6 +1,6 @@
 :root {
   --document-width: 1206px;
-  --gutter-size: max(20px, calc((var(--document-width) - 68rem) / 2));
+  --gutter-size: calc((100vw - 68rem + 12px) / 2);
   --media-gutter-size: max(20px, calc((var(--document-width) - 1728px) / 2));
 
   --max-width: 1206px;

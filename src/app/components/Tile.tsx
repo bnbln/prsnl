@@ -44,7 +44,7 @@ const Tile: React.FC<TileProps> = ({ small = true, video, image, title, desc, co
 
         { video ? 
         
-            <video autoPlay loop muted style={{
+            <video playsInline autoPlay loop muted style={{
             height: "29.471875rem",
             borderRadius: 4.5,
             aspectRatio: small ? "3/4" : "4/3",

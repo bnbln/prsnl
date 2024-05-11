@@ -3,20 +3,22 @@ import { Box, Heading, HStack, useBreakpointValue } from '@chakra-ui/react';
 import {ChevronLeftIcon, ChevronRightIcon} from '@chakra-ui/icons'
 import Tile from './Tile'
 
+interface Item {
+  color: string;
+  title: string;
+  desc: string;
+  video?: string;
+  image?: string;
+}
 
-export default function Row({
-    children,
-    href,
-    title,
-    small,
-    items
-  }: {
-    children: React.ReactNode,
-    href: string
-    title?: string,
-    small?: boolean,
-    items: object 
-  }) {
+interface RowProps {
+  title?: string;
+  small?: boolean;
+  items: Item[];  // Stelle sicher, dass dies als Array von Items definiert ist
+}
+
+
+const Row: React.FC<RowProps> = ({ title, small, items }) => {
        
     return (
         <Box mt={"6.75rem"}>
@@ -51,20 +53,18 @@ export default function Row({
                         display: "flex",
                         minWidth:"100%"
                         }}>
-                            {items && items.map((item, i) => {
-                                // console.log(item);
-                                return(
-                                    <Tile 
-                                        key={"rowItem-"+i}
-                                        small={small && small} 
-                                        color={item.color && item.color} 
-                                        title={item.title && item.title} 
-                                        desc={item.desc && item.desc} 
-                                        video={item.video && item.video} 
-                                        image={item.image && item.image} 
-                                        />
-                                )
-                            })}
+                            {items && items.map((item, i) => (
+                              <Tile 
+                                key={`rowItem-${i}`}
+                                small={small}
+                                color={item.color}
+                                title={item.title}
+                                desc={item.desc}
+                                video={item.video}
+                                image={item.image}
+                              />
+                            ))
+                            }
                    </div>
                 </div>
             </div>
@@ -73,3 +73,5 @@ export default function Row({
 
     )
   }    
+
+  export default Row;

@@ -39,6 +39,7 @@ const Tile: React.FC<TileProps> = ({ small = true, video, image, title, desc, co
         position: "relative",
         backgroundSize: "cover",
         backgroundImage: image ? "url("+ image +")" : "none",
+        backgroundPosition: "center"
     }}>
 
         { video ? 

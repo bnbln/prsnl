@@ -26,8 +26,8 @@ export default function Navbar() {
 
         <Show above='md'>
           <Flex onMouseEnter={()=> setMenu(true)} onMouseLeave={()=> setMenu(false)}>
-            <MyLink href="about">Personal</MyLink>
-            <MyLink href="#home">Work</MyLink>
+            <MyLink href="#personal">Personal</MyLink>
+            <MyLink href="about">Work</MyLink>
             <MyLink href="#home">Motion Design</MyLink>
             <MyLink href="#home">Developement</MyLink>
           </Flex>

@@ -4,7 +4,7 @@ import {ChevronLeftIcon, ChevronRightIcon} from '@chakra-ui/icons'
 import Tile from './Tile'
 
 interface Item {
-  color: string;
+  color?: string;
   title: string;
   desc: string;
   video?: string;

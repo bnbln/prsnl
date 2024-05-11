@@ -28,7 +28,7 @@ export default function Home() {
           objectFit: 'cover'      // Covers the area, clipping the video as needed
         }}/>
     </Box>
-      <VStack gap={"6rem"} w={"100%"}>
+      <VStack gap={useBreakpointValue({base: "3rem", xl: "6rem"})} w={"100%"}>
         {data.map((section, index) => (
           <>
             <Row key={index+"_row"} title={section.title} small={section.small} items={section.items} />

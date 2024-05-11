@@ -27,7 +27,7 @@ const Tile: React.FC<TileProps> = ({ small = true, video, image, title, desc, co
         marginLeft: useBreakpointValue({base: 4, xl: 'var(--gutter-size)'}),
       },
       '&:last-child': {
-        marginRight: useBreakpointValue({base: 4, xl: 'var(--gutter-size)'}),
+        marginRight: useBreakpointValue({base: 4, xl: 'calc( var(--gutter-size) - 12px)'}),
       }
     }}>
     <div style={{

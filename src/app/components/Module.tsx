@@ -9,7 +9,7 @@ interface ModuleProps {
 const Module: React.FC<ModuleProps> = ({ title }) => {
        
     return (
-        <Flex direction={useBreakpointValue({base: "column", md: "row"})} overflow={"hidden"} position={"relative"} w={useBreakpointValue({base: "calc(100vw - 26px)", xl: "1089px"})} alignItems="center" justifyContent={"space-between"} margin="auto" color={"#080808"} background={"white"} borderRadius={4.5}>
+        <Flex id='personal' direction={useBreakpointValue({base: "column", md: "row"})} overflow={"hidden"} position={"relative"} w={useBreakpointValue({base: "calc(100vw - 26px)", xl: "1089px"})} alignItems="center" justifyContent={"space-between"} margin="auto" color={"#080808"} background={"white"} borderRadius={4.5}>
                 <Box style={{
                     width: useBreakpointValue({base: "100%", md: "50%"}),
                     height: useBreakpointValue({base: "400px", md: "100%"}),

@@ -1,7 +1,8 @@
 'use client'
 import React from 'react'
-import { Box, VStack } from '@chakra-ui/react'
+import { Box, Flex, Heading, VStack, useBreakpointValue, Text, Button } from '@chakra-ui/react'
 import Row from './components/Row'
+import Module from './components/Module'
 import { data } from './data'
 
 
@@ -29,8 +30,12 @@ export default function Home() {
     </Box>
       <VStack gap={"6rem"} w={"100%"}>
         {data.map((section, index) => (
-          <Row key={index} title={section.title} small={section.small} items={section.items} />
+          <>
+            <Row key={index+"_row"} title={section.title} small={section.small} items={section.items} />
+            {index === 0 ? <Module key={index+"_module"} /> : null}
+          </>
         ))}
+
     </VStack>
     </>
   )

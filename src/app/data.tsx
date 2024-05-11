@@ -5,6 +5,34 @@ import { title } from "process";
 
 export const data = [
   {
+    title: "Highlights",
+    small: true,
+    items: [
+      {
+        title: "Book Modeling & Animation for TV Spot",
+        desc: "Blender",
+        image: "./Book.jpg"
+      },
+      {
+        title: "Generating advanced QR-Codes with Stable Diffusion",
+        desc: "Artificial Intelligence",
+        image: "./Portrait04.jpg"
+      },
+      {
+        title: "Relaunching a Berlin Lawyers Corporate Design and Website",
+        desc: "Clients",
+        color: "#172340",
+        image: "./Portrait05.jpg"
+      },
+      {
+        title: "Automating Video Workflows in Trailer Production for TV Channel",
+        desc: "Clients",
+        color: "#f18825",
+        video: "./Portrait06.mp4"
+      }
+    ]
+  },
+  {
     title: "Developement",
     small: true,
     items: [

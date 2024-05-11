@@ -21,7 +21,7 @@ interface RowProps {
 const Row: React.FC<RowProps> = ({ title, small, items }) => {
        
     return (
-        <Box mt={"6.75rem"}>
+        <Box w={"100%"}>
             <Box maxW={"68rem"} ml={"auto"} mr={"auto"}>
                 <HStack mb={8} w={"100%"} justifyContent={"space-between"} pl={useBreakpointValue({base: 4, xl: 0})} pr={useBreakpointValue({base: 4, xl: 0})} >
                     <Heading fontSize='1.685625rem' color={"white"}>{title}</Heading>

@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 
 export const metadata: Metadata = {
-  title: 'benedikt.berlin - Motion Design',
+  title: 'Benedikt | Code & Design',
   description: 'Motion Design and Web Developent',
 }
 

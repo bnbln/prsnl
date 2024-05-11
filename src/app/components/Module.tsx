@@ -25,8 +25,8 @@ const Module: React.FC<ModuleProps> = ({ title }) => {
                         <Heading size={"lg"}>Crafting Connections through Code & Creativity</Heading>
                         <Heading mt={2} size={"md"}>with Video and Artificial Intelligence</Heading>
                     </Box>
-                    <Text>Let's work together on anything from video production to web development using React, Node.js, Three.js and CSS, branding, animation, corporate design, 3D modeling, AI-generated artworks, Adobe After Effects and any other Creative Cloud product, Blender, Stable Diffusion, Midjourney, Figma and also Microsoft Office (I'm good at Excel too).</Text>
-                    <Text>If you're interested in collaborating, feel free to reach out.</Text>
+                    <Text>Lets work together on anything from video production to web development using React, Node.js, Three.js and CSS, branding, animation, corporate design, 3D modeling, AI-generated artworks, Adobe After Effects and any other Creative Cloud product, Blender, Stable Diffusion, Midjourney, Figma and also Microsoft Office (I'm good at Excel too).</Text>
+                    <Text>If youre interested in collaborating, feel free to reach out.</Text>
                     <Box>
                     <Button>LinkedIn</Button> <Button variant={"none"}>Mail</Button>
                     </Box>

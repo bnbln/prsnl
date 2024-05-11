@@ -16,7 +16,7 @@ export default function Home() {
       pt={45}             // Padding top of 45 pixels
       color="white"
     >
-      <video src="./Hero.mp4" autoPlay muted style={{
+      <video src="./Hero.mp4" playsInline autoPlay muted style={{
           position: 'absolute',   // Absolute position to center it
           top: '50%',             // Aligns the middle of the video with the middle of the Box
           left: '50%',            // Centers the video horizontally

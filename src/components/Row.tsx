@@ -3,31 +3,36 @@ import { Box, Heading, HStack, useBreakpointValue } from '@chakra-ui/react';
 import {ChevronLeftIcon, ChevronRightIcon} from '@chakra-ui/icons'
 import Tile from './Tile'
 
+interface Fields {
+    color?: string;
+    title: string;
+    desc: string;
+    video?: string;
+    image?: string;
+  }
+  
 interface Item {
-  color?: string;
-  title: string;
-  desc: string;
-  video?: string;
-  image?: string;
+    fields: Fields[]
 }
 
 interface RowProps {
   title?: string;
   small?: boolean;
-  items: Item[];  // Stelle sicher, dass dies als Array von Items definiert ist
+  items: Item[];
 }
 
 
-const Row: React.FC<RowProps> = ({ title, small, items }) => {
-       
+const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
+    const gutterSize = useBreakpointValue({ base: 0, xl: 'var(--gutter-size)' });    
+
     return (
         <Box w={"100%"}>
-            <Box maxW={"68rem"} ml={"auto"} mr={"auto"}>
-                <HStack mb={8} w={"100%"} justifyContent={"space-between"} pl={useBreakpointValue({base: 4, xl: 0})} pr={useBreakpointValue({base: 4, xl: 0})} >
-                    <Heading fontSize='1.685625rem' color={"white"}>{title}</Heading>
-                    <HStack gap={2} color={"white"}>
-                        <ChevronLeftIcon/>
-                        <ChevronRightIcon/>
+            <Box maxW="68rem" mx="auto" px={4}>
+                <HStack mb={8} w="100%" justifyContent="space-between">
+                    <Heading fontSize="1.685625rem">{title}</Heading>
+                    <HStack spacing={2}>
+                        <ChevronLeftIcon />
+                        <ChevronRightIcon />
                     </HStack>
                 </HStack>
             </Box>
@@ -57,11 +62,12 @@ const Row: React.FC<RowProps> = ({ title, small, items }) => {
                               <Tile 
                                 key={`rowItem-${i}`}
                                 small={small}
-                                color={item.color}
-                                title={item.title}
-                                desc={item.desc}
-                                video={item.video}
-                                image={item.image}
+                                color={item.fields.color}
+                                title={item.fields.title}
+                                desc={item.fields.description}
+                                image={item.fields.image}
+                                video={item.fields.video}
+                                slug={item.fields.slug}
                               />
                             ))
                             }

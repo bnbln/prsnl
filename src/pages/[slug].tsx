@@ -1,32 +1,48 @@
 import React from 'react';
-import { Box, Heading, Text } from '@chakra-ui/react';
-import { createClient } from 'contentful';
+import { Box } from '@chakra-ui/react';
+import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
 import Article from '@/components/Article';
 
+interface IArticleFields extends EntrySkeletonType {
+  title: EntryFields.Text;
+  published: EntryFields.Text;
+  subtitle?: EntryFields.Text;
+  slug: EntryFields.Text;
+  text?: {
+    nodeType: string;
+    data: any;
+    content: any[];
+  };
+  image?: {
+    fields: {
+      title: string;
+      file: {
+        url: string;
+      };
+    };
+  };
+  button?: Array<{
+    title: string;
+    uri: string;
+    variant: boolean;
+  }>;
+}
 
-// Define types for the data you expect from Contentful
-interface IArticle {
-  title: string;
-  slug: string;
-  published: string;
-  description: string;
-  color: string;
-  image: any;
-  video: any;
-  excerpt: any;
-  text: any;
-  related: any[];
+interface Params {
+  params: {
+    slug: string;
+  };
 }
 
 // Create the Contentful client outside the component to avoid re-creation on re-renders
 const client = createClient({
-  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-  space: process.env.CONTENTFUL_SPACE_ID,
+  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN as string,
+  space: process.env.CONTENTFUL_SPACE_ID as string,
 });
 
 export async function getStaticPaths() {
   try {
-    const entries = await client.getEntries<IArticle>({
+    const entries = await client.getEntries<IArticleFields>({
       content_type: 'article',
     });
 
@@ -47,9 +63,9 @@ export async function getStaticPaths() {
   }
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params }: Params) {
   try {
-    const entries = await client.getEntries<IArticle>({
+    const entries = await client.getEntries<IArticleFields>({
       content_type: 'article',
       'fields.slug': params.slug,
       include: 2,
@@ -79,7 +95,7 @@ export async function getStaticProps({ params }) {
   }
 }
 
-const Slug: React.FC<{ data: IArticle | null }> = ({ data }) => {
+const Slug: React.FC<{ data: IArticleFields | null }> = ({ data }) => {
   if (!data) {
     return <Box>No data found</Box>;
   }
@@ -87,17 +103,8 @@ const Slug: React.FC<{ data: IArticle | null }> = ({ data }) => {
   
   return (
     <>
-    <Article data={data} />
-      <Box
-        height="75vh"
-        width="100%"
-        position="relative"
-        overflow="hidden"
-        pt={45}
-        color="white"
-      >
-        {/* Add more components to display other fields as needed */}
-      </Box>
+      <div></div>
+      {/* <Article data={data} /> */}
     </>
   );
 }

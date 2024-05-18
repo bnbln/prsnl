@@ -3,11 +3,11 @@ import { Box, Flex, Heading, VStack, useBreakpointValue, Text, Button } from '@c
 import Row from '../components/Row'
 import Module from '../components/Module'
 import Article from '../components/Article'
-import { createClient } from 'contentful';
+import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
 
 // Define types for the data you expect from Contentful
-interface ISection {
-  title: string;
+interface ISection extends EntrySkeletonType {
+  title: EntryFields.Text;
   hero: any;
   position: any[];
 }
@@ -15,8 +15,8 @@ interface ISection {
 
 // Create the Contentful client outside the component to avoid re-creation on re-renders
 const client = createClient({
-  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-  space: process.env.CONTENTFUL_SPACE_ID,
+  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN  as string,
+  space: process.env.CONTENTFUL_SPACE_ID  as string,
 });
 
 export async function getStaticProps() {
@@ -49,16 +49,19 @@ export async function getStaticProps() {
 }
 
 const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
-    console.log('Contentful Access Tokensss:', process.env.CONTENTFUL_ACCESS_TOKEN);
-console.log('Contentful Space ID:', process.env.CONTENTFUL_SPACE_ID);
+    // console.log('Contentful Access Tokensss:', process.env.CONTENTFUL_ACCESS_TOKEN);
+    // console.log('Contentful Space ID:', process.env.CONTENTFUL_SPACE_ID);
+    console.log(data);
+    
   return (
     <>
       <Box
-        height="75vh"
+        height="65vh"
         width="100%"
         position="relative"
         overflow="hidden"
         pt={45}
+        mb={12}
         color="white"
       >
         <video src="./Hero.mp4" playsInline autoPlay muted className="heroVideo" />

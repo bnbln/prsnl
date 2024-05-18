@@ -71,20 +71,19 @@ export default function Navbar() {
           color={colorMode === 'dark' ? 'white' : '#080808'}
         >
           <Flex justify="space-between" align="center">
-            <Icon width={22} height={22} color={colorMode === 'dark' ? 'white' : '#080808'} />
+            <MyLink href={"./"}>
+              <Icon width={22} height={22} color={colorMode === 'dark' ? 'white' : '#080808'} />
+            </MyLink>
             <Show above="md">
               <Flex>
-              <MyLink href={"./"}>
+                <MyLink href={"./"}>
                     Home
                 </MyLink>
                 <MyLink href={"/about"}>
-                    Personal
-                </MyLink>
-                <MyLink href={"/work"}>
                     Work
                 </MyLink>
                 <MyLink href={"/design"}>
-                    Design
+                    Motion Design
                 </MyLink>
                 <MyLink href={"/dev"}>
                     Developement

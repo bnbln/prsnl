@@ -3,19 +3,19 @@ import { Box, Flex, Heading, VStack, useBreakpointValue, Text, Button } from '@c
 import Row from '../components/Row'
 import Module from '../components/Module'
 import Article from '../components/Article'
-import { createClient } from 'contentful';
+import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
 
 // Define types for the data you expect from Contentful
-interface ISection {
-  title: string;
+interface ISection extends EntrySkeletonType {
+  title: EntryFields.Text;
   hero: any;
   position: any[];
 }
 
 // Create the Contentful client outside the component to avoid re-creation on re-renders
 const client = createClient({
-  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
-  space: process.env.CONTENTFUL_SPACE_ID,
+  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN as string,
+  space: process.env.CONTENTFUL_SPACE_ID as string,
 });
 
 export async function getStaticProps() {

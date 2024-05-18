@@ -55,11 +55,9 @@ function MyApp({ Component, pageProps }: AppProps) {
             <Box pt={50}>
             <Component {...pageProps} />
             </Box>
-            
+            <Footer />
           </motion.div>
         </AnimatePresence>
-        {isLoading && <div className="loading-overlay">Loading...</div>}
-        <Footer />
       </div>
     </Providers>
   );

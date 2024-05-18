@@ -90,3 +90,13 @@ nav {
   
 }
 
+.heroVideo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 100%;
+  width: auto;
+  min-width: 100%;
+  object-fit: cover;
+}

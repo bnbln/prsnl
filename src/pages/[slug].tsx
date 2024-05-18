@@ -1,18 +1,16 @@
 import React from 'react';
 import { Box } from '@chakra-ui/react';
-import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
+import { createClient, EntrySkeletonType, EntryFields } from 'contentful';
 import Article from '@/components/Article';
+import { Document } from '@contentful/rich-text-types';
 
+// Define the interface for the Article fields
 interface IArticleFields extends EntrySkeletonType {
   title: EntryFields.Text;
   published: EntryFields.Text;
   subtitle?: EntryFields.Text;
   slug: EntryFields.Text;
-  text?: {
-    nodeType: string;
-    data: any;
-    content: any[];
-  };
+  text?: Document;  // Updated to use Document type from '@contentful/rich-text-types'
   image?: {
     fields: {
       title: string;
@@ -28,6 +26,7 @@ interface IArticleFields extends EntrySkeletonType {
   }>;
 }
 
+// Define the interface for the Params
 interface Params {
   params: {
     slug: string;
@@ -52,7 +51,7 @@ export async function getStaticPaths() {
 
     return {
       paths,
-      fallback: true, // or 'blocking' if you want to block the page from rendering until it's generated
+      fallback: true, // 'blocking' can also be used if required
     };
   } catch (error) {
     console.error("Error fetching paths from Contentful:", error);
@@ -83,7 +82,7 @@ export async function getStaticProps({ params }: Params) {
       props: {
         data: article,
       },
-      revalidate: 60, // Optional: Revalidate at most once every minute
+      revalidate: 60, // Revalidate at most once every minute
     };
   } catch (error) {
     console.error("Error fetching data from Contentful:", error);
@@ -99,13 +98,9 @@ const Slug: React.FC<{ data: IArticleFields | null }> = ({ data }) => {
   if (!data) {
     return <Box>No data found</Box>;
   }
-  console.log("article page", data);
-  
+
   return (
-    <>
-      <div></div>
-      {/* <Article data={data} /> */}
-    </>
+    <Article data={data} />
   );
 }
 

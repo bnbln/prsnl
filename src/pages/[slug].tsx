@@ -100,7 +100,7 @@ const Slug: React.FC<{ data: IArticleFields | null }> = ({ data }) => {
   }
 
   return (
-    <Article data={data} />
+    <Article data={data} page={true} />
   );
 }
 

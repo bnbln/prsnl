@@ -9,7 +9,7 @@ import Image from 'next/image';
 
 type TileProps = {
   title: string;
-  desc: string;
+  desc?: string;
   small?: boolean;
   video?: string;
   image?: any;

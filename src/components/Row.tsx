@@ -6,7 +6,7 @@ import Tile from './Tile';
 interface Fields {
   color?: string;
   title: string;
-  description: string; // Changed 'desc' to 'description' to match your usage
+  description?: string; // Changed 'desc' to 'description' to match your usage
   video?: string;
   image?: string;
   slug?: any; // Added slug as it's being used in Tile props

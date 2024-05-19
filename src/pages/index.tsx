@@ -19,6 +19,7 @@ const client = createClient({
   space: process.env.CONTENTFUL_SPACE_ID  as string,
 });
 
+
 export async function getStaticProps() {
   try {
     const entries = await client.getEntries<ISection>({
@@ -73,7 +74,7 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
               <Row title={section.fields.title} small={section.fields.display} items={section.fields.articles} />
             }
             {section.sys.contentType.sys.id === "module" && <Module data={section} />}
-            {section.sys.contentType.sys.id === "article" && <Article data={section.fields} />}
+            {section.sys.contentType.sys.id === "article" && <Article page={false} data={section.fields} />}
           </React.Fragment>
         ))}
       </VStack>

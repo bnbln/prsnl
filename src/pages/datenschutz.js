@@ -1,13 +1,67 @@
-import React from 'react'
-export default function Datenschutz() {
+import React from 'react';
+import { Box, Flex, Heading, Text, useBreakpointValue, Link } from '@chakra-ui/react';
+import Image from 'next/image';
+
+export default function Impressum(data) {
+  const flexDirection = useBreakpointValue({ base: 'column', md: 'row' }) || 'column';
+  const containerWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' });
+  const contentWidth = useBreakpointValue({ base: '100%', md: '80%' });
+  const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
+  const padding = useBreakpointValue({ base: 4, sm: 12, xl: 20 });
+
     return (
-      <div>
-      <h2>Datenschutzerklärung</h2>
-      <p>
-      Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Soweit auf unseren Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder E-Mail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis. Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.
-      </p>
-      </div>
+      <Flex
+      justifyContent="center"
+      direction={flexDirection}
+      overflow="hidden"
+      position="relative"
+      w={containerWidth}
+      mx="auto"
+      borderRadius={4.5}
+    >
+      <Flex
+        gap={4}
+        direction="column"
+        w={contentWidth}
+        p={padding}
+      >
+        <Box>
+          {data.description && (
+            <Heading mt={2} textAlign="center" size="md">
+              {data.description}
+            </Heading>
+          )}
+            <Heading textAlign="center" size="xl">
+            Datenschutzerklärung
+            </Heading>
+            <Heading textAlign="center" opacity={0.3} mt={4} size="xs">
+              zuletzt aktualisiert am 10. Mai 2024
+            </Heading>
+            <Text mt={8}>
+            Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Soweit auf unseren Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder E-Mail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis. Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.
+            </Text>
+        </Box>
+        {data.image &&
+          <Image
+            src={`https:${data.image.fields.file.url}`}
+            alt={data.image.fields.title}
+            width="900"
+            height="500"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            style={{
+              objectFit: "cover",
+              borderRadius: "4.5px",
+              position: "relative",
+              width: "100%"
+            }}
+          />
+        }
+        </Flex>
+        </Flex>
+
     )
   }
+
+
 
 

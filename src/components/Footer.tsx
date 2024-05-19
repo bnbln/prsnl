@@ -9,7 +9,7 @@ export default function Footer() {
     const { colorMode } = useColorMode();
 
     return (
-        <Box mt={60} py={8} style={{
+        <Box mt={24} py={8} style={{
           background: colorMode === 'dark' ? "rgba(8, 8, 8, 0.8)" : "rgba(249, 249, 249, 0.8)"
         }}>
           <Flex direction="column" alignItems="flex-start" gap={12} maxW="68rem" mx="auto" p={useBreakpointValue({base: 4, xl: 0})} color={colorMode === 'dark' ? "white" : "#080808"}>

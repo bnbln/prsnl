@@ -68,8 +68,6 @@ header {
 
 nav {
   backdrop-filter: blur(24px);
-  background-color: rgba(8, 8, 8, 0.8);
-  color: rgb(255, 255, 255);
   font-family: 'Inter', sans-serif; /* sorgt dafür, dass der Font-Name korrekt interpretiert wird, wenn Leerzeichen vorhanden sind */
   line-height: 24px;
   margin-left: 0px;
@@ -99,4 +97,12 @@ nav {
   width: auto;
   min-width: 100%;
   object-fit: cover;
+}
+
+.slick-list {
+  overflow: visible!important;
+}
+
+.slick-dots li button:before {
+ color: var(--chakra-colors-chakra-body-text)!important;
 }

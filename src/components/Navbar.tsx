@@ -66,9 +66,10 @@ export default function Navbar() {
           mx="auto"
           px={4}
           pr={{ base: 0, xl: 4 }}
-          h={menu ? '400px' : '50px'}
-          alignContent="center"
+          h={menu ? '100vh' : '50px'}
+          alignContent={'flex-start'}
           color={colorMode === 'dark' ? 'white' : '#080808'}
+          transition={"ease-in-out 3s height"}
         >
           <Flex justify="space-between" align="center">
             <MyLink href={"./"}>

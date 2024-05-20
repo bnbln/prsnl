@@ -77,7 +77,6 @@ const EmbeddedEntry: React.FC<{ node: Node }> = ({ node }) => {
   const { slug, title, type, media } = node.data.target.fields as EntryFields;
   return (
     <>
-    <p>carousel</p>
       {type === "Carousel" && media && <Carousel media={media} interval={9000} />}
     </>
   );
@@ -133,6 +132,7 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
         position="relative"
         w={useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' })}
         mx="auto"
+        mb={page ? 0 : "2rem"}
         borderRadius={4.5}
       >
         <Flex

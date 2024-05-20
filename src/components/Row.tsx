@@ -53,6 +53,9 @@ const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
             WebkitOverflowScrolling: 'touch',
             scrollPaddingLeft: gutterSize,
             scrollPaddingRight: gutterSize,
+            '::-webkit-scrollbar': {
+              display: 'none',
+            },
           }}
         >
           {items.map((item, i) => (

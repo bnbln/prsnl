@@ -4,7 +4,6 @@ import { SearchIcon, CloseIcon, HamburgerIcon, SunIcon, MoonIcon } from '@chakra
 import Image from 'next/image';
 import MyLink from './MyLink';
 import Icon from './Icon';
-import { createClient } from 'contentful';
 
 interface IMenuItem {
   title: string;
@@ -15,44 +14,18 @@ interface INavbarData {
   title: string;
   items: IMenuItem[];
 }
-// console.log("i cant belieeeve my eyes:", process.env.CONTENTFUL_ACCESS_TOKEN);
-// const client = createClient({
-//   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN as string,
-//   space: process.env.CONTENTFUL_SPACE_ID as string,
-// });
 
-export default function Navbar() {
+interface NavbarProps {
+  data: INavbarData;
+}
+
+export default function Navbar({ data }: NavbarProps) {
   const [menu, setMenu] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
-  const [data, setData] = useState<INavbarData | null>(null);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       // Fetch the specific entry by ID
-  //       const entry = await client.getEntry<INavbarData>('3w92kKa9R766uKF5maFNky', {
-  //         include: 2,
-  //       });
-
-  //       // Resolve the nested Menu Items
-  //       const items: IMenuItem[] = entry.fields.items.map((item: any) => ({
-  //         title: item.fields.title,
-  //         url: item.fields.url,
-  //       }));
-
-  //       setData({
-  //         title: entry.fields.title,
-  //         items,
-  //       });
-  //     } catch (error) {
-  //       console.error('Error fetching Navbar data from Contentful:', error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
-  // if (!data) return <div>Loading...</div>;
+  useEffect(() => {
+    console.log('Navbar data:', data);
+  }, [data]);
 
   return (
     <header>
@@ -78,16 +51,16 @@ export default function Navbar() {
             <Show above="md">
               <Flex>
                 <MyLink href={"./"}>
-                    Home
+                  Home
                 </MyLink>
                 <MyLink href={"/about"}>
-                    Work
+                  Work
                 </MyLink>
                 <MyLink href={"/design"}>
-                    Motion Design
+                  Motion Design
                 </MyLink>
                 <MyLink href={"/dev"}>
-                    Developement
+                  Development
                 </MyLink>
                 {/* {data.items.map((item, index) => (
                   <MyLink key={index} href={item.url}>

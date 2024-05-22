@@ -94,7 +94,7 @@ const Carousel = ({ media, interval = 5000 }) => {
     };
 
     return (
-        <Box position="relative" width="full" overflow="visible" mb={20} mt={10}>
+        <Box position="relative" width="full" overflow="visible" mb={24} mt={16}>
             <Slider {...settings} ref={sliderRef}>
                 {media.map((item, index) => (
                     <Box key={index} px={2} overflow="visible">

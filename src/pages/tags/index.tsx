@@ -32,6 +32,7 @@ export async function getStaticProps() {
     const entries = await client.getEntries<ISection>({
       content_type: 'home',
       include: 2,
+      // locale: 'de-DE'
     });
 
     const mappedData = entries.items.map((item) => ({
@@ -71,7 +72,7 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
         //pt={45}
         mb={12}
       >
-        <Scene />
+        {/* <Scene /> */}
         <Box position={'absolute'} left={0} top={-10} w={"100%"} h={150} zIndex={-1} backgroundColor={"#3362f0"} transform={"rotate(-3deg)"} filter={"blur(150px)"} />
         {/* <video src="./Hero.mp4" playsInline autoPlay muted className="heroVideo" /> */}
       </Box>

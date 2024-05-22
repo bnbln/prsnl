@@ -29,7 +29,7 @@ interface RelatedPost {
   };
 }
 
-interface ArticleData {
+export interface ArticleData {
   title: string;
   page?: boolean;
   slug?: string;
@@ -53,7 +53,7 @@ interface ArticleProps {
 const EmbeddedAsset: React.FC<{ node: Node }> = ({ node }) => {
   const { file, title } = node.data.target.fields as AssetFields;
   return (
-    <Box mb={4}>
+    <Box mt={4} mb={8}>
       <Image
         src={"https:" + file.url}
         alt={title}
@@ -72,7 +72,7 @@ const EmbeddedAsset: React.FC<{ node: Node }> = ({ node }) => {
 
 // Embedded Entry Component
 const EmbeddedEntry: React.FC<{ node: Node }> = ({ node }) => {
-  console.log(node);
+  //console.log(node);
   
   const { slug, title, type, media } = node.data.target.fields as EntryFields;
   return (
@@ -93,7 +93,8 @@ const formatDate = (inputDate: string): string => {
   return formatter.format(date);
 };
 
-const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
+const Article: React.FC<ArticleProps> = ({ data, page = true }) => {  
+
   const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
   const padding = useBreakpointValue({ base: 4, sm: 12, xl: 20 });
   const paddingTop = page ? padding : 0;
@@ -143,6 +144,8 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
           pt={paddingTop}
           maxHeight={page ? "none" : "650px"}
           pos={"relative"}
+          alignItems={"center"}
+
 
         >
           <Box>
@@ -182,7 +185,7 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
             />
           }
           {page ?
-            <Box w={textWidth}>
+            <Box w={textWidth} my={"3rem"}>
               {data.text && documentToReactComponents(data.text, options)}
             </Box>
             : 

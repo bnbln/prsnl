@@ -11,6 +11,7 @@ import { Inter } from 'next/font/google';
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import { Box } from '@chakra-ui/react';
+import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,9 +22,10 @@ const pageTransitionVariants = {
   exit: { opacity: 0, x: 0, y: 100 },
 };
 
-function MyApp({ Component, pageProps }: AppProps & { navbarData: any; footerData: any }) {
+function MyApp({ Component, pageProps }: AppProps & { mappedData: any }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  
 
   useEffect(() => {
     if (!localStorage.getItem("chakra-ui-color-mode-default")) {
@@ -45,13 +47,13 @@ function MyApp({ Component, pageProps }: AppProps & { navbarData: any; footerDat
     };
   }, [router]);
 
-  console.log('Navbar data:', pageProps.navbarData);
-  console.log('Footer data:', pageProps.footerData);
+console.log(pageProps);
+//pageProps.mappedData
 
   return (
     <Providers>
       <div className={inter.className}>
-        <Navbar data={pageProps.navbarData} />
+        <Navbar data={menuData} /> 
         <AnimatePresence mode='wait'>
           <motion.div
             key={router.route}
@@ -64,7 +66,7 @@ function MyApp({ Component, pageProps }: AppProps & { navbarData: any; footerDat
             <Box pt={50}>
               <Component {...pageProps} />
             </Box>
-            <Footer data={pageProps.footerData} />
+            <Footer data={menuData} />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -72,32 +74,245 @@ function MyApp({ Component, pageProps }: AppProps & { navbarData: any; footerDat
   );
 }
 
-// Custom getInitialProps for _app
-MyApp.getInitialProps = async (appContext: any) => {
-  const appProps = await App.getInitialProps(appContext);
-
-  // Fetch your initial data here
-  const navbarData = await fetchNavbarData();
-  const footerData = await fetchFooterData();
-
-  return {
-    ...appProps,
-    pageProps: {
-      ...appProps.pageProps,
-      navbarData,
-      footerData,
-    },
-  };
-};
+const menuData = [
+  {
+      "title": "Main",
+      "items": [
+          {
+              "metadata": {
+                  "tags": []
+              },
+              "sys": {
+                  "space": {
+                      "sys": {
+                          "type": "Link",
+                          "linkType": "Space",
+                          "id": "1vhomxhsv3ci"
+                      }
+                  },
+                  "id": "1aqCOWULMS6CotaS9nOdxk",
+                  "type": "Entry",
+                  "createdAt": "2024-05-17T15:07:07.466Z",
+                  "updatedAt": "2024-05-20T20:12:33.512Z",
+                  "environment": {
+                      "sys": {
+                          "id": "master",
+                          "type": "Link",
+                          "linkType": "Environment"
+                      }
+                  },
+                  "revision": 2,
+                  "contentType": {
+                      "sys": {
+                          "type": "Link",
+                          "linkType": "ContentType",
+                          "id": "menuItem"
+                      }
+                  },
+                  "locale": "en-US"
+              },
+              "fields": {
+                  "title": "Home",
+                  "url": "/"
+              }
+          },
+          {
+              "metadata": {
+                  "tags": []
+              },
+              "sys": {
+                  "space": {
+                      "sys": {
+                          "type": "Link",
+                          "linkType": "Space",
+                          "id": "1vhomxhsv3ci"
+                      }
+                  },
+                  "id": "2pNBeBLV0AN1ae2tOonlfH",
+                  "type": "Entry",
+                  "createdAt": "2024-05-17T17:57:08.600Z",
+                  "updatedAt": "2024-05-20T20:12:30.612Z",
+                  "environment": {
+                      "sys": {
+                          "id": "master",
+                          "type": "Link",
+                          "linkType": "Environment"
+                      }
+                  },
+                  "revision": 2,
+                  "contentType": {
+                      "sys": {
+                          "type": "Link",
+                          "linkType": "ContentType",
+                          "id": "menuItem"
+                      }
+                  },
+                  "locale": "en-US"
+              },
+              "fields": {
+                  "title": "Work",
+                  "url": "/work"
+              }
+          },
+          {
+              "metadata": {
+                  "tags": []
+              },
+              "sys": {
+                  "space": {
+                      "sys": {
+                          "type": "Link",
+                          "linkType": "Space",
+                          "id": "1vhomxhsv3ci"
+                      }
+                  },
+                  "id": "33JFSjFPBMkMgI7bTvlYT1",
+                  "type": "Entry",
+                  "createdAt": "2024-05-17T17:57:57.094Z",
+                  "updatedAt": "2024-05-17T17:57:57.094Z",
+                  "environment": {
+                      "sys": {
+                          "id": "master",
+                          "type": "Link",
+                          "linkType": "Environment"
+                      }
+                  },
+                  "revision": 1,
+                  "contentType": {
+                      "sys": {
+                          "type": "Link",
+                          "linkType": "ContentType",
+                          "id": "menuItem"
+                      }
+                  },
+                  "locale": "en-US"
+              },
+              "fields": {
+                  "title": "Motion Design",
+                  "url": "/design"
+              }
+          },
+          {
+              "metadata": {
+                  "tags": []
+              },
+              "sys": {
+                  "space": {
+                      "sys": {
+                          "type": "Link",
+                          "linkType": "Space",
+                          "id": "1vhomxhsv3ci"
+                      }
+                  },
+                  "id": "4HD6CrNxbkII4issE34vv2",
+                  "type": "Entry",
+                  "createdAt": "2024-05-17T17:58:14.149Z",
+                  "updatedAt": "2024-05-20T20:12:27.113Z",
+                  "environment": {
+                      "sys": {
+                          "id": "master",
+                          "type": "Link",
+                          "linkType": "Environment"
+                      }
+                  },
+                  "revision": 2,
+                  "contentType": {
+                      "sys": {
+                          "type": "Link",
+                          "linkType": "ContentType",
+                          "id": "menuItem"
+                      }
+                  },
+                  "locale": "en-US"
+              },
+              "fields": {
+                  "title": "Developement",
+                  "url": "/developement"
+              }
+          }
+      ]
+  },
+  {
+      "title": "Footer",
+      "items": [
+          {
+              "metadata": {
+                  "tags": []
+              },
+              "sys": {
+                  "space": {
+                      "sys": {
+                          "type": "Link",
+                          "linkType": "Space",
+                          "id": "1vhomxhsv3ci"
+                      }
+                  },
+                  "id": "6Zu9LhHwUbgqlZNoEObRL0",
+                  "type": "Entry",
+                  "createdAt": "2024-05-20T20:10:46.874Z",
+                  "updatedAt": "2024-05-20T20:10:46.874Z",
+                  "environment": {
+                      "sys": {
+                          "id": "master",
+                          "type": "Link",
+                          "linkType": "Environment"
+                      }
+                  },
+                  "revision": 1,
+                  "contentType": {
+                      "sys": {
+                          "type": "Link",
+                          "linkType": "ContentType",
+                          "id": "menuItem"
+                      }
+                  },
+                  "locale": "en-US"
+              },
+              "fields": {
+                  "title": "Impressum",
+                  "url": "/impressum"
+              }
+          },
+          {
+              "metadata": {
+                  "tags": []
+              },
+              "sys": {
+                  "space": {
+                      "sys": {
+                          "type": "Link",
+                          "linkType": "Space",
+                          "id": "1vhomxhsv3ci"
+                      }
+                  },
+                  "id": "oJhZpgE42LYifOqSDA9KT",
+                  "type": "Entry",
+                  "createdAt": "2024-05-20T20:11:02.532Z",
+                  "updatedAt": "2024-05-20T20:11:02.532Z",
+                  "environment": {
+                      "sys": {
+                          "id": "master",
+                          "type": "Link",
+                          "linkType": "Environment"
+                      }
+                  },
+                  "revision": 1,
+                  "contentType": {
+                      "sys": {
+                          "type": "Link",
+                          "linkType": "ContentType",
+                          "id": "menuItem"
+                      }
+                  },
+                  "locale": "en-US"
+              },
+              "fields": {
+                  "title": "Datenschutz",
+                  "url": "/datenschutz"
+              }
+          }
+      ]
+  }
+]
 
 export default MyApp;
-
-async function fetchNavbarData() {
-  // Replace with your actual data fetching logic
-  return { title: "My Navbar" };
-}
-
-async function fetchFooterData() {
-  // Replace with your actual data fetching logic
-  return { text: "My Footer" };
-}

@@ -58,9 +58,7 @@ export async function getStaticProps() {
 
 const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
   const { colorMode } = useColorMode();
-  const invert = colorMode === 'dark' ? "invert(0%)": "invert(100%)" ;
-  console.log(data);
-    
+  const invert = colorMode === 'dark' ? "invert(0%)": "invert(100%)" ;    
   return (
     <>
       <Box

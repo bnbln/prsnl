@@ -5,14 +5,16 @@ import { Box } from '@chakra-ui/react';
 
 export default function MyLink({
     children,
-    href
+    href,
+    fontSize = "inherit"
   }: {
     children: React.ReactNode,
-    href: string
+    href: string,
+    fontSize?: string
   }) {
     const router = useRouter()
     return (
-        <Box as='button' p={3} className='menuItem' type="button" onClick={() => router.push(href)}>
+        <Box as='button' fontSize={fontSize} p={3} className='menuItem' type="button" onClick={() => router.push(href)}>
         {children}
         </Box>
     )

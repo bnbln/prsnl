@@ -5,18 +5,32 @@ import { EmailIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/navigation';
 import Icon, { IconDribble, IconGithub, IconLinkedin, IconThreads, IconWhatsapp } from './Icon';
 
-interface FooterProps {
-  data: any;
+interface IFields {
+  title: string;
+  url: string;
 }
+
+interface IMenuItem {
+  fields: IFields;
+}
+
+interface INavbarData {
+  title: string;
+  items: IMenuItem[];
+}
+  
+  interface FooterProps {
+    data: INavbarData[];
+  }
+
 
 export default function Footer({ data }: FooterProps) {
   const router = useRouter();
   const { colorMode } = useColorMode();
 
   const currentYear = new Date().getFullYear();
-
   useEffect(() => {
-    console.log('Footer data:', data);
+    console.log(data);
   }, [data]);
 
   return (
@@ -43,28 +57,15 @@ export default function Footer({ data }: FooterProps) {
           </Flex>
 
           <Flex direction="column" gap={12}>
-            <Flex direction="column" alignItems="flex-start">
-              <Box as='button' p={0} className='menuItem' type="button" onClick={() => router.push("/about")}>
-                Personal
-              </Box>
-              <Box as='button' p={0} className='menuItem' type="button" onClick={() => router.push("/about")}>
-                Work
-              </Box>
-              <Box as='button' p={0} className='menuItem' type="button" onClick={() => router.push("/about")}>
-                Motion Design
-              </Box>
-              <Box as='button' p={0} className='menuItem' type="button" onClick={() => router.push("/about")}>
-                Development
-              </Box>
+          {data.map((navItem, navIndex) => (
+            <Flex key={navIndex} direction="column" alignItems="flex-start">
+            {navItem.items.map((item, index)=> (
+                <Box as='button' key={index} p={0} className='menuItem' type="button" onClick={() => router.push(item.fields.url)}>
+                {item.fields.title}
+             </Box>
+            ))}
             </Flex>
-            <Flex direction="column" alignItems="flex-start">
-              <Box as='button' p={0} className='menuItem' type="button" onClick={() => router.push("/impressum")}>
-                Impressum
-              </Box>
-              <Box as='button' p={0} className='menuItem' type="button" onClick={() => router.push("/datenschutz")}>
-                Datenschutz
-              </Box>
-            </Flex>
+          ))}
           </Flex>
         </HStack>
 

@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Flex, Show, Hide, useBreakpointValue, useColorMode, Button } from '@chakra-ui/react';
-import { SearchIcon, CloseIcon, HamburgerIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
-import Image from 'next/image';
+import { Box, Flex, Show, Hide, useColorMode, Button } from '@chakra-ui/react';
+import { CloseIcon, HamburgerIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
 import MyLink from './MyLink';
 import Icon from './Icon';
 
-interface IMenuItem {
+interface IFields {
   title: string;
   url: string;
+}
+
+interface IMenuItem {
+  fields: IFields;
 }
 
 interface INavbarData {
@@ -16,24 +19,21 @@ interface INavbarData {
 }
 
 interface NavbarProps {
-  data: INavbarData;
+  data: INavbarData[];
 }
 
 export default function Navbar({ data }: NavbarProps) {
   const [menu, setMenu] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
+  const backgroundColor = colorMode === 'dark' ? 'rgba(8, 8, 8, 0.8)' : 'rgba(249,249,249,0.8)';
 
   useEffect(() => {
-    console.log('Navbar data:', data);
+    console.log(data);
   }, [data]);
 
   return (
     <header>
-      <nav
-        style={{
-          background: colorMode === 'dark' ? 'rgba(8, 8, 8, 0.8)' : 'rgba(249,249,249,0.8)',
-        }}
-      >
+      <nav style={{ background: backgroundColor }}>
         <Box
           maxW="68rem"
           mx="auto"
@@ -50,23 +50,15 @@ export default function Navbar({ data }: NavbarProps) {
             </MyLink>
             <Show above="md">
               <Flex>
-                <MyLink href={"./"}>
-                  Home
-                </MyLink>
-                <MyLink href={"/about"}>
-                  Work
-                </MyLink>
-                <MyLink href={"/design"}>
-                  Motion Design
-                </MyLink>
-                <MyLink href={"/dev"}>
-                  Development
-                </MyLink>
-                {/* {data.items.map((item, index) => (
-                  <MyLink key={index} href={item.url}>
-                    {item.title}
-                  </MyLink>
-                ))} */}
+                {data.map((navItem, navIndex) => (
+                  <React.Fragment key={navIndex}>
+                    {navItem.title === "Main" && navItem.items.map((menuItem, itemIndex) => (
+                      <MyLink key={itemIndex} href={menuItem.fields.url}>
+                        {menuItem.fields.title}
+                      </MyLink>
+                    ))}
+                  </React.Fragment>
+                ))}
               </Flex>
             </Show>
             <Flex gap="4px">
@@ -80,6 +72,29 @@ export default function Navbar({ data }: NavbarProps) {
               </Hide>
             </Flex>
           </Flex>
+          {menu && (
+            <Flex
+              pr={16}
+              pb={50}
+              direction="column"
+              h={"100%"}
+              w={"100%"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Box>
+                {data.map((navItem, navIndex) => (
+                  <Flex key={navIndex} direction="column" alignItems="flex-start">
+                    {navItem.items.map((menuItem, itemIndex) => (
+                      <MyLink fontSize='xl' key={itemIndex} href={menuItem.fields.url}>
+                        {menuItem.fields.title}
+                      </MyLink>
+                    ))}
+                  </Flex>
+                ))}
+              </Box>
+            </Flex>
+          )}
         </Box>
       </nav>
     </header>

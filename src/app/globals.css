@@ -106,3 +106,7 @@ nav {
 .slick-dots li button:before {
  color: var(--chakra-colors-chakra-body-text)!important;
 }
+
+.slick-arrow {
+  display: none!important;
+}

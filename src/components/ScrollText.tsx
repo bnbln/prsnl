@@ -5,7 +5,7 @@ import { useRef, useEffect } from 'react'
 import { Group } from 'three'
 import { animate, useSpring } from 'framer-motion'
 
-export function ScrollText() {
+const ScrollText: React.FC = () => {
   const { colorMode } = useColorMode()
   const textRef = useRef<Group>(null)
   
@@ -42,8 +42,9 @@ export function ScrollText() {
 
   return (
     <group ref={textRef}>
-      <group position={[0, -1, 0.5]} 
-      //scale={codeSpring.get()}
+      <group 
+        position={[0, -1, 0.5]}
+       // scale={[codeSpring.get(), codeSpring.get(), codeSpring.get()]}
       >
         <Text3D
           font="/fonts/helvetiker_regular.json"
@@ -90,3 +91,5 @@ export function ScrollText() {
     </group>
   )
 } 
+
+export default ScrollText;

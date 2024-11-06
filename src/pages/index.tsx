@@ -9,7 +9,7 @@ import Scene from '../components/Scene'
 import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Center, ScrollControls } from '@react-three/drei'
-import { ScrollText } from '../components/ScrollText';
+import  ScrollText from '../components/ScrollText';
 interface ISection extends EntrySkeletonType {
   title: EntryFields.Text;
   hero: any;
@@ -66,7 +66,7 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
           <Center>
             <ScrollText />
           </Center>
-          <OrbitControls enableZoom={false} />
+          {/* <OrbitControls enableZoom={false} /> */}
         </Canvas>
         <Box 
           position={'absolute'} 

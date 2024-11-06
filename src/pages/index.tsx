@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
 import { Box, Flex, Heading, VStack, useBreakpointValue, useColorMode, Text, Button, border } from '@chakra-ui/react';
 import Row from '../components/Row'
 import Module from '../components/Module'
 import Article from '../components/Article'
 import Cloud from '../components/Cloud'
-import Scene from '../components/Scene'
 import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Center, ScrollControls } from '@react-three/drei'
+import { OrbitControls, Center, ScrollControls, Plane } from '@react-three/drei'
 import  ScrollText from '../components/ScrollText';
+import { useControls } from 'leva'
+
 interface ISection extends EntrySkeletonType {
   title: EntryFields.Text;
   hero: any;
@@ -23,32 +23,76 @@ const client = createClient({
 
 export async function getStaticProps() {
   try {
-    const entries = await client.getEntries<ISection>({
-      content_type: 'home',
+    const entry = await client.getEntry<ISection>('IIqZvNg8GBx6XYe2Kg2bO', {
       include: 2,
     });
-    const mappedData = entries.items.map((item) => ({
-      title: item.fields.title,
-      hero: item.fields.hero,
-      position: item.fields.position3,
-    }));
+    
+    if (!entry) {
+      return {
+        notFound: true
+      }
+    }
+
+    const mappedData = [{
+      title: entry.fields.title,
+      hero: entry.fields.hero,
+      position: entry.fields.position3,
+    }];
 
     return {
       props: {
         data: mappedData,
       },
-      revalidate: 60, // Optional: Revalidate at most once every minute
+      revalidate: 60,
     };
   } catch (error) {
-    console.error("Error fetching data from Contentful:", error);
+    console.error('Error fetching entry:', error);
     return {
-      props: {
-        data: [],
-      },
-    };
+      notFound: true
+    }
   }
 }
 const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
+  // Controls for all three lights
+  const { 
+    mainLight, 
+    mainIntensity,
+    fillLight, 
+    fillIntensity,
+    backLight, 
+    backIntensity 
+  } = useControls('Lighting', {
+    // Main Light
+    mainLight: {
+      value: [-2.3, 4.2, -20],
+      step: 0.1,
+      min: -50,
+      max: 50,
+      joystick: 'invertY'
+    },
+    mainIntensity: { value: 100, min: 0, max: 200, step: 1 },
+    
+    // Fill Light
+    fillLight: {
+      value: [-5, 3, -5],
+      step: 0.1,
+      min: -10,
+      max: 10,
+      joystick: 'invertY'
+    },
+    fillIntensity: { value: 0.5, min: 0, max: 5, step: 0.1 },
+    
+    // Back Light
+    backLight: {
+      value: [0, -5, 0],
+      step: 0.1,
+      min: -10,
+      max: 10,
+      joystick: 'invertY'
+    },
+    backIntensity: { value: 0.2, min: 0, max: 5, step: 0.1 }
+  })
+
   return (
     <>
       <Box
@@ -60,13 +104,28 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
       >
         <Canvas
           camera={{ position: [0, 0, 10], fov: 60 }}
+          shadows
         >
-          <ambientLight intensity={1} />
-          <directionalLight position={[10, 10, 10]} intensity={1} />
+          <ambientLight intensity={0.01} />
+           {/* 3-Point Lighting System */}
+          <directionalLight 
+            position={mainLight} 
+            intensity={mainIntensity} 
+            castShadow
+          />
+          <directionalLight 
+            position={fillLight}
+            intensity={fillIntensity} 
+          />
+          <directionalLight 
+            position={backLight}
+            intensity={backIntensity} 
+          />
           <Center>
             <ScrollText />
           </Center>
           {/* <OrbitControls enableZoom={false} /> */}
+
         </Canvas>
         <Box 
           position={'absolute'} 

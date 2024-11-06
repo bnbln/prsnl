@@ -133,18 +133,24 @@ const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
             },
           }}
         >
-          {items.map((item, i) => (
-            <Tile
-              key={`rowItem-${i}`}
-              small={small}
-              color={item.fields.color}
-              title={item.fields.title}
-              desc={item.fields.description}
-              image={item.fields.image}
-              video={item.fields.video}
-              slug={item.fields.slug}
-            />
-          ))}
+          {items.map((item, i) => {
+            if (!item?.fields) {
+              return null;
+            }
+
+            return (
+              <Tile
+                key={`rowItem-${i}`}
+                small={small}
+                color={item.fields.color || "blue"}
+                title={item.fields.title}
+                desc={item.fields.description}
+                image={item.fields.image}
+                video={item.fields.video}
+                slug={item.fields.slug}
+              />
+            );
+          })}
         </Box>
       </Box>
     </Box>

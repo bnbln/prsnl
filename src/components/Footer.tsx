@@ -50,11 +50,11 @@ export default function Footer({ data }: FooterProps) {
 
           <Flex direction="column" gap={1} alignItems={"flex-start"}>
             {data.map((navItem, navIndex) => (
-              <>
+              <React.Fragment key={`nav-section-${navIndex}`}>
                 {navItem.items.map((item, index) => (
                   <Box 
                     as='button' 
-                    key={index} 
+                    key={`nav-item-${navIndex}-${index}`}
                     p={0} 
                     className='menuItem' 
                     type="button" 
@@ -63,7 +63,7 @@ export default function Footer({ data }: FooterProps) {
                     {item.fields.title}
                   </Box>
                 ))}
-              </>
+              </React.Fragment>
             ))}
           </Flex>
         </HStack>

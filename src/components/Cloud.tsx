@@ -26,7 +26,7 @@ const Cloud: React.FC<CloudProps> = ({ data, page = true }) => {
   const { colorMode } = useColorMode();
   const color = colorMode === 'dark' ? '#080808': '#f9f9f9' ;
   const gradient = `linear-gradient(to bottom, ${color}00, ${color}ff)`;
-  console.log(data.buttons);
+  // console.log(data.buttons);
   
   
   const router = useRouter();

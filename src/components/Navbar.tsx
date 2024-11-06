@@ -90,6 +90,13 @@ export default function Navbar({ data }: NavbarProps) {
                         <Box
                           key={itemIndex}
                           position="relative"
+                          className="link-text"
+                            sx={{
+                              position: 'relative',
+                              transition: 'color 0.2s ease',
+                              fontWeight: isActive ? '900' : 'normal',
+                              color: isActive ? colorMode === 'dark' ? 'white' : '#080808' : 'inherit',
+                            }}
                           _hover={{
                             '& .link-text': {
                               color: colorMode === 'dark' ? 'white' : '#080808',
@@ -103,13 +110,6 @@ export default function Navbar({ data }: NavbarProps) {
                         >
                           <MyLink 
                             href={menuItem.fields.url}
-                            className="link-text"
-                            sx={{
-                              position: 'relative',
-                              transition: 'color 0.2s ease',
-                              fontWeight: isActive ? '900' : 'normal',
-                              color: isActive ? colorMode === 'dark' ? 'white' : '#080808' : 'inherit',
-                            }}
                           >
                             {menuItem.fields.title}
                           </MyLink>

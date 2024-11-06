@@ -145,7 +145,11 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
             }
             {section.sys.contentType.sys.id === "module" && <Module data={section} />}
             {section.sys.contentType.sys.id === "article" && <Article page={false} data={section.fields} />}
-            {section.sys.contentType.sys.id === "cloud" && <Cloud page={false} data={section.fields} />}
+            {section.sys.contentType.sys.id === "cloud" && 
+              <Cloud 
+                data={section.fields} 
+                buttons={section.fields.buttons}
+              />}
           </React.Fragment>
         ))}
       </VStack>

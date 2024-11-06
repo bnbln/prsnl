@@ -15,6 +15,7 @@ export interface CloudData {
 interface CloudProps {
   page?: boolean;
   buttons: CloudData;
+  data: any;
 }
 
 const Cloud: React.FC<CloudProps> = ({ data, page = true }) => {  
@@ -69,8 +70,9 @@ const Cloud: React.FC<CloudProps> = ({ data, page = true }) => {
          } */}
 
           <Flex flexWrap={"wrap"} justifyContent={"center"} gap={"1rem"}>
-            {data.buttons && data.buttons.map((item, i)=>  (<Button cursor={"inherit"} key={i}>{item.fields?.title}</Button>)
-            )}
+            {data.buttons && data.buttons.map((item: { fields?: { title?: string } }, i: number) => (
+              <Button cursor={"inherit"} key={i}>{item.fields?.title}</Button>
+            ))}
           </Flex>
          </Flex>
          </Flex>

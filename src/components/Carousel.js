@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
 import { Box, IconButton, Image, Stack, Text } from "@chakra-ui/react";
-import { useColorMode } from '@chakra-ui/react';
+import { useColorMode, useBreakpointValue } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -13,11 +13,14 @@ const Carousel = ({ media, interval = 5000 }) => {
     const [elapsedTime, setElapsedTime] = useState(0);
     const [intervalId, setIntervalId] = useState(null);
 
+    const slidesToShow = useBreakpointValue({ sm: 2, md: 3, lg: 4, xl: 5 });
+
+
     const settings = {
         dots: true,
         infinite: true,
         speed: 500,
-        slidesToShow: 2,
+        slidesToShow: slidesToShow,
         slidesToScroll: 1,
         swipeToSlide: true,
         appendDots: (dots) => (
@@ -94,7 +97,7 @@ const Carousel = ({ media, interval = 5000 }) => {
     };
 
     return (
-        <Box position="relative" width="full" overflow="visible" mb={24} mt={16}>
+        <Box position="relative" width="full" mb={24} mt={16}>
             <Slider {...settings} ref={sliderRef}>
                 {media.map((item, index) => (
                     <Box key={index} px={2} overflow="visible">

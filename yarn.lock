@@ -1580,6 +1580,18 @@
     postprocessing "^6.32.1"
     three-stdlib "^2.23.4"
 
+"@rive-app/canvas@2.15.6":
+  version "2.15.6"
+  resolved "https://registry.yarnpkg.com/@rive-app/canvas/-/canvas-2.15.6.tgz#98250996090ad5cda5bde0daf41fe5050c4d592d"
+  integrity sha512-xv3mAeT2+nrGNDUGmFxTHfOw6QV82oqM0Bipau5UGjiMh4xo8VD79Rwn8DhA5C7aSuMt6Ga6EWuZyVdXVEoTrw==
+
+"@rive-app/react-canvas@^4.9.5":
+  version "4.9.5"
+  resolved "https://registry.yarnpkg.com/@rive-app/react-canvas/-/react-canvas-4.9.5.tgz#cc04555e8b13531fe8a2fdd4b8be177bb0957600"
+  integrity sha512-DBX0y1ZUv/tPx+cnu3u7B26xahp5zijMmgjvvO9rsHVJo6I0NJQzv1462k7aOhx9kYUnhscsuh9mhav4RPPDEQ==
+  dependencies:
+    "@rive-app/canvas" "2.15.6"
+
 "@rushstack/eslint-patch@^1.1.3":
   version "1.10.3"
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.10.3.tgz#391d528054f758f81e53210f1a1eebcf1a8b1d20"

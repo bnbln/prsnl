@@ -21,6 +21,7 @@
     "@react-three/drei": "^9.105.6",
     "@react-three/fiber": "^8.16.6",
     "@react-three/postprocessing": "^2.16.2",
+    "@rive-app/react-canvas": "^4.9.5",
     "@splinetool/loader": "^0.9.420",
     "@splinetool/r3f-spline": "^1.0.2",
     "@types/node": "20.5.0",

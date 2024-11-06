@@ -71,9 +71,7 @@ const EmbeddedAsset: React.FC<{ node: Node }> = ({ node }) => {
 };
 
 // Embedded Entry Component
-const EmbeddedEntry: React.FC<{ node: Node }> = ({ node }) => {
-  //console.log(node);
-  
+const EmbeddedEntry: React.FC<{ node: Node }> = ({ node }) => {  
   const { slug, title, type, media } = node.data.target.fields as EntryFields;
   return (
     <>
@@ -82,18 +80,46 @@ const EmbeddedEntry: React.FC<{ node: Node }> = ({ node }) => {
   );
 };
 
-const formatDate = (inputDate: string): string => {
+const Wrapper: React.FC<{ node: Node, children: React.ReactNode }> = ({ node, children }) => {
+  const padding = useBreakpointValue({ base: 4, sm: 12, xl: 20 });
+  const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
+  console.log(children);
+  
+  return(
+    <Flex
+        justifyContent="center"
+        w={useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' })}
+        mx="auto"
+      >
+        <Flex
+          gap={4}
+          direction="column"
+          w={useBreakpointValue({ base: '100%', md: '80%' })}
+          px={padding}
+          alignItems={"center"}
+        >
+          <Box w={textWidth}>
+            {children}
+          </Box>
+          </Flex>
+          </Flex>
+  )
+};
+
+const formatDate = (inputDate: string, outputFormat: string): string => {
   const date = new Date(inputDate);
   const options: Intl.DateTimeFormatOptions = {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
   };
-  const formatter = new Intl.DateTimeFormat('de-DE', options);
+  const formatter = new Intl.DateTimeFormat(outputFormat, options);
   return formatter.format(date);
 };
 
 const Article: React.FC<ArticleProps> = ({ data, page = true }) => {  
+    // 'de-DE'
+    const formattedDate = data.published ? formatDate(data.published, 'en-US') : null;
 
   const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
   const padding = useBreakpointValue({ base: 4, sm: 12, xl: 20 });
@@ -107,22 +133,20 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
 
   const options: Options = {
     renderNode: {
-      [BLOCKS.PARAGRAPH]: (node: Node, children: React.ReactNode) => <Text pb={4}>{children}</Text>,
+      [BLOCKS.PARAGRAPH]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Text pb={4}>{children}</Text></Wrapper>,
       [INLINES.HYPERLINK]: (node: Node, children: React.ReactNode) => <Link color='teal' href={(node as Inline).data.uri}>{children}</Link>,
-      [BLOCKS.HEADING_1]: (node: Node, children: React.ReactNode) => <Heading fontWeight={200} size="lg" pb={4}>{children}</Heading>,
-      [BLOCKS.HEADING_2]: (node: Node, children: React.ReactNode) => <Heading size="md" pt={4} pb={2}>{children}</Heading>,
+      [BLOCKS.HEADING_1]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Heading fontWeight={200} size="lg" pb={4}>{children}</Heading></Wrapper>,
+      [BLOCKS.HEADING_2]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Heading size="md" pt={4} pb={2}>{children}</Heading></Wrapper>,
       [INLINES.EMBEDDED_ENTRY]: (node: Node) => (
         <Link color="blue" href={`./${(node as Inline).data.target.fields.slug}`}>
           {(node as Inline).data.target.fields.title}
         </Link>
       ),
       [BLOCKS.EMBEDDED_ENTRY]: (node: Node) => <EmbeddedEntry node={node} />,
-      [BLOCKS.EMBEDDED_ASSET]: (node: Node) => <EmbeddedAsset node={node} />,
+      [BLOCKS.EMBEDDED_ASSET]: (node: Node) => <Wrapper node={node}><EmbeddedAsset node={node} /></Wrapper>,
     },
     renderText: (text: string) => text.split('\n').flatMap((text, i) => [i > 0 && <br key={i} />, text]),
   };
-
-  const formattedDate = data.published ? formatDate(data.published) : '';
 
   return (
     <>
@@ -145,9 +169,9 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
           maxHeight={page ? "none" : "650px"}
           pos={"relative"}
           alignItems={"center"}
-
-
         >
+
+          {/* TITLE AREA */}
           <Box>
             {data.description && (
               <Heading mt={2} textAlign="center" size="md">
@@ -159,7 +183,7 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                 {data.title}
               </Heading>
             )}
-            {data.published && (
+            {formattedDate && (
               <Heading textAlign="center" opacity={0.3} mt={4} size="xs">
                 {formattedDate}
               </Heading>
@@ -168,6 +192,8 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
               <Text textAlign="center" mt={4} fontSize={"lg"} fontWeight={300} pb={4}>{data.excerpts}</Text>
             )}
           </Box>
+
+          {/* HAS IMAGE */}
           {data.image &&
             <Image
               src={`https:${data.image.fields.file.url}`}
@@ -184,19 +210,26 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
               }}
             />
           }
-          {page ?
-            <Box w={textWidth} my={"3rem"}>
-              {data.text && documentToReactComponents(data.text, options)}
-            </Box>
-            : 
-            <Flex position={"absolute"} alignItems={"flex-end"} justifyContent={"center"} w={"100%"} bottom={0} left={0} height={325} background={gradient}>
-              <Button borderRadius={100} onClick={() => router.push("/"+data.slug)}>Read more</Button>
-            </Flex>
-          }
+
+          {/* IS TEASER */}
+          {page === false &&
+          <Flex position={"absolute"} alignItems={"flex-end"} justifyContent={"center"} w={"100%"} bottom={0} left={0} height={325} background={gradient}>
+           <Button borderRadius={100} onClick={() => router.push("/"+data.slug)}>Read more</Button>
+          </Flex>
+         }
+
+        {/* IS PAGE */}
         </Flex>
       </Flex>
+
+      {/* MAPPING COMPONENTS */}
+      {page && data.text && documentToReactComponents(data.text, options)}
+
+         {/* HAS RELATED POSTS */}
       {page === true && data.related &&
+      <>
         <Row title={"Related Posts"} small={true} items={data.related} />
+      </>
       }
     </>
   );

@@ -11,7 +11,7 @@ interface MyLinkProps {
 }
 
 // Create a motion component for MyLink
-const MotionLink = motion(Box);
+const MotionBox = motion(Box as any);
 
 const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize }) => {
   const router = useRouter();
@@ -24,16 +24,15 @@ const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize }) =>
   };
 
   return (
-    <MotionLink 
+    <MotionBox 
       as='button' 
       fontSize={fontSize} 
       p={3} 
       className='menuItem' 
-      type="button" 
       onClick={handleClick}
     >
       {children}
-    </MotionLink>
+    </MotionBox>
   );
 };
 

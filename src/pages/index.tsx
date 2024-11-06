@@ -5,11 +5,11 @@ import Row from '../components/Row'
 import Module from '../components/Module'
 import Article from '../components/Article'
 import Cloud from '../components/Cloud'
-//import Scene from '../app/Spline'
 import Scene from '../components/Scene'
 import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
-import { useRive, Layout, Fit, Alignment, useStateMachineInput } from "@rive-app/react-canvas";
-
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls, Center, ScrollControls } from '@react-three/drei'
+import  ScrollText from '../components/ScrollText';
 interface ISection extends EntrySkeletonType {
   title: EntryFields.Text;
   hero: any;
@@ -49,56 +49,6 @@ export async function getStaticProps() {
   }
 }
 const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
-  const { colorMode } = useColorMode();
-  const stateMachineName = "Motion";
-
-  const {
-    rive,
-    RiveComponent: RiveComponentTouch
-  } = useRive({
-    src: "/logo.riv",
-    stateMachines: stateMachineName,
-    autoplay: true,
-    layout: new Layout({
-      fit: Fit.Contain,
-      alignment: Alignment.Center,
-    }),
-  });
-
-  const [isHovered, setIsHovered] = useState(false);
-
-  const onPressedInput = useStateMachineInput(rive, stateMachineName, 'light');
-  const onHoverInput = useStateMachineInput(rive, stateMachineName, 'Hover');
-
-  useEffect(() => {
-    if (onPressedInput) onPressedInput.value = colorMode === "dark" ? false : true;
-    console.log(colorMode === "dark" ? false : true );
-    
-  }, [colorMode, onPressedInput]);
-
-  function onMouseDown() {
-    if (onPressedInput)  onPressedInput.value = colorMode === "dark" ? false : true;
-    console.log("onMouseDown, onPressedInput = true");
-    
-  }
-
-  function onMouseUp() {
-    if (onPressedInput) onPressedInput.value = false;
-    console.log("onMouseUp, onPressedInput = false");
-  }
-
-  function onMouseEnter() {
-    if (onHoverInput) onHoverInput.value = true;
-    setIsHovered(true);
-    console.log("onMouseEnter, setIsHovered(true)");
-  }
-
-  function onMouseLeave() {
-    if (onHoverInput) onHoverInput.value = false;
-    setIsHovered(false);
-    console.log("onMouseLeave, setIsHovered(false)");
-  }
-
   return (
     <>
       <Box
@@ -108,34 +58,27 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
         overflow="hidden"
         mb={12}
       >
-        <video 
-          playsInline 
-          autoPlay 
-          muted 
-          className="heroVideo" 
-          style={{
-            filter: `invert(${colorMode === "dark" ? 0 : 1})`,
-            mixBlendMode: colorMode === "dark" ? "plus-lighter" : "darken"
-          }}
+        <Canvas
+          camera={{ position: [0, 0, 10], fov: 60 }}
         >
-          <source 
-            src="./logo.mp4" 
-            type='video/mp4"'/>
-          <source 
-            src="./logo.webm"
-            type="video/webm" />
-        </video>
-
-        {/* <RiveComponentTouch
-          className="base-canvas-size"
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-          onMouseDown={onMouseDown}
-          onMouseUp={onMouseUp}
+          <ambientLight intensity={1} />
+          <directionalLight position={[10, 10, 10]} intensity={1} />
+          <Center>
+            <ScrollText />
+          </Center>
+          {/* <OrbitControls enableZoom={false} /> */}
+        </Canvas>
+        <Box 
+          position={'absolute'} 
+          left={0} 
+          top={-10} 
+          w={"100%"} 
+          h={150} 
+          zIndex={-1} 
+          backgroundColor={"#3362f0"} 
+          transform={"rotate(-3deg)"} 
+          filter={"blur(150px)"} 
         />
-        <p>Hover and click on the canvas</p>
-        <p>Is cursor hovering? {isHovered ? 'Yes' : 'No'}</p> */}
-        <Box position={'absolute'} left={0} top={-10} w={"100%"} h={150} zIndex={-1} backgroundColor={"#3362f0"} transform={"rotate(-3deg)"} filter={"blur(150px)"} />
       </Box>
       <VStack gap={useBreakpointValue({ base: "3rem", xl: "6rem" })} w="100%">
         {data[0] && data[0].position.map((section, index) => (

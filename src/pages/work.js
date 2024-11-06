@@ -32,7 +32,7 @@ export default function Work(data) {
             </Heading>
           )}
             <Heading textAlign="center" size="xl">
-              Work
+              Experience
             </Heading>
           {data.published && (
             <Heading textAlign="center" opacity={0.3} mt={4} size="xs">

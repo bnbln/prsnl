@@ -6,7 +6,7 @@ import Icon from './Icon';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 
-const MotionBox = motion(Box as any);
+const MotionBox = motion.create(Box as any);
 const MotionDiv = motion.div;
 
 interface IFields {

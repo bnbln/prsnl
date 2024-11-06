@@ -11,7 +11,7 @@ interface MyLinkProps {
 }
 
 // Create a motion component for MyLink
-const MotionBox = motion(Box as any);
+const MotionBox = motion.create(Box as any);
 
 const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize }) => {
   const router = useRouter();

@@ -1,5 +1,6 @@
 'use client'
 import './../app/globals.css'
+//import { Leva } from 'leva'
 import { AppProps } from 'next/app';
 import App from 'next/app'; // Import App from next/app
 import { Providers } from "../app/providers";
@@ -64,6 +65,7 @@ console.log(pageProps);
             transition={{ type: 'spring', damping: 25, stiffness: 100 }}
           >
             <Box pt={50}>
+            {/* <Leva /> */}
               <Component {...pageProps} />
             </Box>
             <Footer data={menuData} />

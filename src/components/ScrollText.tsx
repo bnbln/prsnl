@@ -24,6 +24,7 @@ const ScrollText: React.FC = () => {
       duration: 1,
       delay: 0.8
     })
+    console.log("code animation ", codeAnimation,"designAnimation", designAnimation);
 
     return () => {
       codeAnimation.stop()
@@ -35,8 +36,8 @@ const ScrollText: React.FC = () => {
     if (textRef.current) {
       // Get scroll progress (0 to 1)
       const scrollProgress = window.scrollY / (window.innerHeight * 0.65)
-      textRef.current.rotation.x = scrollProgress * Math.PI * 0.5
-      textRef.current.position.z = scrollProgress * 5
+      textRef.current.rotation.x = scrollProgress * Math.PI * 0.65
+      textRef.current.position.z = scrollProgress * 6
     }
   })
 
@@ -60,8 +61,8 @@ const ScrollText: React.FC = () => {
           & Code
           <meshStandardMaterial 
             color={colorMode === "dark" ? "#fff" : "#000"} 
-            metalness={0.3}
-            roughness={0.5}
+            metalness={1}
+            roughness={0.3}
           />
         </Text3D>
       </group>
@@ -82,9 +83,9 @@ const ScrollText: React.FC = () => {
         >
           Design
           <meshStandardMaterial 
-            color={colorMode === "dark" ? "#fff" : "#000"} 
-            metalness={0.3}
-            roughness={0.5}
+            color={colorMode === "dark" ? "#fff" : "#fff"} 
+            metalness={1}
+            roughness={0.3}
           />
         </Text3D>
       </group>

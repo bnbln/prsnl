@@ -6,7 +6,7 @@ import Article from '../components/Article'
 import Cloud from '../components/Cloud'
 import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Center, ScrollControls, Plane, Environment } from '@react-three/drei'
+import { OrbitControls, Center, ScrollControls, Plane, Environment, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
 import  ScrollText from '../components/ScrollText';
 import { useControls } from 'leva'
 
@@ -108,7 +108,22 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
         <Canvas
           camera={{ position: [0, 0, 10], fov: 60 }}
           shadows
+          dpr={[1, 2]}
+          gl={{
+            antialias: true,
+            preserveDrawingBuffer: true,
+            alpha: true,
+            stencil: false,
+            powerPreference: "high-performance",
+          }}
+          performance={{ 
+            min: 0.5,  // Minimum frame rate before quality reduction
+            max: 1,    // Maximum frame rate to maintain
+          }}
         >
+          <AdaptiveDpr pixelated />
+          <AdaptiveEvents />
+          
           {/* <Environment preset="sunset" backgroundBlurriness={0.5} backgroundIntensity={0.1} /> */}
           <ambientLight intensity={0.01} />
            {/* 3-Point Lighting System */}

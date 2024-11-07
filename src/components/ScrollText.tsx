@@ -53,7 +53,7 @@ const ScrollText: React.FC = () => {
   // Add smoothing factor control
   const { smoothing, updateInterval } = useControls('Scroll Animation', {
     smoothing: { value: 0.1, min: 0.01, max: 1, step: 0.01 },
-    updateInterval: { value: 16, min: 0, max: 50, step: 1 } // ms between updates
+    updateInterval: { value: 5, min: 0, max: 50, step: 1 } // ms between updates
   })
 
   // Smooth interpolation function

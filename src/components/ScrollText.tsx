@@ -15,7 +15,8 @@ const ScrollText: React.FC = () => {
   const codeSpring = useSpring(-1.3, { damping: 20, stiffness: 20, mass: 20, velocity: 0.2 })
   const designSpring = useSpring(-1, { damping: 20, stiffness: 20, mass: 20, velocity: 0.2 })
   const positionSpring = useSpring(4, { damping: 20, stiffness: 20, mass: 100, velocity: 0.2 })
-  const positionCodeSpring = useSpring(4, { damping: 20, stiffness: 20, mass: 100, velocity: 0.2 })
+  const positionCodeSpring = useSpring(3, { damping: 20, stiffness: 20, mass: 100, velocity: 0.2 })
+  const scaleSpring = useSpring(1, { damping: 20, stiffness: 20, mass: 100, velocity: 0.2 })    
 
   useEffect(() => {
     // Stagger the animations
@@ -36,11 +37,16 @@ const ScrollText: React.FC = () => {
         duration: 1,
         delay: 0
       })
+    const scaleAnimation = animate(scaleSpring, 1, {
+        duration: 1,
+        delay: 0
+      })
     return () => {
       codeAnimation.stop()
       designAnimation.stop()
       positionAnimation.stop()
       positionAnimationCode.stop()
+      scaleAnimation.stop()
     }
   }, [])
 
@@ -53,7 +59,7 @@ const ScrollText: React.FC = () => {
   // Add smoothing factor control
   const { smoothing, updateInterval } = useControls('Scroll Animation', {
     smoothing: { value: 0.1, min: 0.01, max: 1, step: 0.01 },
-    updateInterval: { value: 5, min: 0, max: 50, step: 1 } // ms between updates
+    updateInterval: { value: 1, min: 0, max: 50, step: 1 } // ms between updates
   })
 
   // Smooth interpolation function
@@ -67,8 +73,8 @@ const ScrollText: React.FC = () => {
     if (now - lastUpdate.current < updateInterval) return
     
     const scrollProgress = window.scrollY / (window.innerHeight * 0.65)
-    targetRotation.current = scrollProgress * Math.PI * 0.65
-    targetPositionZ.current = scrollProgress * 6
+    targetRotation.current = scrollProgress * Math.PI * 0.6
+    targetPositionZ.current = scrollProgress * 5
     targetPositionY.current = scrollProgress
     
     lastUpdate.current = now
@@ -81,6 +87,8 @@ const ScrollText: React.FC = () => {
 
   useFrame(() => {
     if (!textRef.current) return
+    // const scale = scaleSpring.get()
+    // textRef.current.scale.set(scale, scale, scale)
 
     // Smooth interpolation
     textRef.current.rotation.x = lerp(
@@ -132,9 +140,9 @@ const ScrollText: React.FC = () => {
         >
           & Code
           <meshStandardMaterial 
-            color={colorMode === "dark" ? "#fff" : "#000"} 
-            metalness={1}
-            roughness={0.3}
+            color={"#fff"} 
+            metalness={0.85}
+            roughness={0.15}
           />
         </Text3D>
       </group>
@@ -156,9 +164,9 @@ const ScrollText: React.FC = () => {
         >
           Design
           <meshStandardMaterial 
-            color={colorMode === "dark" ? "#fff" : "#fff"} 
-            metalness={1}
-            roughness={0.3}
+            color={"#fff"} 
+            metalness={0.85}
+            roughness={0.15}
           />
         </Text3D>
       </group>

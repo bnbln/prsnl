@@ -55,35 +55,9 @@ export async function getStaticProps() {
 const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
   // Controls for all three lights
   const { 
-    mainLight, 
-    mainIntensity,
-    fillLight, 
-    fillIntensity,
     backLight, 
     backIntensity 
   } = useControls('Lighting', {
-    // Main Light
-    mainLight: {
-      value: [-27,1,7.9],
-      //-2.4,11.4,0.3
-      // old -2.3, 4.2, -20
-      step: 0.1,
-      min: -50,
-      max: 50,
-      joystick: 'invertY'
-    },
-    mainIntensity: { value: 9, min: 0, max: 200, step: 1 },
-    
-    // Fill Light
-    fillLight: {
-      value: [6.3, 3, -5],
-      step: 0.1,
-      min: -10,
-      max: 10,
-      joystick: 'invertY'
-    },
-    fillIntensity: { value: 2.8, min: 0, max: 5, step: 0.1 },
-    
     // Back Light
     backLight: {
       value: [0, -5, 0],
@@ -119,23 +93,14 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
           performance={{ 
             min: 0.5,  // Minimum frame rate before quality reduction
             max: 1,    // Maximum frame rate to maintain
+            debounce: 200 // Debounce time for quality adjustments
           }}
         >
           <AdaptiveDpr pixelated />
           <AdaptiveEvents />
           
-          {/* <Environment preset="sunset" backgroundBlurriness={0.5} backgroundIntensity={0.1} /> */}
-          <ambientLight intensity={0.01} />
-           {/* 3-Point Lighting System */}
-          <directionalLight 
-            position={mainLight} 
-            intensity={mainIntensity} 
-            castShadow
-          />
-          <directionalLight 
-            position={fillLight}
-            intensity={fillIntensity} 
-          />
+          <Environment preset="sunset" backgroundBlurriness={1} backgroundIntensity={0} />
+          <ambientLight intensity={0.02} />
           <directionalLight 
             position={backLight}
             intensity={backIntensity} 
@@ -143,7 +108,7 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
           <Center>
             <ScrollText />
           </Center>
-          {/* <OrbitControls enableZoom={false} /> */}
+          <OrbitControls enableZoom={false} />
 
         </Canvas>
         <Box 

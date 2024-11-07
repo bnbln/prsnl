@@ -6,7 +6,7 @@ import Article from '../components/Article'
 import Cloud from '../components/Cloud'
 import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Center, ScrollControls, Plane } from '@react-three/drei'
+import { OrbitControls, Center, ScrollControls, Plane, Environment } from '@react-three/drei'
 import  ScrollText from '../components/ScrollText';
 import { useControls } from 'leva'
 
@@ -64,23 +64,25 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
   } = useControls('Lighting', {
     // Main Light
     mainLight: {
-      value: [-2.3, 4.2, -20],
+      value: [-27,1,7.9],
+      //-2.4,11.4,0.3
+      // old -2.3, 4.2, -20
       step: 0.1,
       min: -50,
       max: 50,
       joystick: 'invertY'
     },
-    mainIntensity: { value: 100, min: 0, max: 200, step: 1 },
+    mainIntensity: { value: 9, min: 0, max: 200, step: 1 },
     
     // Fill Light
     fillLight: {
-      value: [-5, 3, -5],
+      value: [6.3, 3, -5],
       step: 0.1,
       min: -10,
       max: 10,
       joystick: 'invertY'
     },
-    fillIntensity: { value: 0.5, min: 0, max: 5, step: 0.1 },
+    fillIntensity: { value: 2.8, min: 0, max: 5, step: 0.1 },
     
     // Back Light
     backLight: {
@@ -92,6 +94,7 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
     },
     backIntensity: { value: 0.2, min: 0, max: 5, step: 0.1 }
   })
+  const { colorMode } = useColorMode()
 
   return (
     <>
@@ -106,6 +109,7 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
           camera={{ position: [0, 0, 10], fov: 60 }}
           shadows
         >
+          <Environment preset="sunset" backgroundBlurriness={0.5} backgroundIntensity={0.1} />
           <ambientLight intensity={0.01} />
            {/* 3-Point Lighting System */}
           <directionalLight 
@@ -134,7 +138,7 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
           w={"100%"} 
           h={150} 
           zIndex={-1} 
-          backgroundColor={"#3362f0"} 
+          backgroundColor={colorMode === 'dark' ? "#3362f0" : "#00224d"} 
           transform={"rotate(-3deg)"} 
           filter={"blur(150px)"} 
         />

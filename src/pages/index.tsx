@@ -109,7 +109,7 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
           camera={{ position: [0, 0, 10], fov: 60 }}
           shadows
         >
-          <Environment preset="sunset" backgroundBlurriness={0.5} backgroundIntensity={0.1} />
+          {/* <Environment preset="sunset" backgroundBlurriness={0.5} backgroundIntensity={0.1} /> */}
           <ambientLight intensity={0.01} />
            {/* 3-Point Lighting System */}
           <directionalLight 

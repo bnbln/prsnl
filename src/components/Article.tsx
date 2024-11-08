@@ -10,6 +10,7 @@ import Row from './Row';
 interface AssetFields {
   file: {
     url: string;
+    contentType: string;
   };
   title: string;
   description?: string;
@@ -52,6 +53,29 @@ interface ArticleProps {
 // Embedded Asset Component
 const EmbeddedAsset: React.FC<{ node: Node }> = ({ node }) => {
   const { file, title } = node.data.target.fields as AssetFields;
+  const isVideo = file.contentType.includes('video');
+
+  if (isVideo) {
+    return (
+        <video
+          controls
+          autoPlay={false}
+          loop={false}
+          muted
+          playsInline
+          style={{
+            borderRadius: "4.5px",
+            width: "100%",
+            height: "auto",
+            maxWidth: "100%",
+          }}
+        >
+          <source src={"https:" + file.url} type={file.contentType} />
+          Your browser does not support the video tag.
+        </video>
+    );
+  }
+
   return (
     <Box mt={4} mb={8}>
       <Image
@@ -81,6 +105,10 @@ const EmbeddedEntry: React.FC<{ node: Node }> = ({ node }) => {
 };
 
 const Wrapper: React.FC<{ node: Node, children: React.ReactNode }> = ({ node, children }) => {
+  const isEmbeddedAsset = node.nodeType === 'embedded-asset-block';
+  const isVideo = isEmbeddedAsset && 
+  node.data?.target?.fields?.file?.contentType?.includes('video');
+
   const padding = useBreakpointValue({ base: 4, sm: 12, xl: 20 });
   const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
   console.log(children);
@@ -98,9 +126,11 @@ const Wrapper: React.FC<{ node: Node, children: React.ReactNode }> = ({ node, ch
           px={padding}
           alignItems={"center"}
         >
-          <Box w={textWidth}>
+          {isVideo ? (children) : (
+          <Box className='text' w={textWidth}>
             {children}
           </Box>
+          )}
           </Flex>
           </Flex>
   )
@@ -206,7 +236,8 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                 objectFit: "cover",
                 borderRadius: "4.5px",
                 position: "relative",
-                width: "100%"
+                width: "100%",
+                height: "500px"
               }}
             />
           }

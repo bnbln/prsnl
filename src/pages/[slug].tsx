@@ -16,6 +16,7 @@ interface IArticleFields extends EntrySkeletonType {
       title: string;
       file: {
         url: string;
+        contentType: string;
       };
     };
   };

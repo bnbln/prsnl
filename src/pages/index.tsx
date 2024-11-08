@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Box, Flex, Heading, VStack, useBreakpointValue, useColorMode, Text, Button, border } from '@chakra-ui/react';
 import Row from '../components/Row'
 import Module from '../components/Module'
@@ -9,6 +9,7 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Center, ScrollControls, Plane, Environment, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
 import  ScrollText from '../components/ScrollText';
 import { useControls } from 'leva'
+import { useSpring } from '@react-spring/three'
 
 interface ISection extends EntrySkeletonType {
   title: EntryFields.Text;
@@ -108,7 +109,20 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
           <Center>
             <ScrollText />
           </Center>
-          <OrbitControls enableZoom={false} />
+          {/* <OrbitControls 
+            ref={controlsRef}
+            minAzimuthAngle={-0.3} // Slightly larger than visual bounds
+            maxAzimuthAngle={0.3}
+            enableZoom={false}
+            minPolarAngle={Math.PI / 2 - 0.3}
+            maxPolarAngle={Math.PI / 2 + 0.3}
+            enableDamping={true}
+            dampingFactor={0.2}
+            onChange={handleChange}
+            // Apply spring values
+            azimuthAngle={springs.azimuthAngle}
+            polarAngle={springs.polarAngle}
+          /> */}
 
         </Canvas>
         <Box 

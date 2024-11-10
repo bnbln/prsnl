@@ -4,6 +4,7 @@ import Row from '../components/Row'
 import Module from '../components/Module'
 import Article from '../components/Article'
 import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
+import { sanitizeContentfulData } from '../lib/utils';
 
 // Define types for the data you expect from Contentful
 interface ISection extends EntrySkeletonType {
@@ -25,6 +26,12 @@ export async function getStaticProps() {
       include: 2,
     });
 
+    if (!entries) {
+      return {
+        notFound: true
+      }
+    }
+
     const mappedData = entries.items.map((item) => ({
       title: item.fields.title,
       hero: item.fields.hero,
@@ -33,7 +40,7 @@ export async function getStaticProps() {
 
     return {
       props: {
-        data: mappedData,
+        data: sanitizeContentfulData(mappedData),
       },
       revalidate: 60, // Optional: Revalidate at most once every minute
     };

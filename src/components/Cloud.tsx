@@ -47,7 +47,7 @@ const Cloud: React.FC<CloudProps> = ({ data, page = true }) => {
           direction="column"
           w={useBreakpointValue({ base: '100%', md: '80%' })}
           px={padding}
-          pt={paddingTop}
+          py={paddingTop}
           maxHeight={"650px"}
           pos={"relative"}
           alignItems={"center"}

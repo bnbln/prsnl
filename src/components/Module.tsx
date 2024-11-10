@@ -93,7 +93,7 @@ const Module: React.FC<ModuleProps> = ({ data }) => {
         {data.fields.text && documentToReactComponents(data.fields.text, options)}
         <Box>
           {data.fields.button?.map((item, i) => (
-            <Button key={i} borderRadius={50} colorScheme='teal'>{item.fields.title}</Button>
+            <Button key={i}>{item.fields.title}</Button>
           ))}
         </Box>
       </Flex>

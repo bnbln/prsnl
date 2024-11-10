@@ -3,7 +3,6 @@ import { Box } from '@chakra-ui/react';
 import { createClient, EntrySkeletonType, EntryFields } from 'contentful';
 import Article from '@/components/Article';
 import { Document } from '@contentful/rich-text-types';
-
 // Define the interface for the Article fields
 interface IArticleFields extends EntrySkeletonType {
   title: EntryFields.Text;
@@ -25,6 +24,31 @@ interface IArticleFields extends EntrySkeletonType {
     uri: string;
     variant: boolean;
   }>;
+  related?: Array<{
+    fields: {
+      title: string;
+      slug: string;
+      published?: string;
+      description?: string;
+      image?: {
+        fields: {
+          title: string;
+          file: {
+            url: string;
+            contentType: string;
+          };
+        };
+      };
+    };
+    sys?: {
+      id: string;
+      contentType: {
+        sys: {
+          id: string;
+        };
+      };
+    };
+  }>;
 }
 
 // Define the interface for the Params
@@ -40,10 +64,36 @@ const client = createClient({
   space: process.env.CONTENTFUL_SPACE_ID as string,
 });
 
+interface RelatedArticle {
+  fields: {
+    title: string;
+    slug: string;
+    published?: string;
+    description?: string;
+    image?: {
+      fields: {
+        title: string;
+        file: {
+          url: string;
+          contentType: string;
+        };
+      };
+    };
+  };
+}
+
+// Add this type guard function before getStaticProps
+function isRelatedArticleArray(related: any): related is RelatedArticle[] {
+  return Array.isArray(related) && related.every(item => 
+    item?.fields?.title && item?.fields?.slug
+  );
+}
+
 export async function getStaticPaths() {
   try {
     const entries = await client.getEntries<IArticleFields>({
       content_type: 'article',
+      include: 1,
     });
 
     const paths = entries.items.map((item) => ({
@@ -68,7 +118,7 @@ export async function getStaticProps({ params }: Params) {
     const entries = await client.getEntries<IArticleFields>({
       content_type: 'article',
       'fields.slug': params.slug,
-      include: 2,
+      include: 1,
     });
 
     if (!entries.items.length) {
@@ -77,13 +127,29 @@ export async function getStaticProps({ params }: Params) {
       };
     }
 
+    // Create a simplified version of the article
     const article = entries.items[0].fields;
-
+    
+    // Process the related articles to avoid circular references
+    const processedArticle = {
+      ...article,
+      related: article.related && isRelatedArticleArray(article.related) 
+        ? article.related.map((relatedArticle) => ({
+            fields: {
+              title: relatedArticle.fields.title,
+              slug: relatedArticle.fields.slug,
+              description: relatedArticle.fields.description || null,
+              image: relatedArticle.fields.image || null,
+            }
+          }))
+        : null
+    };
+    
     return {
       props: {
-        data: article,
+        data: processedArticle,
       },
-      revalidate: 60, // Revalidate at most once every minute
+      revalidate: 60,
     };
   } catch (error) {
     console.error("Error fetching data from Contentful:", error);

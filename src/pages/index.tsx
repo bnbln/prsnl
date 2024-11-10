@@ -10,6 +10,7 @@ import { OrbitControls, Center, ScrollControls, Plane, Environment, AdaptiveDpr,
 import  ScrollText from '../components/ScrollText';
 import { useControls } from 'leva'
 import { useSpring } from '@react-spring/three'
+import { sanitizeContentfulData } from '../lib/utils';
 
 interface ISection extends EntrySkeletonType {
   title: EntryFields.Text;
@@ -42,7 +43,7 @@ export async function getStaticProps() {
 
     return {
       props: {
-        data: mappedData,
+        data: sanitizeContentfulData(mappedData),
       },
       revalidate: 60,
     };

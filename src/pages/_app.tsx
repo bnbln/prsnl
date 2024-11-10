@@ -48,7 +48,7 @@ function MyApp({ Component, pageProps }: AppProps & { mappedData: any }) {
     };
   }, [router]);
 
-console.log(pageProps);
+//console.log("pageProps", pageProps);
 //pageProps.mappedData
 
   return (

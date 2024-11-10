@@ -34,7 +34,7 @@ export default function Navbar({ data }: NavbarProps) {
   const router = useRouter();
 
   useEffect(() => {
-    console.log(data);
+    //(data);
   }, [data]);
 
   useEffect(() => {
@@ -100,11 +100,11 @@ export default function Navbar({ data }: NavbarProps) {
                           _hover={{
                             '& .link-text': {
                               color: colorMode === 'dark' ? 'white' : '#080808',
-                              fontWeight: 900
+                              fontWeight: '900'
                             },
                             '& .link-underline': {
                               width: '100%',
-                              opacity: 1,
+                              opacity: 0.5,
                             }
                           }}
                         >
@@ -152,15 +152,15 @@ export default function Navbar({ data }: NavbarProps) {
           {menu && (
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'calc(100vh - 46px)' }}
+              animate={{ opacity: 1, height: 'calc(100vh - 50px)' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
               px={4}
-              pb={46}
+              pb={50}
               direction="column"
               w={"100%"}
               position="fixed"
-              top={46}
+              top={50}
               left={0}
               backgroundColor={backgroundColor}
               zIndex={1000}

@@ -6,6 +6,8 @@ import Module from '../../components/Module'
 import Article from '../../components/Article'
 //import Scene from '../app/Spline'
 import Scene from '../../components/Scene'
+import { sanitizeContentfulData } from '../../lib/utils';
+
 import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
 
 
@@ -34,16 +36,20 @@ export async function getStaticProps() {
       include: 2,
       // locale: 'de-DE'
     });
-
+    if (!entries) {
+      return {
+        notFound: true
+      }
+    }
     const mappedData = entries.items.map((item) => ({
       title: item.fields.title,
-      hero: item.fields.hero,
-      position: item.fields.position3,
+      hero: item.fields.hero || null,
+      position: item.fields.position3 || null,
     }));
 
     return {
       props: {
-        data: mappedData,
+        data: sanitizeContentfulData(mappedData),
       },
       revalidate: 60, // Optional: Revalidate at most once every minute
     };
@@ -60,7 +66,7 @@ export async function getStaticProps() {
 const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
     // console.log('Contentful Access Tokensss:', process.env.CONTENTFUL_ACCESS_TOKEN);
     // console.log('Contentful Space ID:', process.env.CONTENTFUL_SPACE_ID);
-    console.log(data);
+    //console.log(data);
     
   return (
     <>

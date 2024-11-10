@@ -91,6 +91,7 @@ const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
     });
   }, [getTileWidth]);
 
+  //console.log("items", items);
   return (
     <Box w="100%">
       <Box maxW="68rem" mx="auto" px={4}>
@@ -144,10 +145,9 @@ const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
                 small={small}
                 color={item.fields.color || "blue"}
                 title={item.fields.title}
-                desc={item.fields.description}
-                image={item.fields.image}
-                video={item.fields.video}
-                slug={item.fields.slug}
+                desc={item.fields.description || ""}
+                image={item.fields.image || null}
+                slug={item.fields.slug || null}
               />
             );
           })}

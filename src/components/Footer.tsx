@@ -30,7 +30,7 @@ export default function Footer({ data }: FooterProps) {
 
   const currentYear = new Date().getFullYear();
   useEffect(() => {
-    console.log(data);
+    //console.log(data);
   }, [data]);
 
   return (

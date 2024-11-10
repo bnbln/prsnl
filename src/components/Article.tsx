@@ -111,7 +111,7 @@ const Wrapper: React.FC<{ node: Node, children: React.ReactNode }> = ({ node, ch
 
   const padding = useBreakpointValue({ base: 4, sm: 12, xl: 20 });
   const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
-  console.log(children);
+  
   
   return(
     <Flex
@@ -149,6 +149,7 @@ const formatDate = (inputDate: string, outputFormat: string): string => {
 
 const Article: React.FC<ArticleProps> = ({ data, page = true }) => {  
     // 'de-DE'
+    //console.log("article", data);
     const formattedDate = data.published ? formatDate(data.published, 'en-US') : null;
 
   const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
@@ -237,7 +238,8 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                 borderRadius: "4.5px",
                 position: "relative",
                 width: "100%",
-                height: "500px"
+                height: "500px",
+                marginBottom: "2rem"
               }}
             />
           }
@@ -245,7 +247,7 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
           {/* IS TEASER */}
           {page === false &&
           <Flex position={"absolute"} alignItems={"flex-end"} justifyContent={"center"} w={"100%"} bottom={0} left={0} height={325} background={gradient}>
-           <Button borderRadius={100} onClick={() => router.push("/"+data.slug)}>Read more</Button>
+           <Button onClick={() => router.push("/"+data.slug)}>Read more</Button>
           </Flex>
          }
 
@@ -258,9 +260,9 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
 
          {/* HAS RELATED POSTS */}
       {page === true && data.related &&
-      <>
+      <Box mt={24}>
         <Row title={"Related Posts"} small={true} items={data.related} />
-      </>
+      </Box>
       }
     </>
   );

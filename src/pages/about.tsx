@@ -34,8 +34,8 @@ export async function getStaticProps() {
 
     const mappedData = entries.items.map((item) => ({
       title: item.fields.title,
-      hero: item.fields.hero,
-      position: item.fields.position3,
+      hero: item.fields.hero || null,
+      position: item.fields.position3 || null,
     }));
 
     return {

@@ -205,12 +205,12 @@ const ScrollText: React.FC = () => {
         </group>
       </group>
 
-      {/* <group 
+      <group 
         ref={batRef}
         position={[3, 0, -2]} // Adjust position as needed
         scale={[0.02, 0.02, 0.02]} // Adjust scale as needed
       >
-        <mesh
+        {/* <mesh
           geometry={nodes.Shape.geometry}
           material={nodes.Shape.material}
         >
@@ -219,8 +219,8 @@ const ScrollText: React.FC = () => {
             metalness={0.8}
             roughness={0.25}
           />
-        </mesh>
-      </group> */}
+        </mesh> */}
+      </group>
     </>
   )
 }

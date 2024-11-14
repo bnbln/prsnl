@@ -126,8 +126,8 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
           position={'absolute'} 
           left={0} 
           top={-10} 
-          w={"100%"} 
-          h={150} 
+          w={"80%"} 
+          h={180} 
           zIndex={-1} 
           backgroundColor={colorMode === 'dark' ? "#3362f0" : "#00224d"} 
           transform={"rotate(-3deg)"} 

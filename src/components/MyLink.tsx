@@ -33,6 +33,8 @@ const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize, font
       className='menuItem' 
       lineHeight={'24px'}
       onClick={handleClick}
+      whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+      
     >
       {children}
     </MotionBox>

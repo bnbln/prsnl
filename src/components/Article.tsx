@@ -199,6 +199,7 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
         mx="auto"
         mb={page ? 0 : "2rem"}
         borderRadius={4.5}
+        pt={page ? "2rem" : 0 }
       >
         <Flex
           gap={4}

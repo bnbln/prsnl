@@ -75,19 +75,10 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
 
   return (
     <>
-      <Box
-        height="100vh"
-        width="100%"
-        position="absolute"
-        overflow="hidden"
-        top={0}
-        left={0}
-        mb={12}
-        zIndex={-2}
-      >
-        {/* <Example /> */}
+
         <Canvas
-          camera={{ position: [0, 0, 10], fov: 60 }}
+          style={{ width: '100%', height: '100vh' }}
+          camera={{ position: [0, 0, 16], fov: 60 }}
           shadows
           dpr={[1, 2]}
           gl={{
@@ -142,10 +133,9 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
           transform={"rotate(-3deg)"} 
           filter={"blur(150px)"} 
         />
-      </Box>
-      <div style={{ position: 'relative', height: '65vh', width: '100%', background: 'linear-gradient(0deg, #080808, transparent)' }} />
 
-      <VStack gap={useBreakpointValue({ base: "3rem", xl: "6rem" })} w="100%">
+{/* background: 'linear-gradient(0deg, #080808, transparent)' } */}
+      <VStack gap={useBreakpointValue({ base: "3rem", xl: "6rem" })} w="100%" mt={"-39vh"}>
         {data[0] && data[0].position.map((section, index) => (
           <React.Fragment key={index}>
             {section.sys.contentType.sys.id === "sections" &&

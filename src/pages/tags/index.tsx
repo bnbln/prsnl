@@ -7,6 +7,7 @@ import Article from '../../components/Article'
 //import Scene from '../app/Spline'
 import Scene from '../../components/Scene'
 import { sanitizeContentfulData } from '../../lib/utils';
+import Cloud from '../../components/Cloud'
 
 import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
 
@@ -81,8 +82,10 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
         {/* <Scene /> */}
         <Box position={'absolute'} left={0} top={-10} w={"100%"} h={150} zIndex={-1} backgroundColor={"#3362f0"} transform={"rotate(-3deg)"} filter={"blur(150px)"} />
         {/* <video src="./Hero.mp4" playsInline autoPlay muted className="heroVideo" /> */}
+        
       </Box>
       <VStack gap={useBreakpointValue({ base: "3rem", xl: "6rem" })} w="100%">
+      {/* <Heading>Tags</Heading> */}
         {data[0] && data[0].position.map((section, index) => (
           <React.Fragment key={index}>
             {section.sys.contentType.sys.id === "sections" && 
@@ -90,6 +93,11 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
             }
             {section.sys.contentType.sys.id === "module" && <Module data={section} />}
             {section.sys.contentType.sys.id === "article" && <Article page={false} data={section.fields} />}
+            {section.sys.contentType.sys.id === "cloud" && 
+              <Cloud 
+                data={section.fields} 
+                buttons={section.fields.buttons}
+              />}
           </React.Fragment>
         ))}
       </VStack>

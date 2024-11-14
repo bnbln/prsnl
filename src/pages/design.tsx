@@ -6,6 +6,7 @@ import Article from '../components/Article'
 import Cloud from '../components/Cloud'
 import { createClient, EntrySkeletonType, EntryFields } from 'contentful';
 import Image from 'next/image';
+import { sanitizeContentfulData } from '../lib/utils';
 
 interface ISection extends EntrySkeletonType {
   title: EntryFields.Text;
@@ -38,7 +39,7 @@ export async function getStaticProps() {
 
     return {
       props: {
-        data: mappedData,
+        data: sanitizeContentfulData(mappedData),
       },
       revalidate: 60,
     };

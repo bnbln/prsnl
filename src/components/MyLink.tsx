@@ -8,12 +8,13 @@ interface MyLinkProps {
   onClick?: () => void; // Optional onClick prop
   children: React.ReactNode;
   fontSize?: string; // Optional fontSize prop
+  fontWeight?: string; // Optional fontWeight prop
 }
 
 // Create a motion component for MyLink
 const MotionBox = motion.create(Box as any);
 
-const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize }) => {
+const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize, fontWeight }) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -27,8 +28,10 @@ const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize }) =>
     <MotionBox 
       as='button' 
       fontSize={fontSize} 
+      fontWeight={fontWeight || 'normal'}
       p={3} 
       className='menuItem' 
+      lineHeight={'24px'}
       onClick={handleClick}
     >
       {children}

@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://benedikt.berlin
+
+# Sitemaps
+Sitemap: https://benedikt.berlin/sitemap.xml

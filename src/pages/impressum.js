@@ -50,7 +50,7 @@ export default function Impressum(data) {
               Kontakt
             </Heading>
             <Text>
-            E-Mail: benediktschnupp@me.com
+            E-Mail: mail@benedikt.berlin
             </Text>
             <Heading mt={2} size="md">
             Verantwortlich für den Inhalt nach 55 Abs. 2 RStV

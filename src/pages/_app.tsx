@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Inter } from 'next/font/google';
+import Head from 'next/head';
 
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
@@ -16,6 +17,11 @@ import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful'
 
 const inter = Inter({ subsets: ['latin'] });
 
+const DEFAULT_TITLE = "Design & Code - Benedikt Schnupp";
+const DEFAULT_DESCRIPTION = "Your default site description goes here - make it compelling and keyword-rich, around 150-160 characters";
+const DEFAULT_KEYWORDS = "keyword1, keyword2, keyword3";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://benedikt.berlin';
+const DEFAULT_OG_IMAGE = `${SITE_URL}/images/og-image.jpg`;
 
 const pageTransitionVariants = {
   hidden: { opacity: 0, x: 0, y: -200 },
@@ -48,11 +54,49 @@ function MyApp({ Component, pageProps }: AppProps & { mappedData: any }) {
     };
   }, [router]);
 
-//console.log("pageProps", pageProps);
+console.log("pageProps", pageProps);
 //pageProps.mappedData
 
   return (
     <Providers>
+      <Head>
+        <title>{DEFAULT_TITLE}</title>
+        <meta name="description" content={DEFAULT_DESCRIPTION} />
+        <meta name="keywords" content={DEFAULT_KEYWORDS} />
+        
+        {/* Viewport */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content={DEFAULT_TITLE} />
+        <meta property="og:description" content={DEFAULT_DESCRIPTION} />
+        <meta property="og:image" content={DEFAULT_OG_IMAGE} />
+        <meta property="og:url" content={SITE_URL} />
+        <meta property="og:type" content="website" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={DEFAULT_TITLE} />
+        <meta name="twitter:description" content={DEFAULT_DESCRIPTION} />
+        <meta name="twitter:image" content={DEFAULT_OG_IMAGE} />
+        
+        {/* Additional SEO tags */}
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        <meta name="theme-color" content="#ffffff" /> {/* Adjust color to match your brand */}
+        <link rel="canonical" href={SITE_URL} />
+        
+        {/* Preconnect to important third-party domains */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </Head>
       <div className={inter.className}>
         <Navbar data={menuData} /> 
         <AnimatePresence mode='wait'>

@@ -3,6 +3,7 @@ import { Box, Flex, Heading, Text, useBreakpointValue, Link, Button, useColorMod
 import { documentToReactComponents, Options } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, INLINES, Block, Document, Inline, Node } from '@contentful/rich-text-types';
 import Image from 'next/image';
+import SEO from './SEO';
 import { useRouter } from 'next/navigation' 
 import Carousel from './Carousel';
 import Row from './Row';
@@ -181,6 +182,14 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
 
   return (
     <>
+    {page && (
+    <SEO 
+        title={data.title + " | Design & Code"}
+        description={data.description}
+        image={`https:${data.image?.fields.file.url}`}
+        article={true}
+      />  
+      )}
       <Flex
         justifyContent="center"
         direction={useBreakpointValue({ base: 'column', md: 'row' })}

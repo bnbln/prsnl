@@ -167,7 +167,7 @@ const Slug: React.FC<{ data: IArticleFields | null }> = ({ data }) => {
   }
 
   return (
-    <Article data={data} page={true} />
+      <Article data={data} page={true} />
   );
 }
 

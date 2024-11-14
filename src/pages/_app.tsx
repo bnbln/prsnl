@@ -108,9 +108,10 @@ console.log("pageProps", pageProps);
             variants={pageTransitionVariants}
             transition={{ type: 'spring', damping: 25, stiffness: 100 }}
           >
-            <Box pt={50}>
+            <Box >
             <Leva
-            hidden={process.env.NODE_ENV === 'production'} // Hides the GUI in production
+            hidden={true}
+            //hidden={process.env.NODE_ENV === 'production'} // Hides the GUI in production
              />
               <Component {...pageProps} />
             </Box>

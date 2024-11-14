@@ -121,13 +121,20 @@ export default function Navbar({ data }: NavbarProps) {
           // pr={{ base: 0, xl: 4 }}
           // color={colorMode === 'dark' ? 'white' : '#080808'}
           px={{base: 0, md: 4}}
-          backgroundColor={"rgba(0,0,0,0.3)"}
+          backgroundColor={colorMode === 'dark' ? "rgba(0,0,0,0.3)" : "rgba(249,249,249,0.3)"}
           borderRadius={{base: menu ? '0px' : '6px', md: '6px'}}
           marginTop={'12px'}
           backdropFilter="blur(24px)"
-          boxShadow="rgb(0 0 0 / 55%) 9px 5px 50px 0"
-
+          boxShadow={colorMode === 'dark' ? "rgb(0 0 0 / 55%) 9px 5px 50px 0" : "rgb(0 0 0 / 15%) 9px 5px 50px 0"}  
+          display={"flex"}
+          alignItems={"center"}
+          position={{base: "absolute", md: "relative"}}
+          right={{base: "16px", md: "auto"}}
+          zIndex={10}
         >
+          <MyLink href={"./"}>
+              <Icon width={22} height={22} color={colorMode === 'dark' ? 'white' : '#080808'} />
+            </MyLink>
             <Show above="md">
               <Flex>
                 {data.map((navItem, navIndex) => (

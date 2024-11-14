@@ -18,8 +18,8 @@ type GLTFResult = {
 }
 
 const ScrollText: React.FC = () => {
-  const { colorMode } = useColorMode()
-  const textRef = useRef<Group>(null)
+    const { colorMode, toggleColorMode } = useColorMode();
+    const textRef = useRef<Group>(null)
   const codeRef = useRef<Group>(null)
   const designRef = useRef<Group>(null)
   const batRef = useRef<Group>(null)
@@ -155,9 +155,9 @@ const ScrollText: React.FC = () => {
 
   return (
     <>
-      <group ref={textRef}>
+      <group ref={textRef} onClick={toggleColorMode}>
         <group 
-          position={[0, -1, 0.5]}
+          position={[0, -3, 0.5]}
           ref={codeRef}
         >
           <Text3D
@@ -181,7 +181,7 @@ const ScrollText: React.FC = () => {
         </group>
 
         <group 
-          position={[0, 0.75, -0.5]} 
+          position={[0.28, -0.75, -0.5]} 
           ref={designRef}
         >
           <Text3D

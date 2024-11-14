@@ -27,6 +27,51 @@ interface NavbarProps {
   data: INavbarData[];
 }
 
+const Path = (props: any) => (
+  <motion.path
+    fill="transparent"
+    strokeWidth="1.33"
+    stroke={props.stroke || "currentColor"}
+    strokeLinecap="round"
+    {...props}
+  />
+);
+
+const MenuToggle = ({ toggle, isOpen, color }: { toggle: () => void, isOpen: boolean, color: string }) => (
+  <Button 
+    onClick={toggle} 
+    variant="none" 
+    aria-label={isOpen ? "Close Menu" : "Open Menu"}
+    zIndex={1000}
+  >
+    <svg width="23" height="23" viewBox="0 0 19 18">
+      <Path
+        variants={{
+          closed: { d: "M 2 2.5 L 20 2.5" },
+          open: { d: "M 3 16.5 L 17 2.5" }
+        }}
+        animate={isOpen ? "open" : "closed"}
+      />
+      <Path
+        d="M 2 9.423 L 20 9.423"
+        variants={{
+          closed: { opacity: 1 },
+          open: { opacity: 0 }
+        }}
+        transition={{ duration: 0.1 }}
+        animate={isOpen ? "open" : "closed"}
+      />
+      <Path
+        variants={{
+          closed: { d: "M 2 16.346 L 20 16.346" },
+          open: { d: "M 3 2.5 L 17 16.346" }
+        }}
+        animate={isOpen ? "open" : "closed"}
+      />
+    </svg>
+  </Button>
+);
+
 export default function Navbar({ data }: NavbarProps) {
   const [menu, setMenu] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -67,18 +112,22 @@ export default function Navbar({ data }: NavbarProps) {
 
   return (
     <header>
-      <nav style={{ background: backgroundColor }}>
+      <nav>
         <Box
-          maxW="68rem"
-          mx="auto"
-          px={4}
-          pr={{ base: 0, xl: 4 }}
-          color={colorMode === 'dark' ? 'white' : '#080808'}
+          className='nav-container'
+          // maxW="68rem"
+          // mx="auto"
+          // px={4}
+          // pr={{ base: 0, xl: 4 }}
+          // color={colorMode === 'dark' ? 'white' : '#080808'}
+          px={{base: 0, md: 4}}
+          backgroundColor={"rgba(0,0,0,0.3)"}
+          borderRadius={{base: menu ? '0px' : '6px', md: '6px'}}
+          marginTop={'12px'}
+          backdropFilter="blur(24px)"
+          boxShadow="rgb(0 0 0 / 55%) 9px 5px 50px 0"
+
         >
-          <Flex justify="space-between" align="center">
-            <MyLink href={"./"}>
-              <Icon width={22} height={22} color={colorMode === 'dark' ? 'white' : '#080808'} />
-            </MyLink>
             <Show above="md">
               <Flex>
                 {data.map((navItem, navIndex) => (
@@ -110,6 +159,7 @@ export default function Navbar({ data }: NavbarProps) {
                         >
                           <MyLink 
                             href={menuItem.fields.url}
+                            fontWeight={isActive ? '900' : 'normal'}
                           >
                             {menuItem.fields.title}
                           </MyLink>
@@ -138,32 +188,31 @@ export default function Navbar({ data }: NavbarProps) {
                 ))}
               </Flex>
             </Show>
-            <Flex gap="4px">
-              <Button onClick={toggleColorMode} variant="none">
-                {colorMode === 'dark' ? <SunIcon /> : <MoonIcon />}
-              </Button>
+
+
               <Hide above="md">
-                <Button onClick={() => setMenu(prev => !prev)} variant="none">
-                  {menu ? <CloseIcon /> : <HamburgerIcon />}
-                </Button>
+                <MenuToggle 
+                  toggle={() => setMenu(prev => !prev)} 
+                  isOpen={menu} 
+                  color={colorMode === 'dark' ? 'white' : '#080808'}
+                />
               </Hide>
-            </Flex>
-          </Flex>
-          {menu && (
+        </Box>
+        {menu && (
             <MotionBox
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'calc(100vh - 50px)' }}
+              animate={{ opacity: 1, height: '100vh' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
               px={4}
-              pb={50}
+              py={50}
               direction="column"
               w={"100%"}
               position="fixed"
-              top={50}
+              top={0}
               left={0}
               backgroundColor={backgroundColor}
-              zIndex={1000}
+              zIndex={-1}
               display={"flex"}
               justifyContent={"flex-start"}
               alignItems={"center"}
@@ -194,9 +243,8 @@ export default function Navbar({ data }: NavbarProps) {
               </Flex>
             </MotionBox>
           )}
-        </Box>
       </nav>
-      {menu && <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100vh', backdropFilter: 'blur(24px)' }} />}
+      {/* {menu && <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100vh', backdropFilter: 'blur(24px)' }} />} */}
     </header>
   );
 }

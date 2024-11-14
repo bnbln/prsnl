@@ -11,6 +11,7 @@ import  ScrollText from '../components/ScrollText';
 import { useControls } from 'leva'
 import { useSpring } from '@react-spring/three'
 import { sanitizeContentfulData } from '../lib/utils';
+import { Example } from '../components/example';
 
 interface ISection extends EntrySkeletonType {
   title: EntryFields.Text;
@@ -75,12 +76,16 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
   return (
     <>
       <Box
-        height="65vh"
+        height="100vh"
         width="100%"
-        position="relative"
+        position="absolute"
         overflow="hidden"
+        top={0}
+        left={0}
         mb={12}
+        zIndex={-2}
       >
+        {/* <Example /> */}
         <Canvas
           camera={{ position: [0, 0, 10], fov: 60 }}
           shadows
@@ -138,6 +143,8 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
           filter={"blur(150px)"} 
         />
       </Box>
+      <div style={{ position: 'relative', height: '65vh', width: '100%', background: 'linear-gradient(0deg, #080808, transparent)' }} />
+
       <VStack gap={useBreakpointValue({ base: "3rem", xl: "6rem" })} w="100%">
         {data[0] && data[0].position.map((section, index) => (
           <React.Fragment key={index}>

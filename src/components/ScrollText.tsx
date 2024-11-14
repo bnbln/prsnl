@@ -30,8 +30,8 @@ const ScrollText: React.FC = () => {
   // Create spring animations for each text element
   const codeSpring = useSpring(-1.3, { damping: 20, stiffness: 20, mass: 20, velocity: 0.2 })
   const designSpring = useSpring(1, { damping: 20, stiffness: 20, mass: 20, velocity: 0.2 })
-  const positionDesignSpring = useSpring(-20, { damping: 20, stiffness: 20, mass: 20, velocity: 1 })
-  const positionCodeSpring = useSpring(20, { damping: 20, stiffness: 20, mass: 20, velocity: 1 })
+  const positionDesignSpring = useSpring(-20, { damping: 20, stiffness: 80, mass: 5, velocity: -1 })
+  const positionCodeSpring = useSpring(-20, { damping: 20, stiffness: 80, mass: 5, velocity: -1 })
   const scaleSpring = useSpring(1, { damping: 20, stiffness: 20, mass: 20, velocity: 2 })    
 
   useEffect(() => {
@@ -45,13 +45,13 @@ const ScrollText: React.FC = () => {
       duration: 1,
       delay: 0
     })
-    const positionAnimationDesign = animate(positionDesignSpring, 0, {
+    const positionAnimationDesign = animate(positionDesignSpring, 2.85, {
       duration: 1,
       delay: 0
     })
-    const positionAnimationCode = animate(positionCodeSpring, 0, {
+    const positionAnimationCode = animate(positionCodeSpring, 1, {
         duration: 1,
-        delay: 0
+        delay: 0.1
       })
     const scaleAnimation = animate(scaleSpring, 1, {
         duration: 1,
@@ -113,11 +113,11 @@ const ScrollText: React.FC = () => {
       smoothing
     )
     
-    textRef.current.position.z = lerp(
-      textRef.current.position.z,
-      targetPositionZ.current,
-      smoothing
-    )
+    // textRef.current.position.z = lerp(
+    //   textRef.current.position.z,
+    //   targetPositionZ.current,
+    //   smoothing
+    // )
     
     textRef.current.position.y = lerp(
       textRef.current.position.y,
@@ -126,12 +126,12 @@ const ScrollText: React.FC = () => {
     )
     if (codeRef.current) {
         if (codeRef.current) {
-            codeRef.current.position.x = positionCodeSpring.get()
+            codeRef.current.position.y = positionCodeSpring.get()
             //codeRef.current.position.z = positionDesignSpring.get()
           }
     }
     if (designRef.current) {
-      designRef.current.position.x = positionDesignSpring.get()
+      designRef.current.position.y = positionDesignSpring.get()
       //designRef.current.position.z = positionCodeSpring.get()
     }
 

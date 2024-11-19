@@ -68,6 +68,7 @@ const Design: React.FC<{ data: ISection[] }> = ({ data }) => {
       w={containerWidth}
       mx="auto"
       borderRadius={4.5}
+      pt={"3rem"}
     >
       <Flex
         gap={4}

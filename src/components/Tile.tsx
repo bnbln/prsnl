@@ -1,32 +1,72 @@
-import React from 'react';
-import {
-  Heading,
-  Text,
-  Box,
-  useBreakpointValue
-} from '@chakra-ui/react';
+import { Box, Heading, Text, useBreakpointValue } from "@chakra-ui/react";
+import Link from "next/link";
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
-type TileProps = {
-  title: string;
-  desc?: string;
-  small?: boolean;
-  video?: string;
-  image?: any;
-  color?: string;
-  slug: string;
+// Create motion components
+const MotionHeading = motion(Heading as any);
+const MotionBox = motion(Box as any);
+const MotionText = motion(Text as any);
+
+
+type ImageProps = {
+    image: {
+        fields: {
+            file: {
+                url: string;
+            }
+        }
+    };
+    title: string;
 }
-
-const Tile: React.FC<TileProps> = ({ small = true, video, image, title, desc, color, slug }) => {
-  const isImage = image?.fields?.file?.contentType.includes("image");
-  const isVideo = image?.fields?.file?.contentType.includes("video");
-
-  return (
-    <Box
-      as='a'
-      href={`./${slug}`}
-      className='tile'
-      sx={{
+function ImageWrapper({image, title}: ImageProps) {
+    return (
+    <Image
+    src={`https:${image.fields.file.url}`}
+    alt={title}
+    fill
+    sizes="(max-width: 768px) 100vw, 
+             (max-width: 1200px) 50vw, 
+             33vw"
+    style={{ 
+      objectFit: "cover",
+      borderRadius: "4.5px"
+    }}
+  />)
+}
+type TileProps = {
+    style?: React.CSSProperties;
+    fields: {
+        title: string | 'Title';
+        description?: string | null;
+        size?: string | 'portrait'; //portrait, landscape, s-square, square, wide, video
+        image?: any;
+        imageLandscape?: any;
+        color?: string | 'black';
+        slug: string;
+        video?: {
+            fields?: {
+                file?: {
+                    url?: string;
+                }
+            }
+        } | null;
+    },
+    height?: string;
+    overlay?: boolean;
+  }
+  
+export default function Tile({fields, style, overlay}: TileProps) {
+    const aspectRatio = fields.size === 'Landscape' ? '4/3' :
+                        fields.size === 'Small' ? '1/1' :
+                        fields.size === 'Square' ? '1/1' :
+                        fields.size === 'Wide' ? '16/9' :
+                        fields.size === 'Video' ? '16/9' :
+                        '3/4';
+    return (
+        <Box 
+        style={style}
+        sx={{
         '&:first-child': {
           marginLeft: useBreakpointValue({ base: 4, xl: 'calc( var(--gutter-size) + 12px)' }),
         },
@@ -34,68 +74,113 @@ const Tile: React.FC<TileProps> = ({ small = true, video, image, title, desc, co
           marginRight: useBreakpointValue({ base: 4, xl: 'calc(var(--gutter-size) - 12px)' }),
         }
       }}
-    >
-      <div style={{
-        height: "29.471875rem",
-        borderRadius: "4.5px",
-        background: color || "teal",
-        color: "white",
-        aspectRatio: small ? "3/4" : "4/3",
-        position: "relative",
-        overflow: "hidden",
-      }}>
-        {isImage && (
-          <Image
-          src={`https:${image.fields.file.url}`}
-          alt={title}
-          fill
-          sizes="(max-width: 768px) 100vw, 
-                   (max-width: 1200px) 50vw, 
-                   33vw"
-          style={{ 
-            objectFit: "cover",
-            borderRadius: "4.5px"
-          }}
-        />
-        )}
+      >
+<Link href={fields.slug} className='tile'>
 
-        {isVideo && (
-          <video
-            playsInline
-            autoPlay
-            loop
-            muted
-            style={{
-              height: "29.471875rem",
-              borderRadius: "4.5px",
-              aspectRatio: small ? "3/4" : "4/3",
-              position: "absolute",
-              top: 0,
-              left: 0
+    <MotionBox 
+    height={{base: '364px', md: fields.size === "Small" ? '364px' : "462px"}}
+    width={fields.size === "Wide" ? "100%" : "auto"}
+    aspectRatio={aspectRatio} 
+    backgroundColor={fields.color}
+    color="white"
+    p={18}
+    borderRadius={4}
+    position="relative"
+    display="flex" 
+    flexDirection="column" 
+    flexWrap="wrap"
+    gap={4}
+    justifyContent="space-between"
+    overflow="hidden"
+    whileHover="hover"
+    initial="initial"
+    variants={{
+        initial: {},
+        hover: {}
+    }}
+    >   
+        
+            <MotionBox  
+            position="absolute" 
+            zIndex={0}
+            top={0} 
+            left={0} 
+            right={0} 
+            bottom={0} 
+            overflow="hidden"
+            w="100%" 
+            h="100%"
+            variants={{
+                initial: { opacity: overlay ? 0.5 : 1, scale: 1.05 },
+                hover: { opacity: 0.5, scale: 1 }
             }}
-            src={`https:${image.fields.file.url}`}
-          />
-        )}
+            transition={{ duration: 0.3, ease: "easeOut" }}
 
-        <Box style={{
-          padding: 18,
-          flexDirection: "column",
-          justifyContent: "space-between",
-          height: "29.471875rem",
-          borderRadius: "4.5px",
-          color: "white",
-          display: "flex",
-          position: "relative",
-          width: "100%",
-          zIndex: 10,
-          //background: isImage ? "rgba(0, 0, 0, 0.4)" : "none", // Optional: dark overlay for text readability
-        }}>
-          <Text>{desc}</Text>
-          <Heading fontSize='xl'>{title}</Heading>
+            >
+                {(fields.size === 'Landscape' || fields.size === 'Wide' || fields.size === 'Video') && fields.imageLandscape !== undefined &&
+                 <ImageWrapper image={fields.imageLandscape} title={fields.title} />
+                }
+                {(fields.size === 'Portrait' || fields.size === 'Square' || fields.size === 'Small') && fields.image !== undefined &&
+                 <ImageWrapper image={fields.image} title={fields.title} />
+                }
+                 { fields.video?.fields?.file?.url &&
+                <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)'
+                    }}
+                >
+                    <source src={`https:${fields.video.fields.file.url}`} type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+                }
+            </MotionBox> 
+        <MotionText 
+            zIndex={10}
+            fontWeight={400} 
+            fontSize="14px"
+            variants={{
+                initial: { y: -40 },
+                hover: { y: 0 }
+            }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+        >{fields.description}</MotionText>
+        <Box zIndex={10} maxW="328px" gap={1} display="flex" flexDirection="column">
+            <MotionHeading 
+                fontWeight={700} 
+                fontSize="18px"
+
+                variants={{
+                    initial: { y: 26 },
+                    hover: { y: 0 }
+                }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+                {fields.title}
+            </MotionHeading>
+            <MotionBox display="flex" gap={1} 
+                variants={{
+                    initial: { y: 40 },
+                    hover: { y: 0 }
+                }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                >
+                <Text fontWeight={400} fontSize="14px">Read</Text>
+                <MotionText fontWeight={400} fontSize="14px">More</MotionText>
+            </MotionBox>
         </Box>
-      </div>
+    </MotionBox>
+   
+    </Link>
     </Box>
-  );
+    )
 }
-
-export default Tile;

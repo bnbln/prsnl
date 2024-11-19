@@ -9,12 +9,13 @@ interface MyLinkProps {
   children: React.ReactNode;
   fontSize?: string; // Optional fontSize prop
   fontWeight?: string; // Optional fontWeight prop
+  animationValue?: string;
 }
 
 // Create a motion component for MyLink
 const MotionBox = motion.create(Box as any);
 
-const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize, fontWeight }) => {
+const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize, fontWeight, animationValue }) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -33,8 +34,17 @@ const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize, font
       className='menuItem' 
       lineHeight={'24px'}
       onClick={handleClick}
-      whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-      
+      whileHover={animationValue && animationValue === "wiggle" ? 
+        { 
+          rotate: [0, 10, -10, 10, 0],
+          transition: {
+            duration: 0.5,
+            repeat: Infinity
+          }
+        } 
+        : { fontWeight: 900 }
+      } 
+      whileTap={{ scale: 0.95 }}
     >
       {children}
     </MotionBox>

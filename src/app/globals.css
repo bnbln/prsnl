@@ -46,10 +46,12 @@
 
 
 
-@import url('https://rsms.me/inter/inter.css');
+/* @import url('https://rsms.me/inter/inter.css'); */
+@import url('./general-sans.css');
 
 * {
   box-sizing: border-box;
+  font-family: 'GeneralSans-Variable', sans-serif;
 }
 
 html,
@@ -71,7 +73,7 @@ header {
 
 .nav-container {
   backdrop-filter: blur(24px);
-  font-family: 'Inter', sans-serif; /* sorgt dafür, dass der Font-Name korrekt interpretiert wird, wenn Leerzeichen vorhanden sind */
+  font-family: 'GeneralSans-Variable', sans-serif; /* sorgt dafür, dass der Font-Name korrekt interpretiert wird, wenn Leerzeichen vorhanden sind */
   
 }
 
@@ -83,4 +85,53 @@ header {
 
 .slick-arrow {
   display: none!important;
+}
+
+
+
+.scene {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  overscroll-behavior-y: none;
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, ubuntu, roboto, noto, segoe ui, arial, sans-serif;
+  color: black;
+  perspective: 3000px;
+  perspective-origin: 50% 50%;
+  background: #c9ffed;
+  color: aquamarine;
+}
+.scene .container h1 {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0) rotate3d(1, 0, 0, 55deg) rotate3d(0, 0, 1, 45deg);
+  font-family: "Roboto", sans-serif;
+  font-style: normal;
+  font-weight: 800;
+  margin: 0;
+  margin-bottom: 0.5rem;
+  font-size: 600px;
+  letter-spacing: -40px;
+  color: inherit;
+}
+
+.scene .container,
+.scene .bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.scene .container > .close,
+.scene .container > .open {
+  margin-top: -270px;
+  letter-spacing: -10px;
+  font-size: 250px;
+}
+
+.scene .container > .close {
+  margin-top: 300px;
 }

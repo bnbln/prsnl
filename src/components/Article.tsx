@@ -28,7 +28,7 @@ interface RelatedPost {
   fields: {
     title: string;
     slug: string;
-    published: string;
+    published?: string;
   };
 }
 

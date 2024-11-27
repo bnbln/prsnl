@@ -28,6 +28,7 @@ interface RelatedPost {
   fields: {
     title: string;
     slug: string;
+    published: string;
   };
 }
 
@@ -150,7 +151,7 @@ const formatDate = (inputDate: string, outputFormat: string): string => {
 
 const Article: React.FC<ArticleProps> = ({ data, page = true }) => {  
     // 'de-DE'
-    //console.log("article", data);
+    console.log("article", data);
     const formattedDate = data.published ? formatDate(data.published, 'en-US') : null;
 
   const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
@@ -269,11 +270,11 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
       {page && data.text && documentToReactComponents(data.text, options)}
 
          {/* HAS RELATED POSTS */}
-      {page === true && data.related &&
+      {/* {page === true && data.related &&
       <Box mt={24}>
         <Row title={"Related Posts"} small={true} items={data.related} />
       </Box>
-      }
+      } */}
     </>
   );
 };

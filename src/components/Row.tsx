@@ -4,7 +4,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import Tile from './Tile';
 
 interface Fields {
-  title: string | 'Title';
+  title: string;
   slug: string;
   published: Date;
   description?: string | null;
@@ -13,7 +13,7 @@ interface Fields {
   
   image?: any;
   imageLandscape?: any;
-  color?: string | 'black';
+  color?: string;
   video?: {
       fields?: {
           file?: {
@@ -114,7 +114,7 @@ const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
     });
   }, [getTileWidth]);
 
-  //console.log("items", items);
+  console.log("items", items);
   return (
     <Box w="100%" zIndex={10}>
       <Box maxW="68rem" mx="auto" px={4}>

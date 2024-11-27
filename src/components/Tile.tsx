@@ -4,9 +4,9 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 // Create motion components
-const MotionHeading = motion(Heading as any);
-const MotionBox = motion(Box as any);
-const MotionText = motion(Text as any);
+const MotionHeading = motion.create(Heading as any);
+const MotionBox = motion.create(Box as any);
+const MotionText = motion.create(Text as any);
 
 
 type ImageProps = {
@@ -116,13 +116,24 @@ export default function Tile({fields, style, overlay}: TileProps) {
             }}
             transition={{ duration: 0.3, ease: "easeOut" }}
 
-            >
-                {(fields.size === 'Landscape' || fields.size === 'Wide' || fields.size === 'Video') && fields.imageLandscape !== undefined &&
-                 <ImageWrapper image={fields.imageLandscape} title={fields.title} />
-                }
-                {(fields.size === 'Portrait' || fields.size === 'Square' || fields.size === 'Small') && fields.image !== undefined &&
-                 <ImageWrapper image={fields.image} title={fields.title} />
-                }
+            >   
+                        {console.log("TADA", aspectRatio === '3/4', aspectRatio)}
+
+            {
+                fields.image?.fields ?
+                    aspectRatio === '3/4' || aspectRatio === '1/1' ?
+                    <ImageWrapper image={fields.image} title={fields.title} />
+                    : fields.imageLandscape?.fields ?<ImageWrapper image={fields.imageLandscape} title={fields.title} />
+                    : <ImageWrapper image={fields.image} title={fields.title} />
+                : fields.imageLandscape?.fields ?
+                    <ImageWrapper image={fields.imageLandscape} title={fields.title} />
+                : null
+            }
+                {/* {(fields.size === 'Landscape' || fields.size === 'Wide' || fields.size === 'Video') ?
+                 <ImageWrapper image={fields.imageLandscape ? fields.imageLandscape : fields.image} title={fields.title} />
+                :
+                 <ImageWrapper image={fields.image ? fields.image : fields.imageLandscape} title={fields.title} />} */}
+
                  { fields.video?.fields?.file?.url &&
                 <video
                     autoPlay

@@ -4,12 +4,35 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import Tile from './Tile';
 
 interface Fields {
-  color?: string;
   title: string;
-  description?: string;
-  video?: string;
-  image?: string;
-  slug?: any;
+  slug: string;
+  published: Date;
+  description?: string | null;
+
+  size?: string | 'portrait'; //portrait, landscape, s-square, square, wide, video
+  
+  image?: any;
+  imageLandscape?: any;
+  color?: string;
+  video?: {
+      fields?: {
+          file?: {
+              url?: string;
+          }
+      }
+  } | null;
+  videoHeader?: {
+      fields?: {  
+          file?: {
+              url?: string;
+          }
+      }
+  } | null;
+  excerpts?: string | null;
+  text?: string | null;
+  related?: any;
+
+
 }
 
 interface Item {
@@ -91,11 +114,11 @@ const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
     });
   }, [getTileWidth]);
 
-  //console.log("items", items);
+  console.log("items", items);
   return (
-    <Box w="100%">
+    <Box w="100%" zIndex={10}>
       <Box maxW="68rem" mx="auto" px={4}>
-        <HStack mb={8} w="100%" justifyContent="space-between">
+        <HStack mb={4} w="100%" justifyContent="space-between">
           {title && <Heading fontSize="1.685625rem">{title}</Heading>}
           <HStack spacing={2}>
             <IconButton 
@@ -142,13 +165,8 @@ const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
             return (
               <Tile
                 key={`rowItem-${i}`}
-                small={small}
-                color={item.fields.color || "blue"}
-                title={item.fields.title}
-                desc={item.fields.description || ""}
-                image={item.fields.image || null}
-                slug={item.fields.slug || null}
-              />
+                fields={item.fields}
+                />
             );
           })}
         </Box>

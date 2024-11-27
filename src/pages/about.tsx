@@ -62,7 +62,7 @@ const About: React.FC<{ data: ISection[] }> = ({ data }) => {
         width="100%"
         position="relative"
         overflow="hidden"
-        pt={45}
+        pt={"2rem"}
         color="white"
       >
       </Box>

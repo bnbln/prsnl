@@ -121,7 +121,7 @@ export default function Navbar({ data }: NavbarProps) {
           // pr={{ base: 0, xl: 4 }}
           // color={colorMode === 'dark' ? 'white' : '#080808'}
           px={{base: 0, md: 4}}
-          backgroundColor={colorMode === 'dark' ? "rgba(0,0,0,0.3)" : "rgba(249,249,249,0.3)"}
+          backgroundColor={colorMode === 'dark' ? "rgba(100,100,100,0.3)" : "rgba(249,249,249,0.3)"}
           borderRadius={{base: menu ? '0px' : '6px', md: '6px'}}
           marginTop={'12px'}
           backdropFilter="blur(24px)"
@@ -132,7 +132,7 @@ export default function Navbar({ data }: NavbarProps) {
           right={{base: "16px", md: "auto"}}
           zIndex={10}
         >
-          <MyLink href={"./"}>
+          <MyLink href={"./"} animationValue={"wiggle"}>
               <Icon width={22} height={22} color={colorMode === 'dark' ? 'white' : '#080808'} />
             </MyLink>
             <Show above="md">
@@ -147,6 +147,8 @@ export default function Navbar({ data }: NavbarProps) {
                           key={itemIndex}
                           position="relative"
                           className="link-text"
+                          minW={{base: "auto", md: "84px"}}
+                          textAlign={ "center" }
                             sx={{
                               position: 'relative',
                               transition: 'color 0.2s ease',

@@ -1,11 +1,12 @@
-import { useColorMode } from '@chakra-ui/react'
+import { useColorMode, useBreakpointValue, Show } from '@chakra-ui/react'
 import { useFrame } from '@react-three/fiber'
-import { Text3D, useGLTF } from '@react-three/drei'
+import { Text3D, useGLTF, Center } from '@react-three/drei'
 import { useRef, useEffect, useCallback } from 'react'
 import * as THREE from 'three'
 import { Group, MeshPhysicalMaterial } from 'three'
 import { animate, useSpring } from 'framer-motion'
 import { useControls } from 'leva'
+
 
 // Add type for the GLTF result
 type GLTFResult = {
@@ -152,16 +153,19 @@ const ScrollText: React.FC = () => {
       //batRef.current.position.y = Math.sin(Date.now() * 0.001) * 0.1 // Floating animation
     }
   })
-
+  const positionCode = useBreakpointValue({ base: 0, md: 0 });
+  console.log("positionCode", positionCode);
   return (
     <>
+
+    <Center>
       <group ref={textRef} onClick={toggleColorMode}>
         <group 
-          position={[0, -3, 0.5]}
+          position={[0, 0, 0.5]}
           ref={codeRef}
         >
           <Text3D
-            font="/fonts/helvetiker_regular.json"
+            font="/fonts/General Sans Extralight Regular.json"
             size={1.5}
             height={0.02}
             curveSegments={24}
@@ -170,8 +174,9 @@ const ScrollText: React.FC = () => {
             bevelSize={0.02}
             bevelOffset={0.03}
             bevelSegments={5}
+            
           >
-            & Code
+            & Developer
             <meshStandardMaterial 
               color={"#fff"} 
               metalness={0.85}
@@ -181,21 +186,22 @@ const ScrollText: React.FC = () => {
         </group>
 
         <group 
-          position={[0.28, -0.75, -0.5]} 
+          position={[0, -0.75, -0.5]} 
           ref={designRef}
         >
           <Text3D
-            font="/fonts/helvetiker_regular.json"
+            font="/fonts/General Sans Bold.json"
             size={1.5}
             height={0.02}
             curveSegments={24}
             bevelEnabled
             bevelThickness={0.02}
             bevelSize={0.02}
-            bevelOffset={0.03}
+            bevelOffset={0}
             bevelSegments={5}
+            
           >
-            Design
+             {useBreakpointValue({ base: 'Motion\nDesigner', lg: 'Motion Designer' })}
             <meshStandardMaterial 
               color={"#fff"} 
               metalness={0.85}
@@ -221,6 +227,7 @@ const ScrollText: React.FC = () => {
           />
         </mesh> */}
       </group>
+      </Center>
     </>
   )
 }

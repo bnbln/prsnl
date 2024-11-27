@@ -24,9 +24,9 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://benedikt.berlin';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/images/og-image.jpg`;
 
 const pageTransitionVariants = {
-  hidden: { opacity: 0, x: 0, y: -200 },
+  hidden: { opacity: 0, x: 0, y: 0 },
   enter: { opacity: 1, x: 0, y: 0 },
-  exit: { opacity: 0, x: 0, y: 100 },
+  exit: { opacity: 0, x: 0, y: 0 },
 };
 
 function MyApp({ Component, pageProps }: AppProps & { mappedData: any }) {
@@ -237,7 +237,7 @@ const menuData = [
                   "locale": "en-US"
               },
               "fields": {
-                  "title": "Motion Design",
+                  "title": "Design",
                   "url": "/design"
               }
           },
@@ -275,7 +275,7 @@ const menuData = [
                   "locale": "en-US"
               },
               "fields": {
-                  "title": "Developement",
+                  "title": "Code",
                   "url": "/developement"
               }
           }

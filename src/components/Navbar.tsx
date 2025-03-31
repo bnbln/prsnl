@@ -111,7 +111,7 @@ export default function Navbar({ data }: NavbarProps) {
   };
 
   return (
-    <header>
+    <header style={{zIndex: 1000, position: "fixed", top: 0, left: 0, width: "100%"}}>
       <nav>
         <Box
           className='nav-container'
@@ -132,8 +132,9 @@ export default function Navbar({ data }: NavbarProps) {
           right={{base: "16px", md: "auto"}}
           zIndex={10}
         >
-          <MyLink href={"./"} animationValue={"wiggle"}>
-              <Icon width={22} height={22} color={colorMode === 'dark' ? 'white' : '#080808'} />
+          <MyLink href={"./"} >
+              Benedikt Schnupp
+              {/* <Icon width={22} height={22} color={colorMode === 'dark' ? 'white' : '#080808'} /> */}
             </MyLink>
             <Show above="md">
               <Flex>

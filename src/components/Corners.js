@@ -20,8 +20,37 @@ const shuffle = (accent = 0) => [
   { color: 'white', roughness: 0.1 },
   { color: accents[accent], roughness: 0.1, accent: true },
   { color: accents[accent], roughness: 0.75, accent: true },
+  { color: accents[accent], roughness: 0.1, accent: true },
+  { color: '#444', roughness: 0.1 },
+  { color: 'white', roughness: 0.75 },
+  { color: accents[accent], roughness: 0.1, accent: true },
+  { color: '#444', roughness: 0.75 },
+  { color: 'white', roughness: 0.1 },
+  { color: accents[accent], roughness: 0.75, accent: true },
+  { color: '#444', roughness: 0.1 },
+  { color: 'white', roughness: 0.75 },
+  { color: accents[accent], roughness: 0.1, accent: true },
+  { color: '#444', roughness: 0.1 },
+  { color: '#444', roughness: 0.75 },
+  { color: '#444', roughness: 0.75 },
+  { color: 'white', roughness: 0.1 },
+  { color: 'white', roughness: 0.75 },
+  { color: 'white', roughness: 0.1 },
+  { color: accents[accent], roughness: 0.1, accent: true },
+  { color: accents[accent], roughness: 0.75, accent: true },
+  { color: accents[accent], roughness: 0.1, accent: true },
+  { color: '#444', roughness: 0.1 },
+  { color: 'white', roughness: 0.75 },
+  { color: accents[accent], roughness: 0.1, accent: true },
+  { color: '#444', roughness: 0.75 },
+  { color: 'white', roughness: 0.1 },
+  { color: accents[accent], roughness: 0.75, accent: true },
+  { color: '#444', roughness: 0.1 },
+  { color: 'white', roughness: 0.75 },
   { color: accents[accent], roughness: 0.1, accent: true }
 ]
+
+const modelPaths = ['/models/B.glb', '/models/E.glb', '/models/N.glb']
 
 export function Corners() {
   return (
@@ -54,11 +83,11 @@ function Scene(props) {
         stencil: false,
         powerPreference: "high-performance",
       }}
-    //   performance={{ 
-    //     min: 0.5,  // Minimum frame rate before quality reduction
-    //     max: 1,    // Maximum frame rate to maintain
-    //     debounce: 200 // Debounce time for quality adjustments
-    //   }}
+      performance={{ 
+        min: 0.5,  // Minimum frame rate before quality reduction
+        max: 1,    // Maximum frame rate to maintain
+        debounce: 100 // Debounce time for quality adjustments
+      }}
     camera={{ position: [0, 0, 15], fov: 17.5, near: 1, far: 20 }} 
     {...props}>
       <color attach="background" args={['#141622']} />
@@ -96,17 +125,29 @@ function Scene(props) {
 
 function Connector({ position, children, vec = new THREE.Vector3(), scale, r = THREE.MathUtils.randFloatSpread, accent, ...props }) {
   const api = useRef()
-  const pos = useMemo(() => position || [r(10), r(10), r(10)], [])
+  const pos = useMemo(() => position || [r(15), r(15), r(15)], [])
+  const modelIndex = useMemo(() => Math.floor(Math.random() * modelPaths.length), [])
+
   useFrame((state, delta) => {
     delta = Math.min(0.1, delta)
-    api.current?.applyImpulse(vec.copy(api.current.translation()).negate().multiplyScalar(0.2))
+    api.current?.applyImpulse(
+      vec.copy(api.current.translation()).negate().multiplyScalar(0.1)
+    )
   })
   return (
-    <RigidBody linearDamping={4} angularDamping={1} friction={0.1} position={pos} ref={api} colliders={false}>
-      <CuboidCollider args={[0.38, 1.27, 0.38]} />
-      <CuboidCollider args={[1.27, 0.38, 0.38]} />
-      <CuboidCollider args={[0.38, 0.38, 1.27]} />
-      {children ? children : <Model {...props} />}
+    <RigidBody 
+      linearDamping={5}
+      angularDamping={2}
+      friction={0.2}
+      restitution={0.2}
+      position={pos} 
+      ref={api} 
+      colliders={false}
+    >
+      <CuboidCollider args={[0.3, 0.7, 0.3]} />
+      <CuboidCollider args={[0.7, 0.3, 0.3]} />
+      <CuboidCollider args={[0.3, 0.3, 0.7]} />
+      {children ? children : <Model {...props} modelIndex={modelIndex} />}
       {accent && <pointLight intensity={4} distance={2.5} color={props.color} />}
     </RigidBody>
   )
@@ -124,15 +165,12 @@ function Pointer({ vec = new THREE.Vector3() }) {
   )
 }
 
-function Model({ children, color = 'white', roughness = 0, ...props }) {
+function Model({ children, color = 'white', roughness = 0, modelIndex, ...props }) {
   const ref = useRef()
-  const { nodes, materials } = useGLTF('/models/c-transformed.glb')
-  useFrame((state, delta) => {
-    easing.dampC(ref.current.material.color, color, 0.2, delta)
-  })
+  const { nodes } = useGLTF(modelPaths[modelIndex ?? 0])
   return (
-    <mesh ref={ref} castShadow receiveShadow scale={10} geometry={nodes.connector.geometry}>
-      <meshStandardMaterial metalness={0.2} roughness={roughness} map={materials.base.map} />
+    <mesh ref={ref} castShadow receiveShadow scale={1} geometry={nodes.Text.geometry}>
+      <meshStandardMaterial metalness={0.2} roughness={roughness} color={color} />
       {children}
     </mesh>
   )

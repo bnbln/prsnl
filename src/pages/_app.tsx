@@ -200,7 +200,7 @@ const menuData = [
               },
               "fields": {
                   "title": "Work",
-                  "url": "/work"
+                  "url": "#Work"
               }
           },
           {
@@ -238,7 +238,7 @@ const menuData = [
               },
               "fields": {
                   "title": "Design",
-                  "url": "/design"
+                  "url": "#Design"
               }
           },
           {
@@ -276,7 +276,7 @@ const menuData = [
               },
               "fields": {
                   "title": "Code",
-                  "url": "/developement"
+                  "url": "#Developement & UX"
               }
           }
       ]

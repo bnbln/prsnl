@@ -106,7 +106,7 @@ const Module: React.FC<ModuleProps> = ({ data }) => {
             backgroundSize: "cover",
             backgroundImage: `url(${data.fields.image.fields.file.url})`,
             borderRadius: "4px",
-            zIndex: -1,
+            zIndex: 0,
           }}
         >
           <Box w="100%" h="100%" bg={`linear-gradient(to top, ${colorMode === 'dark' ? '#080808' : '#f9f9f9'}, transparent)`} opacity={1} position={"absolute"} />

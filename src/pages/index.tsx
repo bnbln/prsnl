@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Box, Flex, Heading, VStack, useBreakpointValue, useColorMode, Text, Button, border } from '@chakra-ui/react';
 import Row from '../components/Row'
 import Module from '../components/Module'
+import ModuleHero from '../components/ModuleHero'
 import Article from '../components/Article'
 import Cloud from '../components/Cloud'
 import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
@@ -92,14 +93,16 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
 
   return (
     <>
-      <Corners />
-      <VStack zIndex={10} gap={useBreakpointValue({ base: "3rem", xl: "6rem" })} w="100%" mt={"-39vh"}>
+     
+      
+      <VStack zIndex={10} gap={useBreakpointValue({ base: "3rem", xl: "6rem" })} w="100%" background="black">
         {data[0] && data[0].position.map((section, index) => (
-          <React.Fragment key={index}>
+          <div key={index} style={{position: "relative", zIndex: 10, }}>
             {section.sys.contentType.sys.id === "sections" &&
               <Row title={section.fields.title} small={section.fields.display} items={section.fields.articles} />
             }
             {section.sys.contentType.sys.id === "module" && <Module data={section} />}
+            {section.sys.contentType.sys.id === "moduleHero" && <ModuleHero data={section} />}
             {section.sys.contentType.sys.id === "cluster" && <Cluster data={section} />}
             {section.sys.contentType.sys.id === "article" && <Article page={false} data={section.fields} />}
             {section.sys.contentType.sys.id === "cloud" && 
@@ -107,7 +110,7 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
                 data={section.fields} 
                 buttons={section.fields.buttons}
               />}
-          </React.Fragment>
+          </div>
         ))}
       </VStack>
     </>

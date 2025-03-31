@@ -116,7 +116,7 @@ const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
 
   console.log("items", items);
   return (
-    <Box w="100%" zIndex={10}>
+    <Box w="100%" zIndex={10} id={title}>
       <Box maxW="68rem" mx="auto" px={4}>
         <HStack mb={4} w="100%" justifyContent="space-between">
           {title && <Heading fontSize="1.685625rem">{title}</Heading>}

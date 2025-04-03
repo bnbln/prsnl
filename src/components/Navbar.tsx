@@ -122,7 +122,7 @@ export default function Navbar({ data }: NavbarProps) {
           // color={colorMode === 'dark' ? 'white' : '#080808'}
           px={{base: 0, md: 4}}
           backgroundColor={colorMode === 'dark' ? "rgba(100,100,100,0.3)" : "rgba(249,249,249,0.3)"}
-          borderRadius={{base: menu ? '0px' : '6px', md: '6px'}}
+          borderRadius={{base: menu ? '0px' : '6px', md: '50px'}}
           marginTop={'12px'}
           backdropFilter="blur(24px)"
           boxShadow={colorMode === 'dark' ? "rgb(0 0 0 / 55%) 9px 5px 50px 0" : "rgb(0 0 0 / 15%) 9px 5px 50px 0"}  
@@ -132,7 +132,7 @@ export default function Navbar({ data }: NavbarProps) {
           right={{base: "16px", md: "auto"}}
           zIndex={10}
         >
-          <MyLink href={"./"} >
+          <MyLink href={"./"} fontWeight={"900"} >
               Benedikt Schnupp
               {/* <Icon width={22} height={22} color={colorMode === 'dark' ? 'white' : '#080808'} /> */}
             </MyLink>

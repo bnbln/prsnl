@@ -97,7 +97,7 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
       
       <VStack zIndex={10} gap={useBreakpointValue({ base: "3rem", xl: "6rem" })} w="100%" background="black">
         {data[0] && data[0].position.map((section, index) => (
-          <div key={index} style={{position: "relative", zIndex: 10, }}>
+          <div key={index} style={{position: "relative", zIndex: 10, width: "100%"}}>
             {section.sys.contentType.sys.id === "sections" &&
               <Row title={section.fields.title} small={section.fields.display} items={section.fields.articles} />
             }

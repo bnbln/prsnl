@@ -12,6 +12,7 @@ import { useTransform } from 'framer-motion';
 import CustomVideoPlayer from './CustomVideoPlayer';
 import { FaPlay } from 'react-icons/fa';
 import { useState } from 'react';
+import ReactPlayer from 'react-player/lazy';
 
 console.log('Imported CustomVideoPlayer in Article.tsx:', CustomVideoPlayer);
 
@@ -325,6 +326,8 @@ const EmbeddedVideo: React.FC<{ node: Node, color?: string }> = ({ node, color }
   const [showPlayer, setShowPlayer] = useState(false);
   // --- Move hook calls to top level ---
   const containerWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' });
+  // --- Add mobile detection hook ---
+  const isMobile = useBreakpointValue({ base: true, md: false });
   // --- End hook calls ---
 
   const videoUrl = video?.fields?.file?.url;
@@ -364,7 +367,7 @@ const EmbeddedVideo: React.FC<{ node: Node, color?: string }> = ({ node, color }
         bg="black"
       >
         {!showPlayer && finalThumbnailUrl ? (
-          // Thumbnail part remains the same
+          // Thumbnail part
           <Box
              position="absolute"
              top="0"
@@ -387,6 +390,7 @@ const EmbeddedVideo: React.FC<{ node: Node, color?: string }> = ({ node, color }
                 objectFit: 'cover',
               }}
             />
+            {/* Overlay Flex - REMOVE backdropFilter from here */}
             <Flex
               position="absolute"
               top="0"
@@ -395,24 +399,54 @@ const EmbeddedVideo: React.FC<{ node: Node, color?: string }> = ({ node, color }
               bottom="0"
               align="center"
               justify="center"
-              bg="rgba(0, 0, 0, 0.4)"
+              // sx prop removed or cleared of backdropFilter
+              bg="rgba(0, 0, 0, 0.4)" // Keep a semi-transparent background for the overlay
               transition="background-color 0.2s ease"
-              _hover={{ bg: "rgba(0, 0, 0, 0.6)" }}
+              _hover={{ bg: "rgba(0, 0, 0, 0.6)" }} // Darken overlay on hover
             >
+              {/* Play Button Box - KEEP frosted glass style here */}
               <Box
-                 bg="rgba(0, 0, 0, 0.7)"
+                 // Apply the frosted glass style ONLY to the button's background
+                 sx={{
+                   backdropFilter: 'blur(5px)', // Blur only behind this element
+                   backgroundColor: 'rgba(0, 0, 0, 0.4)', // Semi-transparent background for the button
+                   WebkitBackdropFilter: 'blur(5px)', // Safari support
+                 }}
                  borderRadius="full"
-                 p={4}
+                 p={5} // Keep padding
                  display="inline-flex"
                  alignItems="center"
                  justifyContent="center"
+                 // Add transition for hover effect on the button itself
+                 transition="background-color 0.2s ease"
+                 _hover={{
+                   backgroundColor: 'rgba(0, 0, 0, 0.6)', // Darken button slightly on hover
+                 }}
               >
-                <FaPlay size="3em" color="white" />
+                <FaPlay size="2em" color="white" style={{ marginLeft: '3px' }} />
               </Box>
             </Flex>
           </Box>
         ) : finalVideoUrl ? (
-          <CustomVideoPlayer videoUrl={finalVideoUrl} color={color} />
+          // --- Conditional Player Rendering ---
+          isMobile ? (
+            // Mobile: Use ReactPlayer with native controls
+            <ReactPlayer
+              url={finalVideoUrl}
+              controls={true}
+              playing={true} // Native player starts immediately
+              width="100%"
+              height="100%"
+              playsinline
+            />
+          ) : (
+            // Desktop: Use CustomVideoPlayer and tell it to start playing
+            <CustomVideoPlayer
+              videoUrl={finalVideoUrl}
+              color={color}
+              startPlaying={true} // Pass the new prop here
+            />
+          )
         ) : (
            // Fallback remains the same
            <Flex position="absolute" top="0" left="0" right="0" bottom="0" align="center" justify="center">

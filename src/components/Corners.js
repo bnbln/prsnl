@@ -125,7 +125,7 @@ function Scene(props) {
 
 function Connector({ position, children, vec = new THREE.Vector3(), scale, r = THREE.MathUtils.randFloatSpread, accent, ...props }) {
   const api = useRef()
-  const pos = useMemo(() => position || [r(15), r(15), r(15)], [])
+  const pos = useMemo(() => position || [r(15), r(15), r(15)], [position, r])
   const modelIndex = useMemo(() => Math.floor(Math.random() * modelPaths.length), [])
 
   useFrame((state, delta) => {
@@ -168,8 +168,28 @@ function Pointer({ vec = new THREE.Vector3() }) {
 function Model({ children, color = 'white', roughness = 0, modelIndex, ...props }) {
   const ref = useRef()
   const { nodes } = useGLTF(modelPaths[modelIndex ?? 0])
+  const geometry = useMemo(() => {
+    const shape = new THREE.Shape();
+    shape.moveTo(0, roughness);
+    shape.absarc(roughness, roughness, roughness, Math.PI, Math.PI / 2, true);
+    shape.absarc(1 - roughness, roughness, roughness, Math.PI / 2, 0, true);
+    shape.absarc(1 - roughness, 1 - roughness, roughness, 0, -Math.PI / 2, true);
+    shape.absarc(roughness, 1 - roughness, roughness, -Math.PI / 2, -Math.PI, true);
+    shape.closePath();
+
+    const extrudeSettings = {
+      steps: 1,
+      depth: 0.01,
+      bevelEnabled: false,
+    };
+
+    return new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  }, [roughness]);
+
+  const memoizedPosition = useMemo(() => props.position || [0, 0, 0], [props.position]);
+
   return (
-    <mesh ref={ref} castShadow receiveShadow scale={1} geometry={nodes.Text.geometry}>
+    <mesh ref={ref} castShadow receiveShadow scale={1} geometry={geometry} position={memoizedPosition}>
       <meshStandardMaterial metalness={0.2} roughness={roughness} color={color} />
       {children}
     </mesh>

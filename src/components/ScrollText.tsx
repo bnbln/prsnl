@@ -4,8 +4,10 @@ import { Text3D, useGLTF, Center } from '@react-three/drei'
 import { useRef, useEffect, useCallback } from 'react'
 import * as THREE from 'three'
 import { Group, MeshPhysicalMaterial } from 'three'
-import { animate, useSpring } from 'framer-motion'
+import { animate, useSpring, useScroll } from 'framer-motion'
 import { useControls } from 'leva'
+import { motion } from 'framer-motion'
+import { Box } from '@chakra-ui/react'
 
 
 // Add type for the GLTF result
@@ -29,43 +31,34 @@ const ScrollText: React.FC = () => {
   const { nodes } = useGLTF('/models/bat.gltf') as unknown as GLTFResult
 
   // Create spring animations for each text element
-  const codeSpring = useSpring(-1.3, { damping: 20, stiffness: 20, mass: 20, velocity: 0.2 })
-  const designSpring = useSpring(1, { damping: 20, stiffness: 20, mass: 20, velocity: 0.2 })
-  const positionDesignSpring = useSpring(-20, { damping: 20, stiffness: 80, mass: 5, velocity: -1 })
-  const positionCodeSpring = useSpring(-20, { damping: 20, stiffness: 80, mass: 5, velocity: -1 })
-  const scaleSpring = useSpring(1, { damping: 20, stiffness: 20, mass: 20, velocity: 2 })    
+  const codeSpring = useSpring(0, { stiffness: 100, damping: 30 })
+  const designSpring = useSpring(0, { stiffness: 100, damping: 30 })
+  const positionDesignSpring = useSpring(0, { stiffness: 100, damping: 30 })
+  const positionCodeSpring = useSpring(0, { stiffness: 100, damping: 30 })
+  const scaleSpring = useSpring(1, { stiffness: 100, damping: 30 })    
+
+  const { scrollYProgress } = useScroll();
 
   useEffect(() => {
-    // Stagger the animations
-    const codeAnimation = animate(codeSpring, 0, {
-      duration: 1,
-      delay: 0
-    })
-    
-    const designAnimation = animate(designSpring, 0, {
-      duration: 1,
-      delay: 0
-    })
-    const positionAnimationDesign = animate(positionDesignSpring, 2.85, {
-      duration: 1,
-      delay: 0
-    })
-    const positionAnimationCode = animate(positionCodeSpring, 1, {
-        duration: 1,
-        delay: 0.1
-      })
-    const scaleAnimation = animate(scaleSpring, 1, {
-        duration: 1,
-        delay: 0
-      })
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      // Example logic - adjust based on your actual animation needs
+      const designTarget = latest > 0.3 && latest < 0.7 ? 1 : 0; // Fade in/out design
+      const codeTarget = latest > 0.6 ? 1 : 0; // Fade in code later
+      const scaleTarget = latest > 0.2 && latest < 0.8 ? 1.1 : 1; // Scale up/down
+      const designYTarget = latest > 0.4 ? -50 : 0; // Move design up
+      const codeYTarget = latest > 0.7 ? 50 : 0; // Move code down
+
+      designSpring.set(designTarget);
+      codeSpring.set(codeTarget);
+      scaleSpring.set(scaleTarget);
+      positionDesignSpring.set(designYTarget);
+      positionCodeSpring.set(codeYTarget);
+    });
+
     return () => {
-      codeAnimation.stop()
-      designAnimation.stop()
-      positionAnimationDesign.stop()
-      positionAnimationCode.stop()
-      scaleAnimation.stop()
-    }
-  }, [])
+      unsubscribe(); // Cleanup listener
+    };
+  }, [scrollYProgress, designSpring, codeSpring, scaleSpring, positionDesignSpring, positionCodeSpring]); // Add all dependencies used inside
 
   // Target values for smooth interpolation
   const targetRotation = useRef(0)

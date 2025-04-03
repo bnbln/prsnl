@@ -186,8 +186,9 @@ const ModuleHero: React.FC<ModuleHeroProps> = ({ data }) => {
         // Ensure the item structure matches ModuleItem expectations
         // If 'item' already fits ModuleItem structure, push directly
         // Otherwise, adapt it like the articleSlide creation
-         const module = item.fields as SlideItemFields; // Cast or map fields
-         slides.push({ fields: module }); // Push module data wrapped in ModuleItem structure
+         // Rename 'module' to avoid conflict with the built-in 'module' object
+         const moduleFields = item.fields as SlideItemFields; // Rename variable
+         slides.push({ fields: moduleFields }); // Use the renamed variable
       }
       // Add handling for other potential item types if necessary
     });
@@ -196,17 +197,14 @@ const ModuleHero: React.FC<ModuleHeroProps> = ({ data }) => {
   const extendedSlides = slides.length > 0 ? [slides[slides.length - 1], ...slides, slides[0]] : [];
   const [currentIndex, setCurrentIndex] = useState(1);
   const [transitionEnabled, setTransitionEnabled] = useState(true);
-
-  // Add a state to track if the initial positioning is done
   const [isInitialPositionSet, setIsInitialPositionSet] = useState(false);
 
   useEffect(() => {
     // Set the initial position without transition after the component mounts
-    // This ensures the carousel starts at the correct slide immediately
-    setCurrentIndex(1);
+    // The initial index is already set by useState(1) above.
+    // setCurrentIndex(1); // Removed redundant state update
     setTransitionEnabled(false); // Disable transition for the very first positioning
     // Use a timeout to re-enable transitions shortly after the initial positioning
-    // Adjust the timeout duration if needed, but a small delay is usually sufficient
     const timer = setTimeout(() => {
         setTransitionEnabled(true);
         setIsInitialPositionSet(true); // Mark initial positioning as done

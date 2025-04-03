@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Flex, Heading, Text, useBreakpointValue, Link, Button, useColorMode, Spinner, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, Heading, Text, useBreakpointValue, Link, Button, useColorMode, Spinner, useColorModeValue, FlexProps } from '@chakra-ui/react';
 import { documentToReactComponents, Options } from '@contentful/rich-text-react-renderer';
 import { BLOCKS, INLINES, Block, Document, Inline, Node } from '@contentful/rich-text-types';
 import Image from 'next/image';
@@ -148,18 +148,23 @@ const EmbeddedAsset: React.FC<{ node: Node }> = ({ node }) => {
 // Add a Module component to render embedded modules
 const Module: React.FC<{ node: Node }> = ({ node }) => {
   const { title, subtitle, image } = node.data.target.fields as ModuleFields;
-  
+  // --- Move hook calls to top level ---
+  const containerWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' });
+  const innerFlexWidth = useBreakpointValue({ base: '100%', md: '80%' });
+  const paddingX = useBreakpointValue({ base: 4, sm: 12, xl: 20 });
+  // --- End hook calls ---
+
   return (
     <Flex
       justifyContent="center"
-      w={useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' })}
+      w={containerWidth} // Use variable
       mx="auto"
       my={8}
     >
       <Flex
         direction="column"
-        w={useBreakpointValue({ base: '100%', md: '80%' })}
-        px={useBreakpointValue({ base: 4, sm: 12, xl: 20 })}
+        w={innerFlexWidth} // Use variable
+        px={paddingX} // Use variable
         alignItems="center"
         borderRadius="md"
         borderWidth="1px"
@@ -198,22 +203,31 @@ const Module: React.FC<{ node: Node }> = ({ node }) => {
 const LinkedArticle: React.FC<{ node: Node }> = ({ node }) => {
   const fields = node.data.target.fields as LinkedArticleFields;
   const formattedDate = fields.published ? formatDate(fields.published, 'en-US') : null;
-  
-  // Determine which image to use
-  const imageToUse = fields.usePortraitImage ? 
-    fields.image : 
+
+  // Determine which image to use (Define this *before* using it in hooks)
+  const imageToUse = fields.usePortraitImage ?
+    fields.image :
     (fields.imageLandscape || fields.image);
-  
+
+  // --- Move hook calls to top level ---
+  const containerWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' });
+  const innerFlexWidth = useBreakpointValue({ base: '100%', md: '80%' });
+  const imageBoxWidth = useBreakpointValue({ base: '100%', md: '40%' });
+  const imageBoxHeight = useBreakpointValue({ base: '200px', md: 'auto' });
+  const contentFlexWidth = useBreakpointValue({ base: '100%', md: imageToUse ? '60%' : '100%' });
+  const cardDirection = useBreakpointValue<'column' | 'row'>({ base: 'column', md: 'row' });
+  // --- End hook calls ---
+
   return (
     <Flex
       justifyContent="center"
-      w={useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' })}
+      w={containerWidth} // Use variable
       mx="auto"
       my={8}
     >
       <Flex
         direction="column"
-        w={useBreakpointValue({ base: '100%', md: '80%' })}
+        w={innerFlexWidth} // Use variable
         borderRadius="md"
         overflow="hidden"
         borderWidth="1px"
@@ -229,12 +243,12 @@ const LinkedArticle: React.FC<{ node: Node }> = ({ node }) => {
       >
         <Link href={`/${fields.slug}`} style={{ textDecoration: 'none' }}>
           {/* Article Card Content */}
-          <Flex direction={{ base: 'column', md: 'row' }} w="100%">
+          <Flex direction={cardDirection} w="100%">
             {/* Image Section */}
             {imageToUse && (
               <Box 
-                w={{ base: '100%', md: '40%' }} 
-                h={{ base: '200px', md: 'auto' }}
+                w={imageBoxWidth} // Use variable
+                h={imageBoxHeight} // Use variable
                 position="relative"
               >
                 <Image
@@ -252,7 +266,7 @@ const LinkedArticle: React.FC<{ node: Node }> = ({ node }) => {
             <Flex 
               direction="column" 
               p={6} 
-              w={{ base: '100%', md: imageToUse ? '60%' : '100%' }}
+              w={contentFlexWidth} // Use variable
               justifyContent="space-between"
             >
               {/* Top content */}
@@ -309,6 +323,9 @@ const EmbeddedVideo: React.FC<{ node: Node, color?: string }> = ({ node, color }
   const fields = node.data.target.fields as VideoEntryFields;
   const { title, video, thumbnail } = fields;
   const [showPlayer, setShowPlayer] = useState(false);
+  // --- Move hook calls to top level ---
+  const containerWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' });
+  // --- End hook calls ---
 
   const videoUrl = video?.fields?.file?.url;
   const thumbnailUrl = thumbnail?.fields?.file?.url;
@@ -329,7 +346,7 @@ const EmbeddedVideo: React.FC<{ node: Node, color?: string }> = ({ node, color }
   return (
     <Flex
       justifyContent="center"
-      w={useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' })}
+      w={containerWidth} // Use variable
       mx="auto"
       my={8}
       direction="column"
@@ -443,29 +460,39 @@ const EmbeddedEntry: React.FC<{ node: Node }> = ({ node }) => {
   return null; // Or render a placeholder/error message
 };
 
-const Wrapper: React.FC<{ node: Node, children: React.ReactNode }> = ({ node, children }) => {
+// Update Wrapper to accept props instead of using hooks directly
+interface WrapperProps {
+  node: Node;
+  children: React.ReactNode;
+}
+
+// Call hooks inside the component
+const Wrapper: React.FC<WrapperProps> = ({ node, children }) => {
+  // --- Move hook calls to top level ---
+  const containerWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' });
+  const innerFlexWidth = useBreakpointValue({ base: '100%', md: '100%' }); // Or adjust as needed
+  const textWidthValue = useBreakpointValue({ base: '100%', md: '500px' }); // Calculate textWidth here
+  // --- End hook calls ---
+
   const isEmbeddedAsset = node.nodeType === 'embedded-asset-block';
-  const isVideo = isEmbeddedAsset && 
+  const isVideo = isEmbeddedAsset &&
   node.data?.target?.fields?.file?.contentType?.includes('video');
 
-  const padding = useBreakpointValue({ base: 4, sm: 12, xl: 20 });
-  const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
-  
-  
   return(
     <Flex
         justifyContent="center"
-        w={useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' })}
+        w={containerWidth} // Use variable
         mx="auto"
       >
         <Flex
           gap={4}
           direction="column"
-          w={useBreakpointValue({ base: '100%', md: '100%' })}
+          w={innerFlexWidth} // Use variable
           alignItems={"center"}
         >
+          {/* Use calculated textWidthValue */}
           {isVideo ? (children) : (
-          <Box className='text' w={textWidth}>
+          <Box className='text' w={textWidthValue}> {/* Use variable */}
             {children}
           </Box>
           )}
@@ -500,7 +527,17 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
 
     const formattedDate = data.published ? formatDate(data.published, 'en-US') : null;
 
+    // --- Move Hook Calls to Top Level ---
     const padding = useBreakpointValue({ base: 4, sm: 12, xl: 20 });
+    const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
+    const containerWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' });
+    const headerInnerFlexWidth = useBreakpointValue({ base: '100%', md: '80%' });
+    // Use FlexProps['direction'] for type safety if needed, or keep as is if simpler
+    const headerDirection = useBreakpointValue<'column' | 'row'>({ base: 'column', md: 'row' });
+    const mainContentWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' }); // For main content section
+    const teaserInnerFlexWidth = useBreakpointValue({ base: '100%', md: '80%' }); // Specific for teaser if different, else reuse headerInnerFlexWidth
+    const teaserDirection = useBreakpointValue<'column' | 'row'>({ base: 'column', md: 'row' }); // Specific for teaser if different, else reuse headerDirection
+
     const { scrollY } = useScroll(); // Keep hooks for potential re-introduction
     const y1 = useTransform(scrollY, [0, 800], [0, 200]);
 
@@ -513,9 +550,12 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
 
     const options: Options = {
       renderNode: {
+        // Remove props passed to Wrapper
         [BLOCKS.PARAGRAPH]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Text pb={4}>{children}</Text></Wrapper>,
         [INLINES.HYPERLINK]: (node: Node, children: React.ReactNode) => <Link color='teal' href={(node as Inline).data.uri}>{children}</Link>,
+        // Remove props passed to Wrapper
         [BLOCKS.HEADING_1]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Heading fontWeight={200} size="lg" pb={4}>{children}</Heading></Wrapper>,
+        // Remove props passed to Wrapper
         [BLOCKS.HEADING_2]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Heading size="md" pt={4} pb={2}>{children}</Heading></Wrapper>,
         [INLINES.EMBEDDED_ENTRY]: (node: Node) => (
           <Link color="blue" href={`./${(node as Inline).data.target.fields.slug}`}>
@@ -523,13 +563,24 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
           </Link>
         ),
         [BLOCKS.EMBEDDED_ENTRY]: (node: Node) => {
-          console.log("Article Options - Using color:", data.color);
-          if (node.data.target.sys.contentType.sys.id === 'video') {
-            console.log("Article Options - Rendering EmbeddedVideo with color:", color);
+          // console.log("Article Options - Using color:", data.color); // Keep for debugging if needed
+          const contentTypeId = node.data.target.sys.contentType?.sys?.id;
+
+          if (contentTypeId === 'video') {
+            // console.log("Article Options - Rendering EmbeddedVideo with color:", data.color); // Keep for debugging
+            // Pass the color prop correctly here
             return <EmbeddedVideo node={node} color={data.color} />;
           }
-          return null;
+          // Handle other embedded entry types if necessary, or return null/placeholder
+          // Example: Check for 'module' or 'article' if they can be embedded this way too
+          // if (contentTypeId === 'module') { return <Module node={node} />; }
+          // if (contentTypeId === 'article') { return <LinkedArticle node={node} />; }
+
+          // Fallback for unhandled embedded entries within the main text body
+          console.warn("Unhandled embedded entry type in main text:", contentTypeId, node.data.target.fields);
+          return <EmbeddedEntry node={node} />; // Use the generic EmbeddedEntry handler
         },
+        // Remove props passed to Wrapper
         [BLOCKS.EMBEDDED_ASSET]: (node: Node) => <Wrapper node={node}><EmbeddedAsset node={node} /></Wrapper>,
       },
       renderText: (text: string) => text.split('\n').flatMap((text, i) => [i > 0 && <br key={i} />, text]),
@@ -598,8 +649,8 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                       direction="column"
                       alignItems="center"
                       justifyContent="flex-end"
-                      px={padding}
-                      pb={padding}
+                      px={padding ?? 4}
+                      pb={padding ?? 4}
                       pt={20}
                       background="linear-gradient(0deg, #000000c0 40%, transparent)"
                       zIndex={10} // Ensure overlay is on top
@@ -623,10 +674,10 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                     {/* Original Title Area Flex */}
                     <Flex
                       justifyContent="center"
-                      direction={useBreakpointValue({ base: 'column', md: 'row' })}
+                      direction={headerDirection ?? 'column'}
                       overflow="hidden"
                       position="relative"
-                      w={useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' })}
+                      w={containerWidth ?? 'calc(100vw - 26px)'}
                       mx="auto"
                       borderRadius={4.5}
                       pt={page ? "6rem" : 0 }
@@ -634,8 +685,8 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                       <Flex
                         gap={4}
                         direction="column"
-                        w={useBreakpointValue({ base: '100%', md: '80%' })}
-                        px={padding}
+                        w={headerInnerFlexWidth ?? '100%'}
+                        px={padding ?? 4}
                         pos={"relative"}
                         alignItems={"center"}
                       >
@@ -651,7 +702,7 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
 
                     {/* Original Image Flex */}
                     {data.image &&
-                      <Flex justifyContent="center" mx="auto" w={useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' })}>
+                      <Flex justifyContent="center" mx="auto" w={containerWidth ?? 'calc(100vw - 26px)'}> 
                         <Image
                           src={data.image.fields.file.url.startsWith('//') ? `https:${data.image.fields.file.url}` : data.image.fields.file.url}
                           alt={data.image.fields.title}
@@ -681,7 +732,7 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                <Flex
                   justifyContent="center"
                   direction="column"
-                  w={useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' })}
+                  w={mainContentWidth ?? 'calc(100vw - 26px)'}
                   mx="auto"
                >
                   {documentToReactComponents(data.text, options)}
@@ -700,10 +751,10 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
             {/* Original Teaser Structure */}
             <Flex
               justifyContent="center"
-              direction={useBreakpointValue({ base: 'column', md: 'row' })}
+              direction={teaserDirection ?? 'column'}
               overflow="hidden"
               position="relative"
-              w={useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' })}
+              w={containerWidth ?? 'calc(100vw - 26px)'}
               mx="auto"
               mb={"2rem"}
               borderRadius={4.5}
@@ -711,8 +762,8 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
               <Flex
                 gap={4}
                 direction="column"
-                w={useBreakpointValue({ base: '100%', md: '80%' })}
-                px={padding}
+                w={teaserInnerFlexWidth ?? '100%'}
+                px={padding ?? 4}
                 maxHeight={"650px"}
                 pos={"relative"}
                 alignItems={"center"}
@@ -734,7 +785,7 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
 
             {/* Teaser Image */}
             {data.image &&
-              <Flex justifyContent="center" mx="auto" w={useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' })}>
+              <Flex justifyContent="center" mx="auto" w={containerWidth ?? 'calc(100vw - 26px)'}>
                 <Image
                   src={data.image.fields.file.url.startsWith('//') ? `https:${data.image.fields.file.url}` : data.image.fields.file.url}
                   alt={data.image.fields.title}

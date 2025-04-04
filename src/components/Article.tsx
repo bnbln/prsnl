@@ -145,6 +145,35 @@ const EmbeddedAsset: React.FC<{ node: Node }> = ({ node }) => {
     </Box>
   );
 };
+// New ImageRow component for rendering image row embedded entry
+const ImageRow: React.FC<{ node: Node }> = ({ node }) => {
+  const files = node.data.target.fields.files;
+  if (!files || files.length === 0) return null;
+  const count = files.length;
+
+  return (
+    <Flex direction="row" justify="space-between" position="relative" w="100%" mb={4}>
+      {files.map((file: any, index: number) => {
+        const url = file.fields.file.url.startsWith('//')
+          ? `https:${file.fields.file.url}`
+          : file.fields.file.url;
+        const title = file.fields.title;
+        const imageDetails = file.fields.file.details?.image;
+        const widthPercentage = `${100 / count}%`;
+        return (
+            <Image
+              key={index}
+              src={url}
+              alt={title}
+              width={imageDetails?.width || 500}
+              height={imageDetails?.height || 500}
+              style={{ width: "calc(" + widthPercentage + " - 6px)", height: "auto", borderRadius: "4.5px" }}
+            />
+        );
+      })}
+    </Flex>
+  );
+};
 
 // Add a Module component to render embedded modules
 const Module: React.FC<{ node: Node }> = ({ node }) => {
@@ -597,22 +626,17 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
           </Link>
         ),
         [BLOCKS.EMBEDDED_ENTRY]: (node: Node) => {
-          // console.log("Article Options - Using color:", data.color); // Keep for debugging if needed
           const contentTypeId = node.data.target.sys.contentType?.sys?.id;
 
           if (contentTypeId === 'video') {
-            // console.log("Article Options - Rendering EmbeddedVideo with color:", data.color); // Keep for debugging
-            // Pass the color prop correctly here
             return <EmbeddedVideo node={node} color={data.color} />;
           }
-          // Handle other embedded entry types if necessary, or return null/placeholder
-          // Example: Check for 'module' or 'article' if they can be embedded this way too
-          // if (contentTypeId === 'module') { return <Module node={node} />; }
-          // if (contentTypeId === 'article') { return <LinkedArticle node={node} />; }
+          if (contentTypeId === 'imageRow') {
+            return <ImageRow node={node} />;
+          }
 
-          // Fallback for unhandled embedded entries within the main text body
           console.warn("Unhandled embedded entry type in main text:", contentTypeId, node.data.target.fields);
-          return <EmbeddedEntry node={node} />; // Use the generic EmbeddedEntry handler
+          return <EmbeddedEntry node={node} />;
         },
         // Remove props passed to Wrapper
         [BLOCKS.EMBEDDED_ASSET]: (node: Node) => <Wrapper node={node}><EmbeddedAsset node={node} /></Wrapper>,

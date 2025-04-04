@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { Box, Flex, Show, Hide, useColorMode, Button } from '@chakra-ui/react';
 import { CloseIcon, HamburgerIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
 import MyLink from './MyLink';
@@ -77,10 +77,86 @@ export default function Navbar({ data }: NavbarProps) {
   const { colorMode, toggleColorMode } = useColorMode();
   const backgroundColor = colorMode === 'dark' ? 'rgba(8, 8, 8, 0.8)' : 'rgba(249,249,249,0.8)';
   const router = useRouter();
+  
+  const [activeSection, setActiveSection] = useState("/");
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const navContainerRef = useRef<HTMLDivElement>(null);
+  const activeLinkRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    //(data);
-  }, [data]);
+    const handleScroll = () => {
+      let determinedSection = "/"; // Default to Home
+
+      const mainNavItems = data.find(navItem => navItem.title === "Main")?.items || [];
+      // Filter for items that link to page sections
+      const sectionItems = mainNavItems.filter(item => item.fields.url.startsWith('#'));
+      // Reverse the order to check from bottom-most section up
+      const reversedSectionItems = [...sectionItems].reverse();
+
+      const threshold = 150; // Pixels from top of viewport to trigger activation
+
+      for (const menuItem of reversedSectionItems) {
+        // Decode URI component to handle IDs with spaces or special characters
+        const id = decodeURIComponent(menuItem.fields.url.replace('#', ''));
+        const section = document.getElementById(id);
+
+        if (section) {
+          const rect = section.getBoundingClientRect();
+          // If the top of the section is at or above the threshold
+          if (rect.top <= threshold) {
+            determinedSection = menuItem.fields.url;
+            break; // Found the highest section meeting the criteria, stop checking
+          }
+        } else {
+          // Optional: Log a warning if an element ID is not found
+          // console.warn(`Navbar: Element with ID '${id}' not found for URL '${menuItem.fields.url}'`);
+        }
+      }
+
+      // Update the activeSection state only if it has changed
+      setActiveSection(currentActiveSection => {
+        if (determinedSection !== currentActiveSection) {
+          return determinedSection;
+        }
+        return currentActiveSection; // No change needed
+      });
+    };
+
+    // Add scroll listener
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Run initially to set the correct section on load
+    handleScroll();
+
+    // Cleanup listener on component unmount
+    return () => window.removeEventListener('scroll', handleScroll);
+
+  }, [data]); // Dependency array only includes data
+
+  // Update indicator position when activeSection changes or on resize
+  useLayoutEffect(() => {
+    const updateIndicator = () => {
+      if (activeLinkRef.current && navContainerRef.current) {
+        const containerRect = navContainerRef.current.getBoundingClientRect();
+        const activeRect = activeLinkRef.current.getBoundingClientRect();
+        setIndicatorStyle({
+          left: activeRect.left - containerRect.left,
+          width: activeRect.width
+        });
+      } else {
+         // Hide indicator if no ref is found (e.g., initial render)
+         setIndicatorStyle({ left: 0, width: 0 });
+      }
+    };
+
+    // Use setTimeout to ensure refs are updated after re-render caused by activeSection change
+    const timerId = setTimeout(updateIndicator, 0);
+
+    window.addEventListener('resize', updateIndicator);
+    return () => {
+      clearTimeout(timerId);
+      window.removeEventListener('resize', updateIndicator);
+    }
+  }, [activeSection]); // Re-run when activeSection changes
 
   useEffect(() => {
     if (menu) {
@@ -98,31 +174,14 @@ export default function Navbar({ data }: NavbarProps) {
     setMenu(false);
   };
 
-  // Animation variants for menu items
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: (index: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: index * 0.3,
-      },
-    }),
-  };
-
   return (
     <header style={{zIndex: 1000, position: "fixed", top: 0, left: 0, width: "100%"}}>
       <nav>
         <Box
           className='nav-container'
-          // maxW="68rem"
-          // mx="auto"
-          // px={4}
-          // pr={{ base: 0, xl: 4 }}
-          // color={colorMode === 'dark' ? 'white' : '#080808'}
-          px={{base: 0, md: 4}}
+          px={4}
           backgroundColor={colorMode === 'dark' ? "rgba(100,100,100,0.3)" : "rgba(249,249,249,0.3)"}
-          borderRadius={{base: menu ? '0px' : '6px', md: '50px'}}
+          borderRadius={{base: menu ? '50px' : '50px', md: '50px'}}
           marginTop={'12px'}
           backdropFilter="blur(24px)"
           boxShadow={colorMode === 'dark' ? "rgb(0 0 0 / 55%) 9px 5px 50px 0" : "rgb(0 0 0 / 15%) 9px 5px 50px 0"}  
@@ -134,71 +193,63 @@ export default function Navbar({ data }: NavbarProps) {
         >
           <MyLink href={"./"} fontWeight={"900"} >
               Benedikt Schnupp
-              {/* <Icon width={22} height={22} color={colorMode === 'dark' ? 'white' : '#080808'} /> */}
             </MyLink>
             <Show above="md">
-              <Flex>
-                {data.map((navItem, navIndex) => (
-                  <React.Fragment key={navIndex}>
-                    {navItem.title === "Main" && navItem.items.map((menuItem, itemIndex) => {
-                      const isActive = router.asPath === menuItem.fields.url;
-                      
-                      return (
-                        <Box
-                          key={itemIndex}
-                          position="relative"
-                          className="link-text"
-                          minW={{base: "auto", md: "84px"}}
-                          textAlign={ "center" }
+              <Box position="relative" ref={navContainerRef}>
+                <motion.div
+                  style={{
+                    position: 'absolute',
+                    backgroundColor: 'white',
+                    borderRadius: '50px',
+                    transition: 'all 0.3s ease',
+                    top: "15%",
+                    left: indicatorStyle.left,
+                    width: indicatorStyle.width,
+                    height: '70%',
+                    zIndex: 0
+                  }}
+                />
+                <Flex position="relative" zIndex={1}>
+                  {data.map((navItem, navIndex) => (
+                    <React.Fragment key={navIndex}>
+                      {navItem.title === "Main" && navItem.items.map((menuItem, itemIndex) => {
+                        const isActive = activeSection === menuItem.fields.url;
+                        return (
+                          <Box
+                            key={itemIndex}
+                            ref={isActive ? activeLinkRef : null}
+                            position="relative"
+                            className="link-text"
+                            minW={{base: "auto", md: "90px"}}
+                            textAlign="center"
                             sx={{
                               position: 'relative',
                               transition: 'color 0.2s ease',
                               fontWeight: isActive ? '900' : 'normal',
-                              color: isActive ? colorMode === 'dark' ? 'white' : '#080808' : 'inherit',
+                              color: isActive ? (colorMode === 'dark' ? 'white' : '#080808') : 'inherit',
+                              padding: '4px 8px',
+                              borderRadius: '50px'
                             }}
-                          _hover={{
-                            '& .link-text': {
+                            _hover={{
                               color: colorMode === 'dark' ? 'white' : '#080808',
                               fontWeight: '900'
-                            },
-                            '& .link-underline': {
-                              width: '100%',
-                              opacity: 0.5,
-                            }
-                          }}
-                        >
-                          <MyLink 
-                            href={menuItem.fields.url}
-                            fontWeight={isActive ? '900' : 'normal'}
+                            }}
                           >
-                            {menuItem.fields.title}
-                          </MyLink>
-                          <motion.div
-                            className="link-underline"
-                            style={{
-                              position: 'absolute',
-                              bottom: -2,
-                              left: 0,
-                              height: '2px',
-                              width: isActive ? '100%' : '0%',
-                              backgroundColor: colorMode === 'dark' ? 'white' : '#080808',
-                              opacity: isActive ? 1 : 0,
-                              transition: 'width 0.2s ease, opacity 0.2s ease',
-                            }}
-                            initial={false}
-                            animate={{
-                              width: isActive ? '100%' : '0%',
-                              opacity: isActive ? 1 : 0,
-                            }}
-                          />
-                        </Box>
-                      );
-                    })}
-                  </React.Fragment>
-                ))}
-              </Flex>
+                            <MyLink 
+                              href={menuItem.fields.url}
+                              fontWeight={isActive ? '900' : 'normal'}
+                              color={isActive ? 'black' : 'inherit'}
+                            >
+                              {menuItem.fields.title}
+                            </MyLink>
+                          </Box>
+                        );
+                      })}
+                    </React.Fragment>
+                  ))}
+                </Flex>
+              </Box>
             </Show>
-
 
               <Hide above="md">
                 <MenuToggle 
@@ -234,10 +285,10 @@ export default function Navbar({ data }: NavbarProps) {
                     {navItem.items.map((menuItem, itemIndex) => (
                       <MotionDiv
                         key={navIndex === 0 ? itemIndex : itemIndex + 4}
-                        variants={itemVariants}
+                        // variants={itemVariants}
                         initial="hidden"
-                        animate="visible"
-                        custom={navIndex === 0 ? itemIndex : itemIndex + 4}
+                        // animate="visible"
+                        // custom={navIndex === 0 ? itemIndex : itemIndex + 4}
                       >
                         <MyLink 
                           fontSize='40px'

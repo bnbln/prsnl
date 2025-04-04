@@ -112,6 +112,7 @@ const Home: React.FC<{ data: ISection[] }> = ({ data }) => {
               />}
           </div>
         ))}
+        <Corners />
       </VStack>
     </>
   );

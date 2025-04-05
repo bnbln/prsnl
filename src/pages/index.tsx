@@ -1,20 +1,14 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Box, Flex, Heading, VStack, useBreakpointValue, useColorMode, Text, Button, border } from '@chakra-ui/react';
+import React from 'react';
+import { Box, VStack, useBreakpointValue, useColorMode } from '@chakra-ui/react';
 import Row from '../components/Row'
 import Module from '../components/Module'
 import ModuleHero from '../components/ModuleHero'
 import Article from '../components/Article'
 import Cloud from '../components/Cloud'
-import { createClient, EntrySkeletonType, EntryFields, Asset } from 'contentful';
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Center, ScrollControls, Plane, Environment, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
-import  ScrollText from '../components/ScrollText';
+import { createClient, EntrySkeletonType, EntryFields } from 'contentful';
 import { useControls } from 'leva'
-import { useSpring } from '@react-spring/three'
 import { sanitizeContentfulData } from '../lib/utils';
-import { Example } from '../components/example';
 import Cluster from '../components/Cluster';
-import MyCanvas from "../components/Canvas"
 import { Corners } from '../components/Corners';
 import { GetStaticProps } from 'next';
 
@@ -30,22 +24,11 @@ const getContentfulClient = () => {
   const nodeEnv = process.env.NODE_ENV;
   const targetEnv = nodeEnv === 'development' ? 'beta' : 'master';
 
-  // --- ADD LOGS ---
-  // console.log(`[getContentfulClient] NODE_ENV: ${nodeEnv}`);
-  // console.log(`[getContentfulClient] Target Environment: ${targetEnv}`);
-  // console.log(`[getContentfulClient] Space ID: ${space}`);
-  // console.log(`[getContentfulClient] Access Token (first 5 chars): ${accessToken?.substring(0, 5)}...`);
-  // --- END LOGS ---
-
   if (!accessToken || !space) {
     console.error("[getContentfulClient] ERROR: Contentful Access Token or Space ID is missing!");
-    // You might want to throw an error or return a dummy client here
-    // depending on how you want to handle missing env vars.
-    // For now, let it proceed to potentially fail in createClient.
   }
 
   try {
-    // console.log(`[getContentfulClient] Attempting to create client for environment: ${targetEnv}`);
     return createClient({
       accessToken: accessToken as string,
       space: space as string,
@@ -57,7 +40,6 @@ const getContentfulClient = () => {
     console.warn('[getContentfulClient] Caught error during initial client creation attempt, falling back to master (if possible). Error:', error);
     // Fallback logic (though if the primary attempt fails with correct vars, this might too)
     try {
-       // console.log('[getContentfulClient] Attempting fallback to master environment');
        return createClient({
          accessToken: accessToken as string,
          space: space as string,
@@ -65,7 +47,6 @@ const getContentfulClient = () => {
        });
     } catch (fallbackError) {
        console.error('[getContentfulClient] ERROR: Fallback client creation failed!', fallbackError);
-       // Handle fatal error - maybe throw?
        throw new Error("Failed to create Contentful client.");
     }
   }

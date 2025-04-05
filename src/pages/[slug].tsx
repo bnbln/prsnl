@@ -178,6 +178,8 @@ function mapContentfulData(entry: any): ExtendedArticleData | null {
   };
 }
 
+
+
 // --- Update getStaticPaths ---
 export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
   const paths: Array<{ params: { slug: string }; locale: string }> = []; // Explicitly type paths array

@@ -9,6 +9,22 @@ import { NavSection } from './Layout';
 const MotionBox = chakra(motion.div);
 const MotionFlex = chakra(motion.div);
 
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    y: 50
+  },
+  visible: (custom: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: custom * 0.1,
+      duration: 0.5,
+      ease: "easeOut"  // Änderung hier: Verwende einen vordefinierten Easing-Namen
+    }
+  })
+};
+
 interface NavbarProps {
   data: NavSection | null;
   mobile: NavSection | null;
@@ -65,7 +81,7 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
   const { colorMode, toggleColorMode } = useColorMode();
   const backgroundColor = colorMode === 'dark' ? 'rgba(8, 8, 8, 0.8)' : 'rgba(249,249,249,0.8)';
   const router = useRouter();
-  const { locale, locales, pathname, asPath, query } = router;
+  const { locale, locales = [], pathname, asPath, query } = router;
   
   const [activeSection, setActiveSection] = useState("/");
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
@@ -121,10 +137,11 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
           position={{base: "absolute", md: "relative"}}
           left={{base: "16px", md: "auto"}}
           right={{base: "16px", md: "auto"}}
+          w={"fit-content"}
           zIndex={10}
         >
           <MyLink href={"./"} fontWeight={"900"} >
-              Benedikt Schnupp
+            {data?.title}
           </MyLink>
           <Show above="md">
             <Flex alignItems="center">
@@ -157,7 +174,7 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
                           position: 'relative',
                           transition: 'color 0.2s ease',
                           fontWeight: isActive ? '900' : 'normal',
-                          color: isActive ? (colorMode === 'dark' ? 'white' : '#080808') : 'inherit',
+                          color: isActive ? (colorMode === 'dark' ? 'white' : 'white') : 'inherit',
                           padding: '4px 8px',
                           borderRadius: '50px'
                         }}
@@ -169,7 +186,7 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
                         <MyLink 
                           href={menuItem.fields.url}
                           fontWeight={isActive ? '900' : 'normal'}
-                          color={isActive ? 'black' : 'inherit'}
+                          color={isActive ? 'white' : 'inherit'}
                         >
                           {menuItem.fields.title}
                         </MyLink>
@@ -179,12 +196,19 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
                 </Flex>
               </Box>
               <ButtonGroup size="sm" isAttached variant="outline">
-                {(locales || []).map((loc) => (
+                {(locales ?? []).map((loc, index) => (
                   <Button
                     key={loc}
                     onClick={() => handleLocaleChange(loc)}
                     isActive={locale === loc}
                     fontWeight={locale === loc ? 'bold' : 'normal'}
+                    borderRadius={
+                      index === 0 
+                        ? '100px 0 0 100px'
+                        : index === locales.length - 1 
+                          ? '0 100px 100px 0'
+                          : 'none'
+                    }
                   >
                     {loc.split('-')[0].toUpperCase()}
                   </Button>
@@ -226,7 +250,10 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
                 {(mobile?.items || data?.items)?.map((menuItem, itemIndex) => (
                   <motion.div
                     key={itemIndex}
+                    variants={itemVariants}
                     initial="hidden"
+                    animate="visible"
+                    custom={itemIndex}
                   >
                     <MyLink 
                       fontSize='40px'

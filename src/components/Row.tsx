@@ -53,7 +53,8 @@ const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
   const gutterSize = useBreakpointValue({ base: 0, xl: 'var(--gutter-size)' });
   const containerWidth = useBreakpointValue({ base: '100%', xl: '100vw' });
   const containerMarginLeft = useBreakpointValue({ base: 0, xl: 'calc(-1*var(--gutter-size))' });
-  
+  const containerMaxWidth = useBreakpointValue({ base: '100%', xl: '68rem' });
+
   // Calculate tile width based on aspect ratio and fixed height
   const getTileWidth = useCallback(() => {
     const tileHeight = 471.55; // 29.471875rem in pixels
@@ -114,10 +115,11 @@ const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
     });
   }, [getTileWidth]);
 
-  console.log("items", items);
+  // Commenting out console.log statement
+  // console.log("items", items);
   return (
     <Box w="100%" zIndex={10}>
-      <Box maxW="68rem" mx="auto" px={4}>
+      <Box maxW={containerMaxWidth} mx="auto" px={4}>
         <HStack mb={4} w="100%" justifyContent="space-between">
           {title && <Heading fontSize="1.685625rem">{title}</Heading>}
           <HStack spacing={2}>
@@ -137,7 +139,7 @@ const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
         </HStack>
       </Box>
 
-      <Box maxW="68rem" mx="auto">
+      <Box maxW={containerMaxWidth} mx="auto">
         <Box
           ref={scrollContainerRef}
           w={containerWidth}

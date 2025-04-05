@@ -21,18 +21,25 @@ type ImageProps = {
 }
 function ImageWrapper({image, title}: ImageProps) {
     return (
-    <Image
-    src={`https:${image.fields.file.url}`}
-    alt={title}
-    fill
-    sizes="(max-width: 768px) 100vw, 
-             (max-width: 1200px) 50vw, 
-             33vw"
-    style={{ 
-      objectFit: "cover",
-      borderRadius: "4.5px"
-    }}
-  />)
+      <Image
+        src={`https:${image.fields.file.url}`}
+        alt={title}
+        fill
+        quality={85}
+        loading="lazy"
+        sizes="(max-width: 640px) 100vw, 
+               (max-width: 1024px) 50vw, 
+               33vw"
+        placeholder="blur"
+        blurDataURL={`data:image/svg+xml;base64,${Buffer.from(
+          `<svg width="700" height="475" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#e2e8f0"/></svg>`
+        ).toString('base64')}`}
+        style={{ 
+          objectFit: "cover",
+          borderRadius: "4.5px"
+        }}
+      />
+    );
 }
 type TileProps = {
     style?: React.CSSProperties;
@@ -117,7 +124,7 @@ export default function Tile({fields, style, overlay}: TileProps) {
             transition={{ duration: 0.3, ease: "easeOut" }}
 
             >   
-                        {console.log("TADA", aspectRatio === '3/4', aspectRatio)}
+                        {/* console.log("TADA", aspectRatio === '3/4', aspectRatio); */}
 
             {
                 fields.image?.fields ?

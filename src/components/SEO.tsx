@@ -20,12 +20,22 @@ export default function SEO({
   article
 }: SEOProps) {
   const router = useRouter();
+  const { locales, defaultLocale, asPath, locale } = router;
+
   const seo = {
     title: title || DEFAULT_TITLE,
     description: description || DEFAULT_DESCRIPTION,
     image: image || DEFAULT_OG_IMAGE,
     url: `${SITE_URL}${router.asPath}`
   };
+
+  // Construct the canonical URL *without* the locale for the default language
+  const canonicalPath = defaultLocale === locale
+      ? asPath.replace(`/${locale}`, '') // Remove locale prefix if it's the default
+      : asPath;
+  // Ensure leading slash if root path
+  const finalCanonicalPath = canonicalPath.startsWith('/') ? canonicalPath : `/${canonicalPath}`;
+  const canonicalUrl = `${SITE_URL}${finalCanonicalPath === '/' ? '' : finalCanonicalPath}`;
 
   return (
     <Head>
@@ -38,12 +48,32 @@ export default function SEO({
       <meta property="og:image" content={seo.image} />
       <meta property="og:url" content={seo.url} />
       <meta property="og:type" content={article ? 'article' : 'website'} />
+      <meta property="og:locale" content={locale?.replace('-', '_')} />
+      {(locales || []).filter(loc => loc !== locale).map(loc => (
+         <meta key={loc} property="og:locale:alternate" content={loc.replace('-', '_')} />
+      ))}
       
       {/* Twitter */}
       <meta name="twitter:title" content={seo.title} />
       <meta name="twitter:description" content={seo.description} />
       <meta name="twitter:image" content={seo.image} />
-      <link rel="canonical" href={seo.url} />
+
+      {/* Hreflang Links */}
+      {(locales || []).map((loc) => {
+        // Construct the URL for this specific locale
+        const localePath = defaultLocale === loc
+          ? asPath.replace(`/${locale}`, '') // Path for default locale might not have prefix
+          : `/${loc}${asPath.replace(`/${locale}`, '')}`; // Add prefix for non-default locales
+        const finalLocalePath = localePath.startsWith('/') ? localePath : `/${localePath}`;
+        const href = `${SITE_URL}${finalLocalePath === '/' ? '' : finalLocalePath}`;
+        return <link key={loc} rel="alternate" hrefLang={loc} href={href} />;
+      })}
+
+      {/* Default hreflang */}
+       <link rel="alternate" hrefLang="x-default" href={`${SITE_URL}${asPath.replace(`/${locale}`, '') === '/' ? '' : asPath.replace(`/${locale}`, '')}`} />
+
+      {/* Canonical Link */}
+      <link rel="canonical" href={canonicalUrl} />
     </Head>
   );
 } 

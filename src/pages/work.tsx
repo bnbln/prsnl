@@ -1,16 +1,18 @@
 import React from 'react';
-import { Box, Flex, VStack, useBreakpointValue, useColorMode, Heading, Text , Link  } from '@chakra-ui/react';
+import { Box, Flex, VStack, useBreakpointValue, useColorMode, Heading, Text, Link } from '@chakra-ui/react';
 import Row from '../components/Row'
 import Module from '../components/Module'
 import Article from '../components/Article'
 import Cloud from '../components/Cloud'
 import { createClient, EntrySkeletonType, EntryFields } from 'contentful';
 import Image from 'next/image';
+import { sanitizeContentfulData } from '../lib/utils';
+import { getMenuData } from '../hooks/useMenuData';
 
 interface ISection extends EntrySkeletonType {
   title: EntryFields.Text;
   hero: any;
-  position: any[];
+  position3: any[];
 }
 
 const client = createClient({
@@ -20,7 +22,10 @@ const client = createClient({
 
 export async function getStaticProps() {
   try {
-    const entry = await client.getEntry<ISection>('OmDBGXo0Eo4v1PoKkKPXS', {
+    // Fetch menu data
+    const menuData = await getMenuData();
+
+    const entry = await client.getEntry<ISection>('1RqjizB0Ykmd0HzroR1aag', {
       include: 2,
     });
     
@@ -31,14 +36,15 @@ export async function getStaticProps() {
     }
 
     const mappedData = [{
-      title: entry.fields.title,
-      hero: entry.fields.hero,
-      position: entry.fields.position3,
+      title: entry.fields.title || null,
+      hero: entry.fields.hero || null,
+      position3: Array.isArray(entry.fields.position3) ? entry.fields.position3.map(pos => pos || null) : null
     }];
 
     return {
       props: {
-        data: mappedData,
+        data: sanitizeContentfulData(mappedData),
+        navData: menuData,
       },
       revalidate: 60,
     };
@@ -57,44 +63,45 @@ const Design: React.FC<{ data: ISection[] }> = ({ data }) => {
   const contentWidth = useBreakpointValue({ base: '100%', md: '80%' });
   const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
   const padding = useBreakpointValue({ base: 4, sm: 12, xl: 20 });
+  const gapSize = useBreakpointValue({ base: "3rem", xl: "6rem" });
+
+  if (!data || !data[0] || !data[0].position3) {
+    return <Box>No content available.</Box>;
+  }
 
   return (
     <>
-          <Flex
-      justifyContent="center"
-      //direction={flexDirection}
-      overflow="hidden"
-      position="relative"
-      w={containerWidth}
-      mx="auto"
-      borderRadius={4.5}
-      pt={"3rem"}
-    >
       <Flex
-        gap={4}
-        direction="column"
-        w={contentWidth}
-        p={padding}
+        justifyContent="center"
+        overflow="hidden"
+        position="relative"
+        w={containerWidth}
+        mx="auto"
+        borderRadius={4.5}
+        pt={"3rem"}
       >
-        <Box>
+        <Flex
+          gap={4}
+          direction="column"
+          w={contentWidth}
+          p={padding}
+        >
+          <Box>
             <Heading textAlign="center" size="xl">
               Work
             </Heading>
-            <Text>
-             
-            </Text>
-        </Box>
+          </Box>
         </Flex>
-        </Flex>
-      <VStack gap={useBreakpointValue({ base: "3rem", xl: "6rem" })} w="100%">
-        {data[0] && data[0].position.map((section, index) => (
-          <React.Fragment key={index}>
-            {section.sys.contentType.sys.id === "sections" &&
+      </Flex>
+      <VStack gap={gapSize} w="100%">
+        {data[0].position3.map((section, index) => (
+          <React.Fragment key={section?.sys?.id || index}>
+            {section?.sys?.contentType?.sys?.id === "sections" && section.fields &&
               <Row title={section.fields.title} small={section.fields.display} items={section.fields.articles} />
             }
-            {section.sys.contentType.sys.id === "module" && <Module data={section} />}
-            {section.sys.contentType.sys.id === "article" && <Article page={false} data={section.fields} />}
-            {section.sys.contentType.sys.id === "cloud" && 
+            {section?.sys?.contentType?.sys?.id === "module" && <Module data={section} />}
+            {section?.sys?.contentType?.sys?.id === "article" && section.fields && <Article page={false} data={section.fields} />}
+            {section?.sys?.contentType?.sys?.id === "cloud" && section.fields &&
               <Cloud 
                 data={section.fields} 
                 buttons={section.fields.buttons}
@@ -106,4 +113,4 @@ const Design: React.FC<{ data: ISection[] }> = ({ data }) => {
   );
 }
 
-export default Design; 
+export default Design;

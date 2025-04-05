@@ -9,13 +9,14 @@ interface MyLinkProps {
   children: React.ReactNode;
   fontSize?: string; // Optional fontSize prop
   fontWeight?: string; // Optional fontWeight prop
+  color?: string; // Optional color prop
   animationValue?: string;
 }
 
 // Create a motion component for MyLink
 const MotionBox = motion.create(Box as any);
 
-const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize, fontWeight, animationValue }) => {
+const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize, fontWeight, color, animationValue }) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -28,6 +29,7 @@ const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize, font
   return (
     <MotionBox 
       as='button' 
+      color={color}
       fontSize={fontSize} 
       fontWeight={fontWeight || 'normal'}
       p={3} 
@@ -45,6 +47,7 @@ const MyLink: React.FC<MyLinkProps> = ({ href, onClick, children, fontSize, font
         : { fontWeight: 900 }
       } 
       whileTap={{ scale: 0.95 }}
+      style={{ transition: 'color 0.2s ease' }}
     >
       {children}
     </MotionBox>

@@ -1,6 +1,29 @@
 import React from 'react';
 import { Box, Flex, Heading, Text, useBreakpointValue, Link, UnorderedList, ListItem } from '@chakra-ui/react';
 import Image from 'next/image';
+import { getMenuData, getFooterData } from '../hooks/useMenuData';
+
+export async function getStaticProps() {
+  try {
+    const menuData = await getMenuData();
+    const footerData = await getFooterData();
+
+    return {
+      props: {
+        navData: menuData[0],
+        footerData: footerData[0],
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching menu or footer data:', error);
+    return {
+      props: {
+        navData: null,
+        footerData: null,
+      },
+    };
+  }
+}
 
 export default function Impressum(data) {
   const flexDirection = useBreakpointValue({ base: 'column', md: 'row' }) || 'column';
@@ -24,6 +47,7 @@ export default function Impressum(data) {
         direction="column"
         w={contentWidth}
         p={padding}
+        pt={24}
       >
         <Box>
           <Heading textAlign="center" size="xl">

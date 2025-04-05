@@ -77,7 +77,7 @@ interface ClusterProps {
 }
 
 export default function Cluster({ data }: ClusterProps) {
-  console.log(data.fields.articles[0]);  
+  // console.log(data.fields.articles[0]);  
   const size3 = useBreakpointValue({ base: "Small", xl: "Square" });
 
   return (

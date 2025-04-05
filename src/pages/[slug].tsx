@@ -4,7 +4,7 @@ import { createClient, EntrySkeletonType, EntryFields } from 'contentful';
 import Article, { ArticleData } from '@/components/Article';
 import { Document } from '@contentful/rich-text-types';
 import { GetStaticProps, GetStaticPaths } from 'next';
-import { getMenuData } from '../hooks/useMenuData';
+import { getMenuData, getFooterData } from '../hooks/useMenuData';
 
 // Define the type for an image asset (you might already have a similar type like AssetFields)
 // If you don't have AssetFields defined or imported, you might need to define it like this:
@@ -232,9 +232,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
 
   try {
-    // Fetch menu data
+    // Fetch menu and footer data
     const menuData = await getMenuData();
-    
+    const footerData = await getFooterData();
+
     // Fetch article data
     const entries = await client.getEntries<IArticleFields>({
       content_type: 'article',
@@ -249,7 +250,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     }
 
     const articleData = mapContentfulData(entries.items[0]);
-    
+
     if (!articleData) {
       return { notFound: true };
     }
@@ -257,7 +258,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
     return {
       props: {
         data: articleData,
-        navData: menuData,
+        navData: menuData[0],
+        footerData: footerData[0],
       },
       revalidate: 60,
     };

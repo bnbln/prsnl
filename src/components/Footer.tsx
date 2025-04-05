@@ -52,12 +52,24 @@ export default function Footer({ data = null }: FooterProps) {
             &copy; Copyright {currentYear}
           </Text>
           <Flex gap="32px">
-            <EmailIcon color={colorMode === 'dark' ? "#fff" : '#080808'} />
-            <IconLinkedin width={16} height={16} color={colorMode === 'dark' ? "#fff" : '#080808'} />
-            <IconGithub width={16} height={16} color={colorMode === 'dark' ? "#fff" : '#080808'} />
-            <IconThreads width={16} height={16} color={colorMode === 'dark' ? "#fff" : '#080808'} />
-            <IconWhatsapp width={16} height={16} color={colorMode === 'dark' ? "#fff" : '#080808'} />
-            <IconDribble width={16} height={16} color={colorMode === 'dark' ? "#fff" : '#080808'} />
+            <a href="mailto:mail@benedikt.berlin" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center' }}>
+              <EmailIcon color={colorMode === 'dark' ? "#fff" : '#080808'} />
+            </a>
+            <a href="https://de.linkedin.com/in/benedikt-schnupp-928112116" target="_blank" rel="noopener noreferrer">
+              <IconLinkedin width={16} height={16} color={colorMode === 'dark' ? "#fff" : '#080808'} />
+            </a>
+            <a href="https://github.com/bnbln" target="_blank" rel="noopener noreferrer">
+              <IconGithub width={16} height={16} color={colorMode === 'dark' ? "#fff" : '#080808'} />
+            </a>
+            <a href="https://www.threads.net" target="_blank" rel="noopener noreferrer">
+              <IconThreads width={16} height={16} color={colorMode === 'dark' ? "#fff" : '#080808'} />
+            </a>
+            <a href="https://www.whatsapp.com" target="_blank" rel="noopener noreferrer">
+              <IconWhatsapp width={16} height={16} color={colorMode === 'dark' ? "#fff" : '#080808'} />
+            </a>
+            <a href="https://www.dribbble.com" target="_blank" rel="noopener noreferrer">
+              <IconDribble width={16} height={16} color={colorMode === 'dark' ? "#fff" : '#080808'} />
+            </a>
           </Flex>
         </Flex>
       </Flex>

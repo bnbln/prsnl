@@ -6,15 +6,13 @@ import Image from 'next/image';
 import SEO from './SEO';
 import { useRouter } from 'next/navigation' 
 import Carousel from './Carousel';
-import Row from './Row';
 import { useScroll } from 'framer-motion';
-import { useTransform } from 'framer-motion';
+import { useTransform, motion } from 'framer-motion';
 import CustomVideoPlayer from './CustomVideoPlayer';
 import { FaPlay } from 'react-icons/fa';
 import { useState } from 'react';
 import ReactPlayer from 'react-player/lazy';
 
-console.log('Imported CustomVideoPlayer in Article.tsx:', CustomVideoPlayer);
 
 interface AssetFields {
   file: {
@@ -167,7 +165,7 @@ const ImageRow: React.FC<{ node: Node }> = ({ node }) => {
               alt={title}
               width={imageDetails?.width || 500}
               height={imageDetails?.height || 500}
-              style={{ width: "calc(" + widthPercentage + " - 6px)", height: "auto", borderRadius: "4.5px" }}
+              style={{ width: "calc(" + widthPercentage + " - 6px)", height: "fit-content", borderRadius: "4.5px" }}
             />
         );
       })}
@@ -349,7 +347,6 @@ const LinkedArticle: React.FC<{ node: Node }> = ({ node }) => {
 
 // Restore EmbeddedVideo to use CustomVideoPlayer
 const EmbeddedVideo: React.FC<{ node: Node, color?: string }> = ({ node, color }) => {
-  console.log("EmbeddedVideo Component - Received color prop:", color);
   const fields = node.data.target.fields as VideoEntryFields;
   const { title, video, thumbnail } = fields;
   const [showPlayer, setShowPlayer] = useState(false);
@@ -367,7 +364,6 @@ const EmbeddedVideo: React.FC<{ node: Node, color?: string }> = ({ node, color }
   const finalThumbnailUrl = thumbnailUrl?.startsWith('//') ? `https:${thumbnailUrl}` : thumbnailUrl;
 
   if (!finalVideoUrl) {
-    console.warn("Embedded video is missing video URL:", fields);
     return <Text color="red.500">Embedded video is missing its source.</Text>;
   }
 
@@ -519,7 +515,6 @@ const EmbeddedEntry: React.FC<{ node: Node }> = ({ node }) => {
   }
 
   // Fallback or render nothing/error for unhandled types
-  console.warn("Unhandled embedded entry type:", contentTypeId, node.data.target.fields);
   return null; // Or render a placeholder/error message
 };
 
@@ -577,48 +572,36 @@ const formatDate = (inputDate: string, outputFormat: string): string => {
 
 const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
     // --- DEBUGGING START ---
-    // console.log("Article Component Received Data:", JSON.stringify(data, null, 2)); // Log the entire data object
+    // console.log("Article Component Received Data:", JSON.stringify(data, null, 2)); // Keep this
     // console.log("Is Page:", page);
-    // console.log("Has videoHeader field:", data && data.hasOwnProperty('videoHeader'));
-    if (data && data.videoHeader) {
-      // console.log("videoHeader Content:", JSON.stringify(data.videoHeader, null, 2));
-      // console.log("videoHeader URL:", data.videoHeader.fields?.file?.url);
-    } else {
-      // console.log("videoHeader is missing or null.");
-    }
+    // console.log("Checking videoHeader:", data?.videoHeader); // Log the videoHeader object
     // --- DEBUGGING END ---
 
     const formattedDate = data.published ? formatDate(data.published, 'en-US') : null;
 
-    // --- Move Hook Calls to Top Level ---
+    // --- Hook Calls ---
     const padding = useBreakpointValue({ base: 4, sm: 12, xl: 20 });
     const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
     const containerWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' });
     const headerInnerFlexWidth = useBreakpointValue({ base: '100%', md: '80%' });
-    // Use FlexProps['direction'] for type safety if needed, or keep as is if simpler
     const headerDirection = useBreakpointValue<'column' | 'row'>({ base: 'column', md: 'row' });
-    const mainContentWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' }); // For main content section
-    const teaserInnerFlexWidth = useBreakpointValue({ base: '100%', md: '80%' }); // Specific for teaser if different, else reuse headerInnerFlexWidth
-    const teaserDirection = useBreakpointValue<'column' | 'row'>({ base: 'column', md: 'row' }); // Specific for teaser if different, else reuse headerDirection
+    const mainContentWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' });
+    const teaserInnerFlexWidth = useBreakpointValue({ base: '100%', md: '80%' });
+    const teaserDirection = useBreakpointValue<'column' | 'row'>({ base: 'column', md: 'row' });
 
-    const { scrollY } = useScroll(); // Keep hooks for potential re-introduction
+    const { scrollY } = useScroll();
     const y1 = useTransform(scrollY, [0, 800], [0, 200]);
 
     const { colorMode } = useColorMode();
     const color = colorMode === 'dark' ? '#080808': '#f9f9f9' ;
     const gradient = `linear-gradient(to bottom, ${color}00, ${color}ff)`;
-  
     const router = useRouter();
-
 
     const options: Options = {
       renderNode: {
-        // Remove props passed to Wrapper
         [BLOCKS.PARAGRAPH]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Text pb={4}>{children}</Text></Wrapper>,
         [INLINES.HYPERLINK]: (node: Node, children: React.ReactNode) => <Link color='teal' href={(node as Inline).data.uri}>{children}</Link>,
-        // Remove props passed to Wrapper
         [BLOCKS.HEADING_1]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Heading fontWeight={200} size="lg" pb={4}>{children}</Heading></Wrapper>,
-        // Remove props passed to Wrapper
         [BLOCKS.HEADING_2]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Heading size="md" pt={4} pb={2}>{children}</Heading></Wrapper>,
         [INLINES.EMBEDDED_ENTRY]: (node: Node) => (
           <Link color="blue" href={`./${(node as Inline).data.target.fields.slug}`}>
@@ -634,11 +617,26 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
           if (contentTypeId === 'imageRow') {
             return <ImageRow node={node} />;
           }
-
+          if (contentTypeId === 'module') {
+             return <Module node={node} />;
+          }
+           if (contentTypeId === 'article') {
+             return <LinkedArticle node={node} />;
+           }
+           // Handle potential 'Carousel' type
+           const fields = node.data.target.fields as EntryFields;
+           if (contentTypeId === 'carousel' || (fields.type === "Carousel" && fields.media)) {
+             const media = node.data.target.fields.media;
+             if (media) {
+                return <Carousel media={media} interval={9000} />;
+             } else {
+                console.warn("Carousel media field is missing or invalid:", node.data.target.fields);
+                return <Text color="red.500">Carousel is missing media.</Text>;
+             }
+           }
           console.warn("Unhandled embedded entry type in main text:", contentTypeId, node.data.target.fields);
-          return <EmbeddedEntry node={node} />;
+          return null;
         },
-        // Remove props passed to Wrapper
         [BLOCKS.EMBEDDED_ASSET]: (node: Node) => <Wrapper node={node}><EmbeddedAsset node={node} /></Wrapper>,
       },
       renderText: (text: string) => text.split('\n').flatMap((text, i) => [i > 0 && <br key={i} />, text]),
@@ -647,58 +645,61 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
     return (
       <>
         {page && (
-          <SEO 
+          <SEO
             title={data.title + " | Design & Code"}
             description={data.description}
-            image={`https:${data.image?.fields.file.url}`}
+            image={data.image?.fields?.file?.url ? `https:${data.image.fields.file.url}` : undefined}
             article={true}
-          />  
+          />
         )}
 
         {/* === FULL PAGE VIEW === */}
         {page && (
           <>
-            {/* --- HEADER SECTION (Video or Image/Title) --- */}
-            {(() => { // IIFE for easier logging inside JSX conditional
-              const hasVideo = data && data.videoHeader && data.videoHeader.fields?.file?.url;
-              // console.log("Rendering Header - Has Video:", hasVideo); // Log if video header branch should render
+            {/* --- HEADER SECTION (Conditionally Render Video or Image/Title) --- */}
+            {(() => {
+              // Check if videoHeader exists and has a file URL
+              const hasVideo = !!data?.videoHeader?.fields?.file?.url;
+              const videoUrl = data?.videoHeader?.fields?.file?.url; // Get URL for logging
 
-              if (hasVideo) {
-                // VIDEO HEADER (Simplified - No Parallax Motion Div)
-                // console.log("Rendering VIDEO Header (Simplified)"); // Confirm this block is reached
-                const videoUrl = data.videoHeader!.fields.file.url;
+              // *** ADDED DEBUGGING LOGS ***
+              console.log(`[HEADER RENDER] hasVideo: ${hasVideo}, videoUrl: ${videoUrl}`);
+
+              if (hasVideo && videoUrl) { // Ensure videoUrl is truthy too
+                // --- RENDER VIDEO HEADER (Simplified - No Motion for now) ---
+                console.log("[HEADER RENDER] Rendering VIDEO block."); // Confirm this block runs
                 const finalVideoUrl = videoUrl.startsWith('//') ? `https:${videoUrl}` : videoUrl;
-                // console.log("Final Video URL:", finalVideoUrl);
 
                 return (
                   <Box
                     position="relative"
                     w="100%"
-                    h={{ base: '60vh', md: '70vh' }} // Define container height
-                    overflow="hidden" // Keep overflow hidden
+                    h={{ base: '60vh', md: '70vh' }}
+                    overflow="hidden"
                     mb={8}
-                    bg="black" // Add temporary background to see the container
+                    bg="black"
                   >
-                    {/* Video Element directly positioned */}
+                    {/* Simplified Video - No motion.div for testing */}
                     <video
+                      key={finalVideoUrl}
                       src={finalVideoUrl}
                       autoPlay
                       loop
                       muted
                       playsInline
                       style={{
-                        position: 'absolute', // Position relative to the Box
+                        position: 'absolute', // Position directly
                         top: 0,
                         left: 0,
-                        width: '100%',    // Make video fill the container width
-                        height: '100%',   // Make video fill the container height
-                        objectFit: 'cover', // Cover the area, maintain aspect ratio
-                        zIndex: 0,        // Behind the overlay
+                        width: '100%',
+                        height: '100%', // Cover the Box height directly
+                        objectFit: 'cover',
+                        zIndex: 0, // Behind overlay
                       }}
-                      onError={(e) => console.error("Video Error:", e)} // Log video specific errors
+                      onError={(e) => console.error("Video playback error:", e)}
                     />
 
-                    {/* Content Overlay (Remains the same) */}
+                    {/* Content Overlay (Same as before) */}
                     <Flex
                       position="absolute"
                       bottom={0}
@@ -711,12 +712,11 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                       pb={padding ?? 4}
                       pt={20}
                       background="linear-gradient(0deg, #000000c0 40%, transparent)"
-                      zIndex={10} // Ensure overlay is on top
+                      zIndex={10}
                       h="100%"
                       textAlign="center"
                       color="white"
                     >
-                      {/* TITLE AREA within Video Header */}
                       {data.description && ( <Heading mt={2} size="md">{data.description}</Heading> )}
                       {data.title && ( <Heading size="xl">{data.title}</Heading> )}
                       {formattedDate && ( <Heading opacity={0.7} mt={4} size="xs">{formattedDate}</Heading> )}
@@ -725,11 +725,11 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                   </Box>
                 );
               } else {
-                // ORIGINAL IMAGE/TITLE HEADER
-                // console.log("Rendering IMAGE Header"); // Confirm this block is reached
+                // --- RENDER IMAGE HEADER ---
+                console.log("[HEADER RENDER] Rendering IMAGE block."); // Confirm this block runs
                 return (
                   <>
-                    {/* Original Title Area Flex */}
+                    {/* Title Area */}
                     <Flex
                       justifyContent="center"
                       direction={headerDirection ?? 'column'}
@@ -748,7 +748,6 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                         pos={"relative"}
                         alignItems={"center"}
                       >
-                        {/* TITLE AREA */}
                         <Box>
                           {data.description && ( <Heading mt={2} textAlign="center" size="md">{data.description}</Heading> )}
                           {data.title && ( <Heading textAlign="center" size="xl">{data.title}</Heading> )}
@@ -758,14 +757,14 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                       </Flex>
                     </Flex>
 
-                    {/* Original Image Flex */}
+                    {/* Image Area */}
                     {data.image &&
-                      <Flex justifyContent="center" mx="auto" w={containerWidth ?? 'calc(100vw - 26px)'}> 
+                      <Flex justifyContent="center" mx="auto" w={containerWidth ?? 'calc(100vw - 26px)'}>
                         <Image
                           src={data.image.fields.file.url.startsWith('//') ? `https:${data.image.fields.file.url}` : data.image.fields.file.url}
-                          alt={data.image.fields.title}
-                          width="1024"
-                          height="1024"
+                          alt={data.image.fields.title ?? data.title ?? 'Article image'}
+                          width={1024}
+                          height={576}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1089px"
                           priority
                           style={{
@@ -804,7 +803,6 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
 
         {/* === TEASER VIEW === */}
         {!page && (
-           // ... Keep existing teaser code ...
            <>
             {/* Original Teaser Structure */}
             <Flex

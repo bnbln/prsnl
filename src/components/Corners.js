@@ -126,7 +126,7 @@ function Scene(props) {
 
 function Connector({ position, children, vec = new THREE.Vector3(), scale, r = THREE.MathUtils.randFloatSpread, accent, ...props }) {
   const api = useRef()
-  const pos = useMemo(() => position || [r(15), r(15), r(15)], [])
+  const pos = useMemo(() => position || [r(15), r(15), r(15)], [position, r])
   const modelIndex = useMemo(() => Math.floor(Math.random() * modelPaths.length), [])
 
   useFrame((state, delta) => {

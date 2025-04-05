@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
-import { Box, Flex, Show, Hide, useColorMode, Button } from '@chakra-ui/react';
+import { Box, Flex, Show, Hide, useColorMode, Button, Link as ChakraLink, ButtonGroup } from '@chakra-ui/react';
 import { CloseIcon, HamburgerIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
 import MyLink from './MyLink';
 import Icon from './Icon';
@@ -77,6 +77,7 @@ export default function Navbar({ data }: NavbarProps) {
   const { colorMode, toggleColorMode } = useColorMode();
   const backgroundColor = colorMode === 'dark' ? 'rgba(8, 8, 8, 0.8)' : 'rgba(249,249,249,0.8)';
   const router = useRouter();
+  const { locale, locales, pathname, asPath, query } = router;
   
   const [activeSection, setActiveSection] = useState("/");
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
@@ -93,7 +94,7 @@ export default function Navbar({ data }: NavbarProps) {
       // Reverse the order to check from bottom-most section up
       const reversedSectionItems = [...sectionItems].reverse();
 
-      const threshold = 150; // Pixels from top of viewport to trigger activation
+      const threshold = 250; // Pixels from top of viewport to trigger activation
 
       for (const menuItem of reversedSectionItems) {
         // Decode URI component to handle IDs with spaces or special characters
@@ -169,6 +170,11 @@ export default function Navbar({ data }: NavbarProps) {
     };
   }, [menu]);
 
+  const handleLocaleChange = (nextLocale: string) => {
+    router.push({ pathname, query }, asPath, { locale: nextLocale });
+    setMenu(false);
+  };
+
   // Function to handle link click and close the menu
   const handleLinkClick = () => {
     setMenu(false);
@@ -195,60 +201,74 @@ export default function Navbar({ data }: NavbarProps) {
               Benedikt Schnupp
             </MyLink>
             <Show above="md">
-              <Box position="relative" ref={navContainerRef}>
-                <motion.div
-                  style={{
-                    position: 'absolute',
-                    backgroundColor: 'white',
-                    borderRadius: '50px',
-                    transition: 'all 0.3s ease',
-                    top: "15%",
-                    left: indicatorStyle.left,
-                    width: indicatorStyle.width,
-                    height: '70%',
-                    zIndex: 0
-                  }}
-                />
-                <Flex position="relative" zIndex={1}>
-                  {data.map((navItem, navIndex) => (
-                    <React.Fragment key={navIndex}>
-                      {navItem.title === "Main" && navItem.items.map((menuItem, itemIndex) => {
-                        const isActive = activeSection === menuItem.fields.url;
-                        return (
-                          <Box
-                            key={itemIndex}
-                            ref={isActive ? activeLinkRef : null}
-                            position="relative"
-                            className="link-text"
-                            minW={{base: "auto", md: "90px"}}
-                            textAlign="center"
-                            sx={{
-                              position: 'relative',
-                              transition: 'color 0.2s ease',
-                              fontWeight: isActive ? '900' : 'normal',
-                              color: isActive ? (colorMode === 'dark' ? 'white' : '#080808') : 'inherit',
-                              padding: '4px 8px',
-                              borderRadius: '50px'
-                            }}
-                            _hover={{
-                              color: colorMode === 'dark' ? 'white' : '#080808',
-                              fontWeight: '900'
-                            }}
-                          >
-                            <MyLink 
-                              href={menuItem.fields.url}
-                              fontWeight={isActive ? '900' : 'normal'}
-                              color={isActive ? 'black' : 'inherit'}
+              <Flex alignItems="center">
+                <Box position="relative" ref={navContainerRef} mr={4}>
+                  <motion.div
+                    style={{
+                      position: 'absolute',
+                      backgroundColor: 'white',
+                      borderRadius: '50px',
+                      transition: 'all 0.3s ease',
+                      top: "15%",
+                      left: indicatorStyle.left,
+                      width: indicatorStyle.width,
+                      height: '70%',
+                      zIndex: 0
+                    }}
+                  />
+                  <Flex position="relative" zIndex={1}>
+                    {data.map((navItem, navIndex) => (
+                      <React.Fragment key={navIndex}>
+                        {navItem.title === "Main" && navItem.items.map((menuItem, itemIndex) => {
+                          const isActive = activeSection === menuItem.fields.url;
+                          return (
+                            <Box
+                              key={itemIndex}
+                              ref={isActive ? activeLinkRef : null}
+                              position="relative"
+                              className="link-text"
+                              minW={{base: "auto", md: "90px"}}
+                              textAlign="center"
+                              sx={{
+                                position: 'relative',
+                                transition: 'color 0.2s ease',
+                                fontWeight: isActive ? '900' : 'normal',
+                                color: isActive ? (colorMode === 'dark' ? 'white' : '#080808') : 'inherit',
+                                padding: '4px 8px',
+                                borderRadius: '50px'
+                              }}
+                              _hover={{
+                                color: colorMode === 'dark' ? 'white' : '#080808',
+                                fontWeight: '900'
+                              }}
                             >
-                              {menuItem.fields.title}
-                            </MyLink>
-                          </Box>
-                        );
-                      })}
-                    </React.Fragment>
+                              <MyLink 
+                                href={menuItem.fields.url}
+                                fontWeight={isActive ? '900' : 'normal'}
+                                color={isActive ? 'black' : 'inherit'}
+                              >
+                                {menuItem.fields.title}
+                              </MyLink>
+                            </Box>
+                          );
+                        })}
+                      </React.Fragment>
+                    ))}
+                  </Flex>
+                </Box>
+                <ButtonGroup size="sm" isAttached variant="outline">
+                  {(locales || []).map((loc) => (
+                    <Button
+                      key={loc}
+                      onClick={() => handleLocaleChange(loc)}
+                      isActive={locale === loc}
+                      fontWeight={locale === loc ? 'bold' : 'normal'}
+                    >
+                      {loc.split('-')[0].toUpperCase()}
+                    </Button>
                   ))}
-                </Flex>
-              </Box>
+                </ButtonGroup>
+              </Flex>
             </Show>
 
               <Hide above="md">
@@ -279,16 +299,13 @@ export default function Navbar({ data }: NavbarProps) {
               alignItems={"center"}
               backdropFilter="blur(10px)"
             >
-              <Flex direction="column" alignItems="flex-start">
+              <Flex direction="column" alignItems="center" w="100%">
                 {data.map((navItem, navIndex) => (
                   <React.Fragment key={navIndex}>
                     {navItem.items.map((menuItem, itemIndex) => (
                       <MotionDiv
                         key={navIndex === 0 ? itemIndex : itemIndex + 4}
-                        // variants={itemVariants}
                         initial="hidden"
-                        // animate="visible"
-                        // custom={navIndex === 0 ? itemIndex : itemIndex + 4}
                       >
                         <MyLink 
                           fontSize='40px'
@@ -301,11 +318,25 @@ export default function Navbar({ data }: NavbarProps) {
                     ))}
                   </React.Fragment>
                 ))}
+                <ButtonGroup size="md" variant="ghost" mt={8}>
+                  {(locales || []).map((loc) => (
+                    <Button
+                      key={loc}
+                      onClick={() => handleLocaleChange(loc)}
+                      isActive={locale === loc}
+                      fontWeight={locale === loc ? 'bold' : 'normal'}
+                      fontSize="2xl"
+                      color={colorMode === 'dark' ? 'white' : '#080808'}
+                      _active={{ bg: 'transparent' }}
+                    >
+                      {loc.split('-')[0].toUpperCase()}
+                    </Button>
+                  ))}
+                </ButtonGroup>
               </Flex>
             </MotionBox>
           )}
       </nav>
-      {/* {menu && <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100vh', backdropFilter: 'blur(24px)' }} />} */}
     </header>
   );
 }

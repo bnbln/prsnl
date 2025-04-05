@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { Box, Flex, Show, Hide, useColorMode, Button, ButtonGroup } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { chakra, ChakraProps } from "@chakra-ui/system";
 import MyLink from './MyLink';
 import { useRouter } from 'next/router';
 import { NavSection } from './Layout';
 
-const MotionBox = motion(Box) as any;
-const MotionFlex = motion(Flex);
+const MotionBox = chakra(motion.div);
+const MotionFlex = chakra(motion.div);
 
 interface NavbarProps {
-  data: NavSection[];
+  data: NavSection | null;
 }
 
 const Path = (props: any) => (
@@ -57,7 +58,7 @@ const MenuToggle = ({ toggle, isOpen, color }: { toggle: () => void, isOpen: boo
   </Button>
 );
 
-export default function Navbar({ data = [] }: NavbarProps) {
+export default function Navbar({ data = null }: NavbarProps) {
   console.log('Navbar component rendered with data:', data);
   const [menu, setMenu] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -73,7 +74,7 @@ export default function Navbar({ data = [] }: NavbarProps) {
   useEffect(() => {
     console.log("Navbar: Übergebene Daten:", data);
 
-    if (!data || !Array.isArray(data) || data.length === 0) {
+    if (!data || !Array.isArray(data.items) || data.items.length === 0) {
       console.warn("Navbar: Keine Daten zum Rendern verfügbar.", data);
       return;
     }
@@ -205,7 +206,7 @@ export default function Navbar({ data = [] }: NavbarProps) {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: '100vh' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ ease: "easeInOut", duration: 0.3 } as any}
               px={4}
               py={50}
               flexDirection="column"
@@ -221,7 +222,7 @@ export default function Navbar({ data = [] }: NavbarProps) {
               backdropFilter="blur(10px)"
             >
               <Flex direction="column" alignItems="center" w="100%">
-                {data[0]?.items?.map((menuItem, itemIndex) => (
+                {data?.items?.map((menuItem, itemIndex) => (
                   <motion.div
                     key={itemIndex}
                     initial="hidden"

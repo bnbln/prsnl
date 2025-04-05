@@ -17,21 +17,21 @@ export interface NavSection {
 
 interface LayoutProps {
   children: React.ReactNode;
-  navData: NavSection[] | null;
-  footerData: NavSection[] | null;
+  navData: NavSection | null;
+  footerData: NavSection | null;
 }
 
-export default function Layout({ children, navData = [], footerData = [] }: LayoutProps) {
+export default function Layout({ children, navData = null, footerData = null }: LayoutProps) {
   console.log('Layout component rendered with navData:', navData);
   console.log('Layout component rendered with footerData:', footerData);
   
   return (
     <>
-      <Navbar data={navData || []} />
+      <Navbar data={navData} />
       <Box>
         {children}
       </Box>
-      <Footer data={footerData || []} />
+      <Footer data={footerData} />
     </>
   );
 }

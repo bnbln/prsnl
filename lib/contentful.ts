@@ -43,7 +43,7 @@ export async function fetchMenuData(entryId: string): Promise<NavSection[]> {
     })).filter(Boolean);
 
     return [{
-      title: entry.fields.title || 'Main',
+      title: String(entry.fields.title || 'Main'),
       items,
     }];
   } catch (error) {

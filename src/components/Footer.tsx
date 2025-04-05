@@ -7,10 +7,10 @@ import { IconDribble, IconGithub, IconLinkedin, IconThreads, IconWhatsapp } from
 import { NavSection } from './Layout';
 
 interface FooterProps {
-  data: NavSection[];
+  data: NavSection | null;
 }
 
-export default function Footer({ data = [] }: FooterProps) {
+export default function Footer({ data = null }: FooterProps) {
   const router = useRouter();
   const { colorMode } = useColorMode();
 

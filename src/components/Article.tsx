@@ -143,30 +143,70 @@ const EmbeddedAsset: React.FC<{ node: Node }> = ({ node }) => {
     </Box>
   );
 };
-// New ImageRow component for rendering image row embedded entry
+
+// Single Image Component
+const SingleImage: React.FC<{ file: any, title: string }> = ({ file, title }) => {
+  return (
+    <Box position="relative" width="100%" height="auto">
+      <Image
+        src={file.url.startsWith('//') ? `https:${file.url}` : file.url}
+        alt={title}
+        width={1200}
+        height={800}
+        quality={85}
+        priority={false}
+        loading="lazy"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        style={{
+          borderRadius: "4.5px",
+          width: "100%",
+          height: "auto",
+        }}
+        placeholder="blur"
+        blurDataURL={`data:image/svg+xml;base64,${Buffer.from(
+          `<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#e2e8f0"/></svg>`
+        ).toString('base64')}`}
+      />
+    </Box>
+  );
+};
+
+// Optimized ImageRow Component
 const ImageRow: React.FC<{ node: Node }> = ({ node }) => {
   const files = node.data.target.fields.files;
   if (!files || files.length === 0) return null;
   const count = files.length;
 
   return (
-    <Flex direction="row" justify="space-between" position="relative" w="100%" mb={4}>
+    <Flex direction="row" justify="space-between" position="relative" w="100%" mb={4} gap={2}>
       {files.map((file: any, index: number) => {
         const url = file.fields.file.url.startsWith('//')
           ? `https:${file.fields.file.url}`
           : file.fields.file.url;
         const title = file.fields.title;
         const imageDetails = file.fields.file.details?.image;
-        const widthPercentage = `${100 / count}%`;
+        
         return (
+          <Box key={index} flex={1}>
             <Image
-              key={index}
               src={url}
-              alt={title}
-              width={imageDetails?.width || 500}
-              height={imageDetails?.height || 500}
-              style={{ width: "calc(" + widthPercentage + " - 6px)", height: "fit-content", borderRadius: "4.5px" }}
+              alt={title || `Bild ${index + 1}`}
+              width={imageDetails?.width || 800}
+              height={imageDetails?.height || 600}
+              quality={85}
+              loading="lazy"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{ 
+                width: "100%",
+                height: "auto",
+                borderRadius: "4.5px" 
+              }}
+              placeholder="blur"
+              blurDataURL={`data:image/svg+xml;base64,${Buffer.from(
+                `<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#e2e8f0"/></svg>`
+              ).toString('base64')}`}
             />
+          </Box>
         );
       })}
     </Flex>

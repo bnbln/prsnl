@@ -147,7 +147,7 @@ const ScrollText: React.FC = () => {
     }
   })
   const positionCode = useBreakpointValue({ base: 0, md: 0 });
-  console.log("positionCode", positionCode);
+  // console.log("positionCode", positionCode);
   return (
     <>
 

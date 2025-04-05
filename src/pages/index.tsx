@@ -31,10 +31,10 @@ const getContentfulClient = () => {
   const targetEnv = nodeEnv === 'development' ? 'beta' : 'master';
 
   // --- ADD LOGS ---
-  console.log(`[getContentfulClient] NODE_ENV: ${nodeEnv}`);
-  console.log(`[getContentfulClient] Target Environment: ${targetEnv}`);
-  console.log(`[getContentfulClient] Space ID: ${space}`);
-  console.log(`[getContentfulClient] Access Token (first 5 chars): ${accessToken?.substring(0, 5)}...`);
+  // console.log(`[getContentfulClient] NODE_ENV: ${nodeEnv}`);
+  // console.log(`[getContentfulClient] Target Environment: ${targetEnv}`);
+  // console.log(`[getContentfulClient] Space ID: ${space}`);
+  // console.log(`[getContentfulClient] Access Token (first 5 chars): ${accessToken?.substring(0, 5)}...`);
   // --- END LOGS ---
 
   if (!accessToken || !space) {
@@ -45,7 +45,7 @@ const getContentfulClient = () => {
   }
 
   try {
-    console.log(`[getContentfulClient] Attempting to create client for environment: ${targetEnv}`);
+    // console.log(`[getContentfulClient] Attempting to create client for environment: ${targetEnv}`);
     return createClient({
       accessToken: accessToken as string,
       space: space as string,
@@ -57,7 +57,7 @@ const getContentfulClient = () => {
     console.warn('[getContentfulClient] Caught error during initial client creation attempt, falling back to master (if possible). Error:', error);
     // Fallback logic (though if the primary attempt fails with correct vars, this might too)
     try {
-       console.log('[getContentfulClient] Attempting fallback to master environment');
+       // console.log('[getContentfulClient] Attempting fallback to master environment');
        return createClient({
          accessToken: accessToken as string,
          space: space as string,
@@ -96,15 +96,19 @@ function convertUndefinedToNull(obj: any): any {
   return newObj;
 }
 
-// --- TEMPORARY MINIMAL getStaticProps ---
+// Fetch menu data
+async function fetchMenuData(menuId: string) {
+  try {
+    const menuEntry = await client.getEntry(menuId);
+    return menuEntry.fields;
+  } catch (error) {
+    console.error(`[fetchMenuData] Error fetching menu data for ID ${menuId}:`, error);
+    return null;
+  }
+}
+
 export const getStaticProps: GetStaticProps = async (context) => {
   const locale = context.locale;
-
-  // --- Log environment variables directly ---
-  console.log("[getStaticProps] Directly checking process.env:");
-  console.log(`[getStaticProps] CONTENTFUL_SPACE_ID: ${process.env.CONTENTFUL_SPACE_ID}`);
-  console.log(`[getStaticProps] CONTENTFUL_ACCESS_TOKEN (exists?): ${!!process.env.CONTENTFUL_ACCESS_TOKEN}`);
-  // --- End Log ---
 
   if (!locale) {
     console.error("[getStaticProps] Locale is undefined.");
@@ -112,49 +116,46 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
 
   try {
-    console.log(`[getStaticProps] Fetching entry 'IIqZvNg8GBx6XYe2Kg2bO' for locale: ${locale}`); // Restore locale logging
+    // Fetch menu data
+    const menuData = await fetchMenuData('3w92kKa9R766uKF5maFNky');
+    // Fetch footer data
+    const footerData = await fetchMenuData('5lQO6PPLuT8YOeZp6IociC');
 
+    // Fetch page content
     const entry = await client.getEntry<ISection>('IIqZvNg8GBx6XYe2Kg2bO', {
       include: 2,
-      locale: locale, // <--- RESTORE: Add locale back
+      locale: locale,
     });
 
-    console.log("[getStaticProps] RAW ENTRY FROM CONTENTFUL:", JSON.stringify(entry, null, 2));
-
     if (!entry || !entry.fields) {
-      console.warn(`[getStaticProps] Entry IIqZvNg8GBx6XYe2Kg2bO not found or has no fields (locale: ${locale})`);
       return { notFound: true };
     }
 
     const mappedData = [{
-      title: entry.fields.title,
-      hero: entry.fields.hero,
-      position3: entry.fields.position3, // <--- CHANGE: Use position3
+      title: entry.fields.title || null,
+      hero: entry.fields.hero || null,
+      position3: Array.isArray(entry.fields.position3) ? entry.fields.position3.map(item => item || null) : null
     }];
-    console.log("[getStaticProps] Raw mappedData (before sanitize):", JSON.stringify(mappedData, null, 2));
-
-    // --- Ensure sanitizeContentfulData handles position3 ---
-    // You might need to update sanitizeContentfulData if it specifically looks for 'position'
-    const sanitizedData = sanitizeContentfulData(mappedData);
-    console.log("[getStaticProps] Sanitized Data:", JSON.stringify(sanitizedData, null, 2));
-
-    const serializableData = convertUndefinedToNull(sanitizedData);
-    console.log("[getStaticProps] Serializable Data:", JSON.stringify(serializableData, null, 2));
 
     return {
       props: {
-        data: serializableData,
+        data: sanitizeContentfulData(mappedData),
+        navData: menuData,
+        footerData: footerData,
       },
       revalidate: 60,
     };
   } catch (error) {
-    console.error(`[getStaticProps] Error fetching entry IIqZvNg8GBx6XYe2Kg2bO for locale "${locale}":`, error);
-    return {
-      notFound: true
-    }
+    console.error('Error fetching data:', error);
+    return { 
+      props: {
+        data: null,
+        navData: null,
+        footerData: null,
+      }
+    };
   }
-}
-// --- END TEMPORARY ---
+};
 
 const Home: React.FC<{ data: ISection[] | null }> = ({ data }) => {
   // --- MOVED HOOKS HERE ---
@@ -181,22 +182,25 @@ const Home: React.FC<{ data: ISection[] | null }> = ({ data }) => {
 
   return (
     <>
-      <VStack zIndex={10} gap={gapSize} w="100%" background="black">
-         {/* CHANGE: Map over data[0].position3 */}
+      <VStack zIndex={10} w="100%" background="black" gap={0}>
          {data[0].position3.map((section, index) => (
            <div key={section?.sys?.id || index} style={{position: "relative", zIndex: 10, width: "100%"}}>
              {section?.sys?.contentType?.sys?.id === "sections" && section.fields &&
-               <Row title={section.fields.title} small={section.fields.display} items={section.fields.articles} />
+               <Box my={gapSize}><Row title={section.fields.title} small={section.fields.display} items={section.fields.articles} /></Box>
              }
-             {section?.sys?.contentType?.sys?.id === "module" && <Module data={section} />}
+             {section?.sys?.contentType?.sys?.id === "menuItem" && <Box id={section.fields.title} h="0" m="0" p="0" />}
+             {section?.sys?.contentType?.sys?.id === "module" && <Box my={gapSize}><Module data={section} /></Box>}
              {section?.sys?.contentType?.sys?.id === "moduleHero" && <ModuleHero data={section} />}
-             {section?.sys?.contentType?.sys?.id === "cluster" && <Cluster data={section} />}
-             {section?.sys?.contentType?.sys?.id === "article" && section.fields && <Article page={false} data={section.fields} />}
+             {section?.sys?.contentType?.sys?.id === "cluster" && <Box my={gapSize}><Cluster data={section} /></Box>}
+             {section?.sys?.contentType?.sys?.id === "article" && section.fields && <Box my={gapSize}><Article page={false} data={section.fields} /></Box>}
              {section?.sys?.contentType?.sys?.id === "cloud" && section.fields &&
+               <Box my={gapSize}>
                <Cloud
                  data={section.fields}
                  buttons={section.fields.buttons}
-               />}
+               />
+               </Box>
+             }
            </div>
          ))}
          <Corners />

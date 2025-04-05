@@ -663,11 +663,11 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
               const videoUrl = data?.videoHeader?.fields?.file?.url; // Get URL for logging
 
               // *** ADDED DEBUGGING LOGS ***
-              console.log(`[HEADER RENDER] hasVideo: ${hasVideo}, videoUrl: ${videoUrl}`);
+              // console.log(`[HEADER RENDER] hasVideo: ${hasVideo}, videoUrl: ${videoUrl}`);
 
               if (hasVideo && videoUrl) { // Ensure videoUrl is truthy too
                 // --- RENDER VIDEO HEADER (Simplified - No Motion for now) ---
-                console.log("[HEADER RENDER] Rendering VIDEO block."); // Confirm this block runs
+                // console.log("[HEADER RENDER] Rendering VIDEO block."); // Confirm this block runs
                 const finalVideoUrl = videoUrl.startsWith('//') ? `https:${videoUrl}` : videoUrl;
 
                 return (
@@ -726,7 +726,7 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                 );
               } else {
                 // --- RENDER IMAGE HEADER ---
-                console.log("[HEADER RENDER] Rendering IMAGE block."); // Confirm this block runs
+                // console.log("[HEADER RENDER] Rendering IMAGE block."); // Confirm this block runs
                 return (
                   <>
                     {/* Title Area */}

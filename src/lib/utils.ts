@@ -40,14 +40,29 @@ function sanitizeFields(fields: any, depth = 0) {
 }
 
 export function sanitizeContentfulData(data: any[]) {
-  return data.map(item => ({
-    ...item,
-    position: item.position?.map((pos: any) => ({
-      fields: sanitizeFields(pos.fields, 0),
-      sys: {
-        id: pos.sys?.id,
-        contentType: pos.sys?.contentType
-      }
-    }))
-  }));
-} 
+  if (!Array.isArray(data)) {
+    console.warn('sanitizeContentfulData received non-array data:', data);
+    return [];
+  }
+
+  return data.map(item => {
+    if (!item) return null;
+
+    const sanitizedItem = { ...item };
+
+    // Handle position3 specifically
+    if (item.position3) {
+      sanitizedItem.position3 = Array.isArray(item.position3) 
+        ? item.position3.map((pos: any) => pos ? {
+            fields: sanitizeFields(pos.fields, 0),
+            sys: {
+              id: pos.sys?.id || null,
+              contentType: pos.sys?.contentType || null
+            }
+          } : null)
+        : null;
+    }
+
+    return sanitizedItem;
+  }).filter(Boolean); // Remove any null items
+}

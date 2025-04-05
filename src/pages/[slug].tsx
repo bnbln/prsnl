@@ -4,6 +4,7 @@ import { createClient, EntrySkeletonType, EntryFields } from 'contentful';
 import Article, { ArticleData } from '@/components/Article';
 import { Document } from '@contentful/rich-text-types';
 import { GetStaticProps, GetStaticPaths } from 'next';
+import { getMenuData } from '../hooks/useMenuData';
 
 // Define the type for an image asset (you might already have a similar type like AssetFields)
 // If you don't have AssetFields defined or imported, you might need to define it like this:
@@ -221,57 +222,46 @@ export const getStaticPaths: GetStaticPaths = async ({ locales }) => {
 
 // --- Update getStaticProps ---
 export const getStaticProps: GetStaticProps = async (context) => {
-  // Get slug and locale from context
   const slug = context.params?.slug as string;
-  const locale = context.locale; // The locale for this request
+  const locale = context.locale;
 
-  if (!slug || !locale) { // Also ensure locale exists
+  if (!slug || !locale) {
     return { notFound: true };
   }
 
   try {
-    // Fetch the entry for the given slug AND LOCALE.
+    // Fetch menu data
+    const menuData = await getMenuData();
+    
+    // Fetch article data
     const entries = await client.getEntries<IArticleFields>({
       content_type: 'article',
       'fields.slug': slug,
-      locale: locale, // <<< Pass the requested locale
-      include: 2, // Or your desired include level
+      locale: locale,
+      include: 2,
       limit: 1
     });
 
-    // This check now correctly verifies if an entry exists *for the specific locale*
     if (!entries.items || entries.items.length === 0) {
-      console.warn(`No article found for slug "${slug}" in locale "${locale}"`);
       return { notFound: true };
     }
 
-    // Map the data
     const articleData = mapContentfulData(entries.items[0]);
     
-    // Add detailed logging
-    console.log(`[getStaticProps] Raw entry fields:`, JSON.stringify(entries.items[0].fields, null, 2));
-    console.log(`[getStaticProps] Mapped articleData:`, JSON.stringify(articleData, null, 2));
-
-    // Handle potentially null data from mapping
     if (!articleData) {
-        console.warn(`Failed to map data for slug "${slug}" in locale "${locale}"`);
-        return { notFound: true };
+      return { notFound: true };
     }
 
-    // Pass the mapped data directly under the 'data' prop
-    // The mapContentfulData function already handles setting missing fields to null
-    const props = {
-      data: articleData // Pass the mapped data using the key 'data'
-    };
-
     return {
-      props,
+      props: {
+        data: articleData,
+        navData: menuData,
+      },
       revalidate: 60,
     };
   } catch (error) {
-    // Log the specific locale in the error message for better debugging
     console.error(`Error fetching data for slug "${slug}" in locale "${locale}":`, error);
-    return { notFound: true }; // Or handle error differently
+    return { notFound: true };
   }
 };
 

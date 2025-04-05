@@ -115,9 +115,10 @@ const Row: React.FC<RowProps> = ({ title, small, items = [] }) => {
     });
   }, [getTileWidth]);
 
-  console.log("items", items);
+  // Commenting out console.log statement
+  // console.log("items", items);
   return (
-    <Box w="100%" zIndex={10} id={title}>
+    <Box w="100%" zIndex={10}>
       <Box maxW={containerMaxWidth} mx="auto" px={4}>
         <HStack mb={4} w="100%" justifyContent="space-between">
           {title && <Heading fontSize="1.685625rem">{title}</Heading>}

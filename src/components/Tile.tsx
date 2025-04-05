@@ -117,7 +117,7 @@ export default function Tile({fields, style, overlay}: TileProps) {
             transition={{ duration: 0.3, ease: "easeOut" }}
 
             >   
-                        {console.log("TADA", aspectRatio === '3/4', aspectRatio)}
+                        {/* console.log("TADA", aspectRatio === '3/4', aspectRatio); */}
 
             {
                 fields.image?.fields ?

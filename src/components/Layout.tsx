@@ -27,7 +27,7 @@ export default function Layout({ children, navData = null, footerData = null }: 
   
   return (
     <>
-      <Navbar data={navData} />
+      <Navbar data={navData} mobile={footerData} />
       <Box>
         {children}
       </Box>

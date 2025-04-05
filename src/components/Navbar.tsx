@@ -11,6 +11,7 @@ const MotionFlex = chakra(motion.div);
 
 interface NavbarProps {
   data: NavSection | null;
+  mobile: NavSection | null;
 }
 
 const Path = (props: any) => (
@@ -58,8 +59,8 @@ const MenuToggle = ({ toggle, isOpen, color }: { toggle: () => void, isOpen: boo
   </Button>
 );
 
-export default function Navbar({ data = null }: NavbarProps) {
-  console.log('Navbar component rendered with data:', data);
+export default function Navbar({ data = null, mobile = null }: NavbarProps) {
+  console.log('Navbar component rendered with data:', data, 'mobile:', mobile);
   const [menu, setMenu] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
   const backgroundColor = colorMode === 'dark' ? 'rgba(8, 8, 8, 0.8)' : 'rgba(249,249,249,0.8)';
@@ -217,12 +218,12 @@ export default function Navbar({ data = null }: NavbarProps) {
               backgroundColor={backgroundColor}
               zIndex={-1}
               display={"flex"}
-              justifyContent={"flex-start"}
+              justifyContent={"center"}
               alignItems={"center"}
               backdropFilter="blur(10px)"
             >
               <Flex direction="column" alignItems="center" w="100%">
-                {data?.items?.map((menuItem, itemIndex) => (
+                {(mobile?.items || data?.items)?.map((menuItem, itemIndex) => (
                   <motion.div
                     key={itemIndex}
                     initial="hidden"

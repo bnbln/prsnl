@@ -47,7 +47,7 @@ interface ExtendedArticleData extends ArticleData {
   // Add the missing imageLandscape property
   imageLandscape?: {
     fields: AssetFields; // Use the appropriate type for your image assets
-  } | null; // Make it optional and allow null if needed
+  } | undefined; // Entferne null, um den Typ kompatibel zu machen
   // Add any other fields that exist in IArticleFields but not in ArticleData
 }
 

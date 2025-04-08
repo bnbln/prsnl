@@ -135,3 +135,20 @@ header {
 .scene .container > .close {
   margin-top: 300px;
 }
+
+
+.paragraph {
+  padding: 8px 0px;
+  line-height: 1.5;
+  font-size: 1.125rem;
+}
+
+.paragraph:first-of-type:not(:has(~ .paragraph)) {
+  padding-top: 40px;
+}
+
+/* Nur wenn KEIN weiteres .paragraph direkt danach folgt → Padding setzen */
+.paragraph:not(:has(+ .paragraph)) {
+  padding-bottom: 40px;
+}
+

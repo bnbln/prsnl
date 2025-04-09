@@ -50,6 +50,16 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   }, [router]);
 
+  useEffect(() => {
+    if (router.pathname === '/' && typeof window !== 'undefined') {
+      document.documentElement.style.scrollBehavior = 'smooth';
+    }
+
+    return () => {
+      document.documentElement.style.scrollBehavior = 'auto';
+    };
+  }, [router.pathname]);
+
   return (
     <Providers>
       <Head>

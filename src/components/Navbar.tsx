@@ -75,6 +75,7 @@ const MenuToggle = ({ toggle, isOpen, color }: { toggle: () => void, isOpen: boo
   </Button>
 );
 
+
 export default function Navbar({ data = null, mobile = null }: NavbarProps) {
   console.log('Navbar component rendered with data:', data, 'mobile:', mobile);
   const [menu, setMenu] = useState(false);
@@ -97,8 +98,66 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
     }
   }, [data]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      let determinedSection = "/"; // Default to Home
+    
+      // Assuming `data` is an array of navigation items
+      const mainNavItems = data?.items || []; // Adjusted to access `items` directly
+    
+      const sectionItems = mainNavItems.filter(item => item.fields.url.startsWith('#'));
+      const reversedSectionItems = [...sectionItems].reverse();
+    
+      const threshold = 150; // Pixels from top of viewport to trigger activation
+    
+      for (const menuItem of reversedSectionItems) {
+        const id = decodeURIComponent(menuItem.fields.url.replace('#', ''));
+        const section = document.getElementById(id);
+    
+        if (section) {
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= threshold) {
+            determinedSection = menuItem.fields.url;
+            break;
+          }
+        }
+      }
+    
+      setActiveSection(currentActiveSection => {
+        if (determinedSection !== currentActiveSection) {
+          return determinedSection;
+        }
+        return currentActiveSection;
+      });
+    };
+  
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+  
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [data]);
+
   useLayoutEffect(() => {
-    // Entferne die Logik für den aktiven Indikator
+    const updateIndicator = () => {
+      if (activeLinkRef.current && navContainerRef.current) {
+        const containerRect = navContainerRef.current.getBoundingClientRect();
+        const activeRect = activeLinkRef.current.getBoundingClientRect();
+        setIndicatorStyle({
+          left: activeRect.left - containerRect.left,
+          width: activeRect.width
+        });
+      } else {
+        setIndicatorStyle({ left: 0, width: 0 });
+      }
+    };
+  
+    const timerId = setTimeout(updateIndicator, 0);
+  
+    window.addEventListener('resize', updateIndicator);
+    return () => {
+      clearTimeout(timerId);
+      window.removeEventListener('resize', updateIndicator);
+    };
   }, [activeSection]);
 
   useEffect(() => {
@@ -112,12 +171,43 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
     };
   }, [menu]);
 
+  useEffect(() => {
+    if (pathname === '/' && typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      if (hash) {
+        const scrollToElement = () => {
+          const element = document.querySelector(hash);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            // Wiederhole die Überprüfung, falls das Element noch nicht existiert
+            setTimeout(scrollToElement, 100);
+          }
+        };
+        scrollToElement();
+      }
+    }
+  }, [pathname]);
+
   const handleLocaleChange = (nextLocale: string) => {
     router.push({ pathname, query }, asPath, { locale: nextLocale });
     setMenu(false);
   };
 
-  const handleLinkClick = () => {
+  const handleLinkClick = (url: string) => {
+    if (!url.startsWith('#')) {
+      setMenu(false);
+      return;
+    }
+  
+    if (pathname !== '/') {
+      router.push({ pathname: '/', hash: url.slice(1) });
+    } else {
+      const element = document.querySelector(url);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
     setMenu(false);
   };
 
@@ -140,7 +230,7 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
           w={"fit-content"}
           zIndex={10}
         >
-          <MyLink href={"./"} fontWeight={"900"} >
+          <MyLink href={"./"} fontWeight={"900"} opacity={1} >
             {data?.title}
           </MyLink>
           <Show above="md">
@@ -149,17 +239,19 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
                 <motion.div
                   style={{
                     position: 'absolute',
-                    backgroundColor: 'white',
+                    backgroundColor: '#ffffff20',
                     borderRadius: '50px',
                     transition: 'all 0.3s ease',
                     top: "15%",
                     left: indicatorStyle.left,
+                    border: '1px solid #ffffff40',
                     width: indicatorStyle.width,
                     height: '70%',
                     zIndex: 0
                   }}
                 />
                 <Flex position="relative" zIndex={1}>
+                  {/* <ScrollIndicator activeSection={activeSection} /> */}
                   {data?.items?.map((menuItem, itemIndex) => {
                     const isActive = activeSection === menuItem.fields.url;
                     return (
@@ -173,10 +265,11 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
                         sx={{
                           position: 'relative',
                           transition: 'color 0.2s ease',
-                          fontWeight: isActive ? '900' : 'normal',
+                          fontWeight: 'normal',
                           color: isActive ? (colorMode === 'dark' ? 'white' : 'white') : 'inherit',
                           padding: '4px 8px',
-                          borderRadius: '50px'
+                          borderRadius: '50px',
+                          mixBlendMode: isActive ? 'difference' : 'normal',
                         }}
                         _hover={{
                           color: colorMode === 'dark' ? 'white' : '#080808',
@@ -185,8 +278,9 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
                       >
                         <MyLink 
                           href={menuItem.fields.url}
-                          fontWeight={isActive ? '900' : 'normal'}
+                          fontWeight={'500'}
                           color={isActive ? 'white' : 'inherit'}
+                          onClick={() => handleLinkClick(menuItem.fields.url)}
                         >
                           {menuItem.fields.title}
                         </MyLink>
@@ -258,7 +352,7 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
                     <MyLink 
                       fontSize='40px'
                       href={menuItem.fields.url}
-                      onClick={handleLinkClick}
+                      onClick={() => handleLinkClick(menuItem.fields.url)}
                     >
                       {menuItem.fields.title}
                     </MyLink>

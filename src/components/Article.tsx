@@ -88,6 +88,9 @@ export interface ArticleData {
   image?: {
     fields: AssetFields;
   };
+  imageLandscape?: {
+    fields: AssetFields;
+  };
   text?: Document;
   related?: RelatedPost[];
   videoHeader?: {
@@ -172,13 +175,13 @@ const SingleImage: React.FC<{ file: any, title: string }> = ({ file, title }) =>
 };
 
 // Optimized ImageRow Component
-const ImageRow: React.FC<{ node: Node }> = ({ node }) => {
+const ImageRow: React.FC<{ node: Node, imagesSpacing: number }> = ({ node, imagesSpacing }) => {
   const files = node.data.target.fields.files;
   if (!files || files.length === 0) return null;
   const count = files.length;
 
   return (
-    <Flex direction="row" justify="space-between" position="relative" w="100%" mb={4} gap={2}>
+    <Flex direction="row" justify="space-between" position="relative" w="100%" mb={4} gap={imagesSpacing}>
       {files.map((file: any, index: number) => {
         const url = file.fields.file.url.startsWith('//')
           ? `https:${file.fields.file.url}`
@@ -520,11 +523,11 @@ const EmbeddedVideo: React.FC<{ node: Node, color?: string }> = ({ node, color }
         )}
       </Box>
 
-      {title && (
+      {/* {title && (
         <Heading size="md" mt={4} textAlign="left" w="100%">
           {title}
         </Heading>
-      )}
+      )} */}
     </Flex>
   );
 };
@@ -569,7 +572,7 @@ const Wrapper: React.FC<WrapperProps> = ({ node, children }) => {
   // --- Move hook calls to top level ---
   const containerWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' });
   const innerFlexWidth = useBreakpointValue({ base: '100%', md: '100%' }); // Or adjust as needed
-  const textWidthValue = useBreakpointValue({ base: '100%', md: '500px' }); // Calculate textWidth here
+  const textWidthValue = useBreakpointValue({ base: '100%', md: '725px' }); // Calculate textWidth here
   // --- End hook calls ---
 
   const isEmbeddedAsset = node.nodeType === 'embedded-asset-block';
@@ -581,6 +584,7 @@ const Wrapper: React.FC<WrapperProps> = ({ node, children }) => {
         justifyContent="center"
         w={containerWidth} // Use variable
         mx="auto"
+        className="paragraph"
       >
         <Flex
           gap={4}
@@ -621,13 +625,15 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
 
     // --- Hook Calls ---
     const padding = useBreakpointValue({ base: 4, sm: 12, xl: 20 });
-    const textWidth = useBreakpointValue({ base: '100%', md: '500px' });
+    const textWidth = useBreakpointValue({ base: '100%', md: '800px' });
     const containerWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' });
     const headerInnerFlexWidth = useBreakpointValue({ base: '100%', md: '80%' });
     const headerDirection = useBreakpointValue<'column' | 'row'>({ base: 'column', md: 'row' });
     const mainContentWidth = useBreakpointValue({ base: 'calc(100vw - 26px)', xl: '1089px' });
     const teaserInnerFlexWidth = useBreakpointValue({ base: '100%', md: '80%' });
     const teaserDirection = useBreakpointValue<'column' | 'row'>({ base: 'column', md: 'row' });
+    const imagesSpacing = useBreakpointValue({ base: 4, md: 8 });
+    const paragraphGap = useBreakpointValue({ base: 1, md: 2 });
 
     const { scrollY } = useScroll();
     const y1 = useTransform(scrollY, [0, 800], [0, 200]);
@@ -639,10 +645,11 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
 
     const options: Options = {
       renderNode: {
-        [BLOCKS.PARAGRAPH]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Text pb={4}>{children}</Text></Wrapper>,
+        [BLOCKS.PARAGRAPH]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Text my={paragraphGap}>{children}</Text></Wrapper>,
         [INLINES.HYPERLINK]: (node: Node, children: React.ReactNode) => <Link color='teal' href={(node as Inline).data.uri}>{children}</Link>,
-        [BLOCKS.HEADING_1]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Heading fontWeight={200} size="lg" pb={4}>{children}</Heading></Wrapper>,
-        [BLOCKS.HEADING_2]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Heading size="md" pt={4} pb={2}>{children}</Heading></Wrapper>,
+        [BLOCKS.HEADING_1]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Heading fontWeight={300} size="xl" pb={4} pt={10}>{children}</Heading></Wrapper>,
+        [BLOCKS.HEADING_2]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Heading size="md" pb={2} pt={8}>{children}</Heading></Wrapper>,
+        [BLOCKS.HEADING_3]: (node: Node, children: React.ReactNode) => <Wrapper node={node}><Heading size="sm" pb={2} pt={8}>{children}</Heading></Wrapper>,
         [INLINES.EMBEDDED_ENTRY]: (node: Node) => (
           <Link color="blue" href={`./${(node as Inline).data.target.fields.slug}`}>
             {(node as Inline).data.target.fields.title}
@@ -655,7 +662,8 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
             return <EmbeddedVideo node={node} color={data.color} />;
           }
           if (contentTypeId === 'imageRow') {
-            return <ImageRow node={node} />;
+            const spacing = imagesSpacing ?? 8; // Standardwert 8 verwenden, falls imagesSpacing undefined ist
+            return <Box my={8}><ImageRow node={node} imagesSpacing={spacing} /></Box>;
           }
           if (contentTypeId === 'module') {
              return <Module node={node} />;
@@ -757,10 +765,12 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                       textAlign="center"
                       color="white"
                     >
+                      <Box maxW={textWidth} w="100%">
                       {data.description && ( <Heading mt={2} size="md">{data.description}</Heading> )}
                       {data.title && ( <Heading size="xl">{data.title}</Heading> )}
                       {formattedDate && ( <Heading opacity={0.7} mt={4} size="xs">{formattedDate}</Heading> )}
                       {data.excerpts && ( <Text mt={4} fontSize={"lg"} fontWeight={300} pb={4}>{data.excerpts}</Text> )}
+                      </Box>
                     </Flex>
                   </Box>
                 );
@@ -801,10 +811,10 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                     {data.image &&
                       <Flex justifyContent="center" mx="auto" w={containerWidth ?? 'calc(100vw - 26px)'}>
                         <Image
-                          src={data.image.fields.file.url.startsWith('//') ? `https:${data.image.fields.file.url}` : data.image.fields.file.url}
+                          src={data.image.fields.file.url.startsWith('//') ? `https:${data.imageLandscape ? data.imageLandscape.fields.file.url : data.image.fields.file.url}` : data.image.fields.file.url}
                           alt={data.image.fields.title ?? data.title ?? 'Article image'}
                           width={1024}
-                          height={576}
+                          height={1024}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1089px"
                           priority
                           style={{
@@ -812,7 +822,7 @@ const Article: React.FC<ArticleProps> = ({ data, page = true }) => {
                             borderRadius: "4.5px",
                             width: "100%",
                             height: "auto",
-                            aspectRatio: "16/9",
+                            // aspectRatio: "16/9",
                             margin: "1rem 0",
                             marginBottom: "2rem",
                           }}

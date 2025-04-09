@@ -6,7 +6,7 @@ import { motion, useScroll, useTransform, Variants } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Corners } from './Corners';
-
+import { useRouter } from 'next/router';
 
 interface ImageFields {
   file: {
@@ -138,6 +138,7 @@ const textVariants: Variants = {
 };
 
 const ModuleHero: React.FC<ModuleHeroProps> = ({ data }) => {
+  const { locale } = useRouter();
   const flexDirection = useBreakpointValue<'column' | 'row'>({ base: "column", md: "row" });
   const containerWidth = useBreakpointValue({ base: "calc(100vw - 26px)", xl: "1089px" });
   const imageWidth = useBreakpointValue({ base: "100%", md: "50%" });
@@ -381,7 +382,7 @@ const ModuleHero: React.FC<ModuleHeroProps> = ({ data }) => {
 
           // Conditional Linking
           return item.fields.slug ? (
-            <Link href={`/${item.fields.slug}`} key={index} _hover={{ textDecoration: 'none' }} isExternal={false}>
+            <Link href={`/${locale}/${item.fields.slug}`} key={index} _hover={{ textDecoration: 'none' }} isExternal={false}>
               {slideContent}
             </Link>
           ) : (

@@ -102,38 +102,44 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
     const handleScroll = () => {
       let determinedSection = "/"; // Default to Home
     
-      // Assuming `data` is an array of navigation items
-      const mainNavItems = data?.items || []; // Adjusted to access `items` directly
-    
-      const sectionItems = mainNavItems.filter(item => item.fields.url.startsWith('#'));
-      const reversedSectionItems = [...sectionItems].reverse();
-    
-      const threshold = 150; // Pixels from top of viewport to trigger activation
-    
-      for (const menuItem of reversedSectionItems) {
-        const id = decodeURIComponent(menuItem.fields.url.replace('#', ''));
-        const section = document.getElementById(id);
-    
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= threshold) {
-            determinedSection = menuItem.fields.url;
-            break;
+      if (!data?.items?.length) return;
+
+      const mainNavItems = data.items;
+      
+      // Wenn wir uns ganz oben befinden, Home aktiv setzen
+      if (window.scrollY < 10) {
+        const homeItem = mainNavItems.find(item => item.fields.url === "/");
+        if (homeItem) {
+          determinedSection = homeItem.fields.url;
+        }
+      } else {
+        // Nur Sections für Scroll-basierte Navigation verwenden
+        const sectionItems = mainNavItems.filter(item => item.fields.url.startsWith('#'));
+        const reversedSectionItems = [...sectionItems].reverse();
+        
+        const threshold = 150;
+        for (const menuItem of reversedSectionItems) {
+          const id = decodeURIComponent(menuItem.fields.url.replace('#', ''));
+          const section = document.getElementById(id);
+      
+          if (section) {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= threshold) {
+              determinedSection = menuItem.fields.url;
+              break;
+            }
           }
         }
       }
     
-      setActiveSection(currentActiveSection => {
-        if (determinedSection !== currentActiveSection) {
-          return determinedSection;
-        }
-        return currentActiveSection;
-      });
+      setActiveSection(determinedSection);
     };
   
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Führe die Überprüfung sofort aus
     handleScroll();
-  
+    
+    // Füge den Scroll-Listener hinzu
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [data]);
 
@@ -146,12 +152,11 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
           left: activeRect.left - containerRect.left,
           width: activeRect.width
         });
-      } else {
-        setIndicatorStyle({ left: 0, width: 0 });
       }
     };
   
-    const timerId = setTimeout(updateIndicator, 0);
+    // Erhöhe die initiale Verzögerung auf 100ms
+    const timerId = setTimeout(updateIndicator, 100);
   
     window.addEventListener('resize', updateIndicator);
     return () => {

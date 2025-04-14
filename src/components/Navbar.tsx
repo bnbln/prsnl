@@ -75,10 +75,23 @@ const MenuToggle = ({ toggle, isOpen, color }: { toggle: () => void, isOpen: boo
   </Button>
 );
 
+// Füge diese Utility-Funktion am Anfang der Datei ein
+const throttle = <T extends (...args: any[]) => any>(func: T, limit: number): T => {
+  let inThrottle: boolean;
+  return function(this: any, ...args: Parameters<T>): ReturnType<T> {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+    return undefined as ReturnType<T>;
+  } as T;
+};
 
 export default function Navbar({ data = null, mobile = null }: NavbarProps) {
   console.log('Navbar component rendered with data:', data, 'mobile:', mobile);
   const [menu, setMenu] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
   const backgroundColor = colorMode === 'dark' ? 'rgba(8, 8, 8, 0.8)' : 'rgba(249,249,249,0.8)';
   const router = useRouter();
@@ -99,71 +112,76 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
   }, [data]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      let determinedSection = "/"; // Default to Home
-    
-      if (!data?.items?.length) return;
+    if (!data || !Array.isArray(data.items)) {
+      console.error("Navbar: Ungültige oder fehlende Daten.", data);
+      return;
+    }
+  }, [data]);
 
-      const mainNavItems = data.items;
-      
-      // Wenn wir uns ganz oben befinden, Home aktiv setzen
-      if (window.scrollY < 10) {
-        const homeItem = mainNavItems.find(item => item.fields.url === "/");
-        if (homeItem) {
-          determinedSection = homeItem.fields.url;
-        }
-      } else {
-        // Nur Sections für Scroll-basierte Navigation verwenden
-        const sectionItems = mainNavItems.filter(item => item.fields.url.startsWith('#'));
-        const reversedSectionItems = [...sectionItems].reverse();
+  useEffect(() => {
+    const handleScroll = throttle(() => {
+      if (!data?.items?.length || pathname !== '/') return;
+
+      requestAnimationFrame(() => {
+        let determinedSection = "/";
+        const mainNavItems = data.items;
         
-        const threshold = 150;
-        for (const menuItem of reversedSectionItems) {
-          const id = decodeURIComponent(menuItem.fields.url.replace('#', ''));
-          const section = document.getElementById(id);
-      
-          if (section) {
-            const rect = section.getBoundingClientRect();
-            if (rect.top <= threshold) {
-              determinedSection = menuItem.fields.url;
-              break;
+        if (window.scrollY < 10) {
+          const homeItem = mainNavItems.find(item => item.fields.url === "/");
+          if (homeItem) {
+            determinedSection = homeItem.fields.url;
+          }
+        } else {
+          const sectionItems = mainNavItems.filter(item => item.fields.url.startsWith('#'));
+          const reversedSectionItems = [...sectionItems].reverse();
+          
+          const threshold = 150;
+          for (const menuItem of reversedSectionItems) {
+            const id = decodeURIComponent(menuItem.fields.url.replace('#', ''));
+            const section = document.getElementById(id);
+        
+            if (section) {
+              const rect = section.getBoundingClientRect();
+              if (rect.top <= threshold) {
+                determinedSection = menuItem.fields.url;
+                break;
+              }
             }
           }
         }
-      }
-    
-      setActiveSection(determinedSection);
-    };
-  
-    // Führe die Überprüfung sofort aus
-    handleScroll();
-    
-    // Füge den Scroll-Listener hinzu
+      
+        setActiveSection(determinedSection);
+      });
+    }, 100); // Throttle auf 100ms
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [data]);
+  }, [data, pathname]);
 
   useLayoutEffect(() => {
-    const updateIndicator = () => {
-      if (activeLinkRef.current && navContainerRef.current) {
-        const containerRect = navContainerRef.current.getBoundingClientRect();
-        const activeRect = activeLinkRef.current.getBoundingClientRect();
-        setIndicatorStyle({
-          left: activeRect.left - containerRect.left,
-          width: activeRect.width
-        });
-      }
-    };
-  
-    // Erhöhe die initiale Verzögerung auf 100ms
+    if (pathname !== '/') return;
+
+    const updateIndicator = throttle(() => {
+      requestAnimationFrame(() => {
+        if (activeLinkRef.current && navContainerRef.current) {
+          const containerRect = navContainerRef.current.getBoundingClientRect();
+          const activeRect = activeLinkRef.current.getBoundingClientRect();
+          setIndicatorStyle({
+            left: activeRect.left - containerRect.left,
+            width: activeRect.width
+          });
+        }
+      });
+    }, 50);
+
     const timerId = setTimeout(updateIndicator, 100);
-  
-    window.addEventListener('resize', updateIndicator);
+    window.addEventListener('resize', updateIndicator, { passive: true });
+    
     return () => {
       clearTimeout(timerId);
       window.removeEventListener('resize', updateIndicator);
     };
-  }, [activeSection]);
+  }, [activeSection, pathname]);
 
   useEffect(() => {
     if (menu) {
@@ -194,6 +212,13 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
     }
   }, [pathname]);
 
+  useEffect(() => {
+    // Setze hasAnimated auf true nach der ersten Animation
+    if (!hasAnimated) {
+      setHasAnimated(true);
+    }
+  }, [hasAnimated]);
+
   const handleLocaleChange = (nextLocale: string) => {
     router.push({ pathname, query }, asPath, { locale: nextLocale });
     setMenu(false);
@@ -217,113 +242,140 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
   };
 
   return (
-    <header style={{zIndex: 1000, position: "fixed", top: 0, left: 0, width: "100%"}}>
-      <nav>
-        <Box
-          className='nav-container'
-          px={4}
-          backgroundColor={colorMode === 'dark' ? "rgba(100,100,100,0.3)" : "rgba(249,249,249,0.3)"}
-          borderRadius={{base: menu ? '50px' : '50px', md: '50px'}}
-          marginTop={'12px'}
-          backdropFilter="blur(24px)"
-          boxShadow={colorMode === 'dark' ? "rgb(0 0 0 / 55%) 9px 5px 50px 0" : "rgb(0 0 0 / 15%) 9px 5px 50px 0"}  
-          display={"flex"}
-          alignItems={"center"}
-          position={{base: "absolute", md: "relative"}}
-          left={{base: "16px", md: "auto"}}
-          right={{base: "16px", md: "auto"}}
-          w={"fit-content"}
-          zIndex={10}
+    <motion.header 
+      style={{
+        zIndex: 1000, 
+        position: "fixed", 
+        top: 0, 
+        left: 0, 
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        pointerEvents: "none" // Erlaubt Klicks durch den Header hindurch
+      }}
+    >
+      <nav style={{ pointerEvents: "auto" }}> {/* Aktiviert Klick-Events nur für die Nav */}
+        <motion.div
+          initial={!hasAnimated ? { y: -100, opacity: 0 } : false}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ 
+            duration: 0.6, 
+            delay: 0.5,
+            ease: [0.16, 1, 0.3, 1],
+            opacity: { duration: 0.3 }
+          }}
         >
-          <MyLink href={"./"} fontWeight={"900"} opacity={1} >
-            {data?.title}
-          </MyLink>
-          <Show above="md">
-            <Flex alignItems="center">
-              <Box position="relative" ref={navContainerRef} mr={4}>
-                <motion.div
-                  style={{
-                    position: 'absolute',
-                    backgroundColor: '#ffffff20',
-                    borderRadius: '50px',
-                    transition: 'all 0.3s ease',
-                    top: "15%",
-                    left: indicatorStyle.left,
-                    border: '1px solid #ffffff40',
-                    width: indicatorStyle.width,
-                    height: '70%',
-                    zIndex: 0
-                  }}
-                />
-                <Flex position="relative" zIndex={1}>
-                  {/* <ScrollIndicator activeSection={activeSection} /> */}
-                  {data?.items?.map((menuItem, itemIndex) => {
-                    const isActive = activeSection === menuItem.fields.url;
-                    return (
-                      <Box
-                        key={itemIndex}
-                        ref={isActive ? activeLinkRef : null}
-                        position="relative"
-                        className="link-text"
-                        minW={{base: "auto", md: "90px"}}
-                        textAlign="center"
-                        sx={{
-                          position: 'relative',
-                          transition: 'color 0.2s ease',
-                          fontWeight: 'normal',
-                          color: isActive ? (colorMode === 'dark' ? 'white' : 'white') : 'inherit',
-                          padding: '4px 8px',
-                          borderRadius: '50px',
-                          mixBlendMode: isActive ? 'difference' : 'normal',
-                        }}
-                        _hover={{
-                          color: colorMode === 'dark' ? 'white' : '#080808',
-                          fontWeight: '900'
-                        }}
-                      >
-                        <MyLink 
-                          href={menuItem.fields.url}
-                          fontWeight={'500'}
-                          color={isActive ? 'white' : 'inherit'}
-                          onClick={() => handleLinkClick(menuItem.fields.url)}
+          <Box
+            className='nav-container'
+            px={4}
+            py={1}
+            backgroundColor={ "rgb(166 166 166 / 45%);"}
+            borderRadius="50px"
+            marginTop={'12px'}
+            marginX={'16px'}
+            backdropFilter="blur(12px)"
+            boxShadow={colorMode === 'dark' ? "rgb(0 0 0 / 25%) 0px 3px 20px" : "rgb(0 0 0 / 10%) 0px 3px 20px"}
+            display="flex"
+            alignItems="center"
+            w="fit-content"
+            transition="all 0.3s ease"
+            borderColor={colorMode === 'dark' ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
+            style={{
+              WebkitBackdropFilter: "blur(12px)"
+            }}
+          >
+            <MyLink href={"./"} fontWeight={"900"} opacity={1} >
+              {data?.title}
+            </MyLink>
+            <Show above="md">
+              <Flex alignItems="center">
+                <Box position="relative" ref={navContainerRef} mr={4}>
+                  {pathname === '/' && (
+                    <motion.div
+                      style={{
+                        position: 'absolute',
+                        backgroundColor: '#ffffff20',
+                        borderRadius: '50px',
+                        transition: 'all 0.3s ease',
+                        top: "15%",
+                        left: indicatorStyle.left,
+                        border: '1px solid #ffffff40',
+                        width: indicatorStyle.width,
+                        height: '70%',
+                        zIndex: 0
+                      }}
+                    />
+                  )}
+                  <Flex position="relative" zIndex={1}>
+                    {/* <ScrollIndicator activeSection={activeSection} /> */}
+                    {data?.items?.map((menuItem, itemIndex) => {
+                      const isActive = pathname === '/' ? activeSection === menuItem.fields.url : pathname === menuItem.fields.url;
+                      return (
+                        <Box
+                          key={itemIndex}
+                          ref={isActive && pathname === '/' ? activeLinkRef : null}
+                          position="relative"
+                          className="link-text"
+                          minW={{base: "auto", md: "90px"}}
+                          textAlign="center"
+                          sx={{
+                            position: 'relative',
+                            transition: 'color 0.2s ease',
+                            fontWeight: 'normal',
+                            color: isActive ? (colorMode === 'dark' ? 'white' : 'white') : 'inherit',
+                            padding: '4px 8px',
+                            borderRadius: '50px',
+                            mixBlendMode: isActive ? 'difference' : 'normal',
+                          }}
+                          _hover={{
+                            color: colorMode === 'dark' ? 'white' : '#080808',
+                            fontWeight: '900'
+                          }}
                         >
-                          {menuItem.fields.title}
-                        </MyLink>
-                      </Box>
-                    );
-                  })}
-                </Flex>
-              </Box>
-              <ButtonGroup size="sm" isAttached variant="outline">
-                {(locales ?? []).map((loc, index) => (
-                  <Button
-                    key={loc}
-                    onClick={() => handleLocaleChange(loc)}
-                    isActive={locale === loc}
-                    fontWeight={locale === loc ? 'bold' : 'normal'}
-                    borderRadius={
-                      index === 0 
-                        ? '100px 0 0 100px'
-                        : index === locales.length - 1 
-                          ? '0 100px 100px 0'
-                          : 'none'
-                    }
-                  >
-                    {loc.split('-')[0].toUpperCase()}
-                  </Button>
-                ))}
-              </ButtonGroup>
-            </Flex>
-          </Show>
+                          <MyLink 
+                            href={menuItem.fields.url}
+                            fontWeight={'500'}
+                            color={isActive ? 'white' : 'inherit'}
+                            onClick={() => handleLinkClick(menuItem.fields.url)}
+                          >
+                            {menuItem.fields.title}
+                          </MyLink>
+                        </Box>
+                      );
+                    })}
+                  </Flex>
+                </Box>
+                <ButtonGroup size="sm" isAttached variant="outline">
+                  {(locales ?? []).map((loc, index) => (
+                    <Button
+                      key={loc}
+                      onClick={() => handleLocaleChange(loc)}
+                      isActive={locale === loc}
+                      fontWeight={locale === loc ? 'bold' : 'normal'}
+                      borderRadius={
+                        index === 0 
+                          ? '100px 0 0 100px'
+                          : index === locales.length - 1 
+                            ? '0 100px 100px 0'
+                            : 'none'
+                      }
+                    >
+                      {loc.split('-')[0].toUpperCase()}
+                    </Button>
+                  ))}
+                </ButtonGroup>
+              </Flex>
+            </Show>
 
-          <Hide above="md">
-            <MenuToggle 
-              toggle={() => setMenu(prev => !prev)} 
-              isOpen={menu} 
-              color={colorMode === 'dark' ? 'white' : '#080808'}
-            />
-          </Hide>
-        </Box>
+            <Hide above="md">
+              <MenuToggle 
+                toggle={() => setMenu(prev => !prev)} 
+                isOpen={menu} 
+                color={colorMode === 'dark' ? 'white' : '#080808'}
+              />
+            </Hide>
+          </Box>
+        </motion.div>
         <AnimatePresence>
           {menu && (
             <MotionBox
@@ -383,6 +435,6 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
           )}
         </AnimatePresence>
       </nav>
-    </header>
+    </motion.header>
   );
 }

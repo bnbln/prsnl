@@ -1,15 +1,20 @@
 import React from 'react';
 import { Box, VStack, useBreakpointValue, useColorMode } from '@chakra-ui/react';
+import { Canvas } from '@react-three/fiber'
+import { ScrollControls, Environment } from '@react-three/drei'
+import { EffectComposer, Bloom, Vignette, Noise } from '@react-three/postprocessing'
 import Row from '../components/Row'
 import Module from '../components/Module'
 import ModuleHero from '../components/ModuleHero'
 import Article from '../components/Article'
 import Cloud from '../components/Cloud'
+import SceneHero from '../components/SceneHero'
 import { createClient, EntrySkeletonType, EntryFields } from 'contentful';
 import { useControls } from 'leva'
 import { sanitizeContentfulData } from '../lib/utils';
 import Cluster from '../components/Cluster';
 import { Corners } from '../components/Corners';
+import SlicedB from '@/components/SlicedB';
 import { GetStaticProps } from 'next';
 
 interface ISection extends EntrySkeletonType {
@@ -164,6 +169,7 @@ const Home: React.FC<{ data: ISection[] | null }> = ({ data }) => {
   return (
     <>
       <VStack zIndex={10} w="100%" background="black" gap={0}>
+
          {data[0].position3.map((section, index) => (
            <div key={section?.sys?.id || index} style={{position: "relative", zIndex: 10, width: "100%"}}>
              {section?.sys?.contentType?.sys?.id === "sections" && section.fields &&

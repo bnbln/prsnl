@@ -112,6 +112,13 @@ export default function Navbar({ data = null, mobile = null }: NavbarProps) {
   }, [data]);
 
   useEffect(() => {
+    if (!data || !Array.isArray(data.items)) {
+      console.error("Navbar: Ungültige oder fehlende Daten.", data);
+      return;
+    }
+  }, [data]);
+
+  useEffect(() => {
     const handleScroll = throttle(() => {
       if (!data?.items?.length || pathname !== '/') return;
 
